@@ -1,7 +1,30 @@
 {
-  "helloWorld": "Hello World!",
-  "@helloWorld": {
-    "description": "The conventional newborn programmer greeting"
-  },
-  "appName" : "ETouch"
+  "appName" : "ETouch",
+  "orientationEInvoiceTitle" : "E-Invoice",
+  "orientationEInvoiceDesc" : "We will help you to create and send E-Invoices to the Egyptian Tax Authority in a fast modern way.",
+  "orientationEReceiptTitle" : "E-Receipt",
+  "orientationEReceiptDesc" : "In addition, it will help you to create and send E-Receipts to the Egyptian Tax Authority.",
+  "orientationWelcomeTitle" : "Welcome ..",
+  "orientationWelcomeDesc" : "You have joined the clients of Riyada Integrated Solutions (RIS).",
+  "loginTxt": "Login",
+  "logoutTxt": "Logout",
+  "loginUsernameTxt" : "User Name",
+  "loginPasswordTxt" : "Password",
+  "loginContactUsTxt" : "Contact us",
+  "eInvoiceDashboardTitle" : "E-Invoice Dashboard",
+  "eInvoiceDashboardDesc" : "Dashboard about the sent E-Invoices",
+  "eInvoiceDashboardTopCustomersTitle" : "Most sales customers",
+  "moreTxt" : "more",
+  "eInvoiceDashboardAcceptedDocumentsTxt" : "Valid",
+  "eInvoiceTxt" : "E-Invoice",
+  "eReceiptTxt" : "E-Receipt",
+  "eInvoiceDashboardCardValidTitle" : "Valid",
+  "eInvoiceDashboardCardInvalidTitle" : "Invalid",
+  "eInvoiceDashboardCardCancelledTitle": "Cancelled",
+  "eInvoiceDashboardCardRejectedTitle": "Rejected",
+  "totalTxt" : "Total",
+  "taxesTxt" : "Tax",
+  "savedFilesTxt": "Saved documents",
+  "sentFilesTxt": "Sent documents",
+  "darkModeTxt": "Dark mood"
 }
