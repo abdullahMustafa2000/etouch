@@ -1,23 +1,30 @@
-import 'dart:ffi';
-
 import 'package:etouch/ui/constants.dart';
 import 'package:etouch/ui/elements/primary_btn_model.dart';
 import 'package:etouch/ui/themes/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class OrientationModel extends StatelessWidget {
+class OrientationModel extends StatefulWidget {
   OrientationModel(
       {Key? key,
       required this.title,
       required this.desc,
       required this.lottiePath,
-      required this.controller})
+      required this.controller,
+      required this.onNextClick})
       : super(key: key);
   String lottiePath;
   String title, desc;
   PageController controller;
+  Function onNextClick;
+
+  @override
+  State<OrientationModel> createState() => _OrientationModelState();
+}
+
+class _OrientationModelState extends State<OrientationModel> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -26,12 +33,15 @@ class OrientationModel extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Expanded(child: Lottie.asset(lottiePath)),
+          Expanded(child: Lottie.asset(widget.lottiePath)),
           Expanded(
               child: DiscussionWidget(
-            title: title,
-            desc: desc,
-            pageController: controller,
+            title: widget.title,
+            desc: widget.desc,
+            pageController: widget.controller,
+            onNextClicked: () {
+              widget.onNextClick();
+            },
           )),
         ],
       ),
@@ -39,16 +49,24 @@ class OrientationModel extends StatelessWidget {
   }
 }
 
-class DiscussionWidget extends StatelessWidget {
+class DiscussionWidget extends StatefulWidget {
   DiscussionWidget(
       {Key? key,
       required this.title,
       required this.desc,
-      required this.pageController})
+      required this.pageController,
+      required this.onNextClicked})
       : super(key: key);
   String title;
   String desc;
   PageController pageController;
+  Function onNextClicked;
+
+  @override
+  State<DiscussionWidget> createState() => _DiscussionWidgetState();
+}
+
+class _DiscussionWidgetState extends State<DiscussionWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -59,53 +77,80 @@ class DiscussionWidget extends StatelessWidget {
         color: pureWhite,
       ),
       padding: const EdgeInsets.only(left: 20, right: 20, top: 46, bottom: 82),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: Theme.of(context)
-                .textTheme
-                .displayLarge!
-                .copyWith(color: primaryColor),
-          ),
-          const SizedBox(
-            height: 38,
-          ),
-          Text(
-            desc,
-            style: Theme.of(context)
-                .textTheme
-                .displaySmall!
-                .copyWith(color: primaryColor),
-          ),
-          const SizedBox(
-            height: 52,
-          ),
-          Expanded(child: Container()),
-          Directionality(
-            textDirection: TextDirection.ltr,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SmoothPageIndicator(
-                  controller: pageController,
-                  count: 3,
-                  effect: ExpandingDotsEffect(
-                    activeDotColor: primaryColor,
-                    dotColor: const Color.fromRGBO(20, 39, 155, .3),
-                    dotHeight: 8,
-                    dotWidth: 8,
-                    spacing: 6,
-                  ),
-                ),
-                PrimaryClrBtn(null, goIcon, () {}),
-              ],
+      child: Directionality(
+        textDirection: isRTL(context)?TextDirection.rtl:TextDirection.ltr,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              widget.title,
+              style: Theme.of(context)
+                  .textTheme
+                  .displayLarge!
+                  .copyWith(color: primaryColor),
             ),
-          )
-        ],
+            const SizedBox(
+              height: 38,
+            ),
+            Text(
+              widget.desc,
+              style: Theme.of(context)
+                  .textTheme
+                  .displaySmall!
+                  .copyWith(color: primaryColor),
+            ),
+            const SizedBox(
+              height: 52,
+            ),
+            Expanded(child: Container()),
+            Directionality(
+              textDirection: TextDirection.ltr,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SmoothPageIndicator(
+                    controller: widget.pageController,
+                    count: 3,
+                    effect: ExpandingDotsEffect(
+                      activeDotColor: primaryColor,
+                      dotColor: const Color.fromRGBO(20, 39, 155, .3),
+                      dotHeight: 8,
+                      dotWidth: 8,
+                      spacing: 6,
+                    ),
+                  ),
+                  PrimaryClrBtn(
+                    content: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          AppLocalizations.of(context)!.nextTxt,
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineSmall!
+                              .copyWith(color: pureWhite, fontFamily: almarai),
+                        ),
+                        const SizedBox(
+                          width: 6,
+                        ),
+                        Icon(
+                          Icons.navigate_next_sharp,
+                          color: pureWhite,
+                        ),
+                      ],
+                    ),
+                    onPressed: () {
+                      widget.onNextClicked();
+                    },
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

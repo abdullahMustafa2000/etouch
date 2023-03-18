@@ -26,5 +26,6 @@
   "taxesTxt" : "Tax",
   "savedFilesTxt": "Saved documents",
   "sentFilesTxt": "Sent documents",
-  "darkModeTxt": "Dark mood"
+  "darkModeTxt": "Dark mood",
+  "nextTxt": "Next"
 }

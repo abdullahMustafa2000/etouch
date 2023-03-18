@@ -8,11 +8,15 @@ class SideMenuModel extends StatelessWidget {
       {required this.taxPayerName,
       required this.isDarkMood,
       required this.taxPayerImg,
-      required this.onChangeMood});
+      required this.onChangeMood,
+      required this.onSavesClkd,
+      required this.onSentClkd,
+      required this.onContactClkd,
+      required this.onLogoutClkd});
   String taxPayerName;
   String taxPayerImg;
   bool isDarkMood;
-  Function onChangeMood;
+  Function onChangeMood, onSavesClkd, onSentClkd, onContactClkd, onLogoutClkd;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -36,9 +40,14 @@ class SideMenuModel extends StatelessWidget {
             width: double.infinity,
             color: secondaryColor,
           ),
-          MenuProfileWidget(userName: taxPayerName, userImg: taxPayerImg ?? 'assets/images/fakeImage.png'),
+          MenuProfileWidget(
+              userName: taxPayerName,
+              userImg: taxPayerImg ?? 'assets/images/fakeImage.png'),
           SideMenuOptionsWidget(
             onChangeMood: onChangeMood,
+            onSavesClkd: onSavesClkd,
+            onSentClkd: onSentClkd,
+            onContactClkd: onContactClkd,
           ),
           const Expanded(
               child: Padding(
@@ -46,22 +55,26 @@ class SideMenuModel extends StatelessWidget {
           )),
           Padding(
             padding: const EdgeInsets.only(right: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Icon(
-                  Icons.logout_sharp,
-                  color: Theme.of(context).primaryColorDark,
-                ),
-                const Padding(padding: EdgeInsets.only(left: 8)),
-                Text(
-                  AppLocalizations.of(context)!.logoutTxt,
-                  style: Theme.of(context)
-                      .textTheme
-                      .headlineSmall!
-                      .copyWith(color: Theme.of(context).primaryColorDark),
-                ),
-              ],
+            child: InkWell(
+              onTap: () {
+                onLogoutClkd();
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Icon(
+                    Icons.logout_sharp,
+                    color: Theme.of(context).primaryColorDark,
+                  ),
+                  const Padding(padding: EdgeInsets.only(left: 8)),
+                  Text(
+                    AppLocalizations.of(context)!.logoutTxt,
+                    style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                        color: Theme.of(context).primaryColorDark,
+                        fontFamily: almarai),
+                  ),
+                ],
+              ),
             ),
           )
         ],
@@ -130,10 +143,9 @@ class MenuProfileWidget extends StatelessWidget {
             const Padding(padding: EdgeInsets.symmetric(horizontal: 6)),
             Text(
               userName,
-              style: Theme.of(context)
-                  .textTheme
-                  .headlineLarge!
-                  .copyWith(color: Theme.of(context).primaryColorDark),
+              style: Theme.of(context).textTheme.headlineLarge!.copyWith(
+                  color: Theme.of(context).primaryColorDark,
+                  fontFamily: almarai),
             ),
           ],
         ));
@@ -141,31 +153,52 @@ class MenuProfileWidget extends StatelessWidget {
 }
 
 class SideMenuOptionsWidget extends StatelessWidget {
-  SideMenuOptionsWidget({this.onChangeMood});
+  SideMenuOptionsWidget(
+      {this.onChangeMood,
+      required this.onSavesClkd,
+      required this.onSentClkd,
+      required this.onContactClkd});
   Function? onChangeMood;
+  Function onSavesClkd, onSentClkd, onContactClkd;
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 38),
       child: Column(
         children: [
+          InkWell(
+            onTap: () {
+              onSavesClkd();
+            },
+            child: MenuItemWidget(
+                title: AppLocalizations.of(context)!.savedFilesTxt,
+                prefix: Icons.stars,
+                isNightMood: false),
+          ),
+          InkWell(
+            onTap: () {
+              onSentClkd();
+            },
+            child: MenuItemWidget(
+                title: AppLocalizations.of(context)!.sentFilesTxt,
+                prefix: Icons.upload_file_outlined,
+                isNightMood: false),
+          ),
           MenuItemWidget(
-              title: AppLocalizations.of(context)!.savedFilesTxt,
-              prefix: Icons.stars,
-              isNightMood: false),
-          MenuItemWidget(
-              title: AppLocalizations.of(context)!.sentFilesTxt,
-              prefix: Icons.upload_file_outlined,
-              isNightMood: false),
-          MenuItemWidget(
-              title: AppLocalizations.of(context)!.darkModeTxt,
-              prefix: Icons.dark_mode_outlined,
-              isNightMood: true,
-          onChangeMood: onChangeMood,),
-          MenuItemWidget(
-              title: AppLocalizations.of(context)!.loginContactUsTxt,
-              prefix: Icons.local_phone_outlined,
-              isNightMood: false),
+            title: AppLocalizations.of(context)!.darkModeTxt,
+            prefix: Icons.dark_mode_outlined,
+            isNightMood: true,
+            onChangeMood: onChangeMood,
+          ),
+          InkWell(
+            onTap: () {
+              onContactClkd();
+            },
+            child: MenuItemWidget(
+                title: AppLocalizations.of(context)!.loginContactUsTxt,
+                prefix: Icons.local_phone_outlined,
+                isNightMood: false),
+          ),
         ],
       ),
     );
@@ -201,10 +234,8 @@ class _MenuItemWidgetState extends State<MenuItemWidget> {
           const Padding(padding: EdgeInsets.symmetric(horizontal: 7.5)),
           Text(
             widget.title,
-            style: Theme.of(context)
-                .textTheme
-                .headlineSmall!
-                .copyWith(color: Theme.of(context).primaryColorDark),
+            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                color: Theme.of(context).primaryColorDark, fontFamily: almarai),
           ),
           const Expanded(
               child: Padding(

@@ -1,27 +1,23 @@
 import 'package:flutter/material.dart';
 
 class PrimaryClrBtn extends StatelessWidget {
-  PrimaryClrBtn(this.btnInnerTxt, this.icon, this.onPressed);
-  String? btnInnerTxt;
-  String? icon;
+  PrimaryClrBtn({required this.content, required this.onPressed});
   Function onPressed;
+  Widget content;
   //double width;
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       //width: width,
       child: ElevatedButton(
-        onPressed: () {},
+        onPressed: () {
+          onPressed();
+        },
         style: ButtonStyle(
           backgroundColor:
               MaterialStatePropertyAll<Color>(Theme.of(context).primaryColor),
         ),
-        child: btnInnerTxt != null
-            ? Text(
-                btnInnerTxt!,
-                style: TextStyle(color: Theme.of(context).primaryColorDark),
-              )
-            : Image.asset(icon!),
+        child: content,
       ),
     );
   }
