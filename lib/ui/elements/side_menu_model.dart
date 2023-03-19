@@ -19,65 +19,70 @@ class SideMenuModel extends StatelessWidget {
   Function onChangeMood, onSavesClkd, onSentClkd, onContactClkd, onLogoutClkd;
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width * .7,
-      padding: const EdgeInsets.only(bottom: 24),
-      decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor,
-        borderRadius: const BorderRadius.all(Radius.circular(30)),
-      ),
-      child: Column(
-        children: [
-          const SizedBox(
-            height: 60,
-          ),
-          MenuTopView(),
-          const SizedBox(
-            height: 28,
-          ),
-          Container(
-            height: 1,
-            width: double.infinity,
-            color: secondaryColor,
-          ),
-          MenuProfileWidget(
-              userName: taxPayerName,
-              userImg: taxPayerImg ?? 'assets/images/fakeImage.png'),
-          SideMenuOptionsWidget(
-            onChangeMood: onChangeMood,
-            onSavesClkd: onSavesClkd,
-            onSentClkd: onSentClkd,
-            onContactClkd: onContactClkd,
-          ),
-          const Expanded(
-              child: Padding(
-            padding: EdgeInsets.all(0),
-          )),
-          Padding(
-            padding: const EdgeInsets.only(right: 20),
-            child: InkWell(
-              onTap: () {
-                onLogoutClkd();
-              },
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Icon(
-                    Icons.logout_sharp,
-                    color: Theme.of(context).primaryColorDark,
-                  ),
-                  const Padding(padding: EdgeInsets.only(left: 8)),
-                  Text(
-                    AppLocalizations.of(context)!.logoutTxt,
-                    style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                        color: Theme.of(context).primaryColorDark,
-                        fontFamily: almarai),
-                  ),
-                ],
-              ),
+    return SafeArea(
+      child: Container(
+        width: MediaQuery.of(context).size.width * .7,
+        padding: const EdgeInsets.only(bottom: 24),
+        decoration: BoxDecoration(
+          color: Theme.of(context).primaryColor,
+          borderRadius: const BorderRadius.all(Radius.circular(30)),
+        ),
+        child: Column(
+          children: [
+            const SizedBox(
+              height: 60,
             ),
-          )
-        ],
+            MenuTopView(),
+            const SizedBox(
+              height: 28,
+            ),
+            Container(
+              height: 1,
+              width: double.infinity,
+              color: secondaryColor,
+            ),
+            MenuProfileWidget(
+                userName: taxPayerName,
+                userImg: taxPayerImg ?? 'assets/images/fakeImage.png'),
+            SideMenuOptionsWidget(
+              onChangeMood: onChangeMood,
+              onSavesClkd: onSavesClkd,
+              onSentClkd: onSentClkd,
+              onContactClkd: onContactClkd,
+            ),
+            const Expanded(
+                child: Padding(
+              padding: EdgeInsets.all(0),
+            )),
+            Padding(
+              padding: const EdgeInsets.only(right: 20),
+              child: InkWell(
+                onTap: () {
+                  onLogoutClkd();
+                },
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Icon(
+                        Icons.logout_sharp,
+                        color: Theme.of(context).primaryColorDark,
+                      ),
+                      const Padding(padding: EdgeInsets.only(left: 8)),
+                      Text(
+                        AppLocalizations.of(context)!.logoutTxt,
+                        style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                            color: Theme.of(context).primaryColorDark,
+                            fontFamily: almarai),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -154,11 +159,11 @@ class MenuProfileWidget extends StatelessWidget {
 
 class SideMenuOptionsWidget extends StatelessWidget {
   SideMenuOptionsWidget(
-      {this.onChangeMood,
+      {required this.onChangeMood,
       required this.onSavesClkd,
       required this.onSentClkd,
       required this.onContactClkd});
-  Function? onChangeMood;
+  Function onChangeMood;
   Function onSavesClkd, onSentClkd, onContactClkd;
   @override
   Widget build(BuildContext context) {
@@ -188,7 +193,10 @@ class SideMenuOptionsWidget extends StatelessWidget {
             title: AppLocalizations.of(context)!.darkModeTxt,
             prefix: Icons.dark_mode_outlined,
             isNightMood: true,
-            onChangeMood: onChangeMood,
+            onChangeMood: (bool isDark) {
+              print('change mood');
+              onChangeMood(isDark);
+            },
           ),
           InkWell(
             onTap: () {
@@ -246,9 +254,9 @@ class _MenuItemWidgetState extends State<MenuItemWidget> {
             child: CustomSwitch(
                 value: _toggle,
                 onChanged: (bool val) {
+                  widget.onChangeMood!(val);
                   setState(() {
                     _toggle = val;
-                    widget.onChangeMood!(val);
                   });
                 }),
           ),

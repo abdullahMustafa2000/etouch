@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:etouch/ui/screens/orientation/oriantationscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -47,6 +50,10 @@ class _SplashScreenState extends State<SplashScreen>
     logoController.addStatusListener((status) {
       if (status == AnimationStatus.completed) appNameController.forward();
     });
+    Timer(
+        const Duration(milliseconds: 2100),
+        () => Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => OrientaionScreen())));
   }
 
   @override
@@ -57,37 +64,40 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Stack(
-        clipBehavior: Clip.none,
-        alignment: AlignmentDirectional.bottomCenter,
-        children: [
-          AnimatedBuilder(
-              animation: logoController,
-              builder: (BuildContext context, Widget? child) => ScaleTransition(
-                    scale: scaleAnim,
-                    child: Image.asset(
-                      logo,
-                      opacity: opacityAnim,
-                    ),
-                  )),
-          AnimatedBuilder(
-            animation: appNameController,
-            builder: (context, child) => Positioned(
-              bottom: positionAnim.value,
-              child: Opacity(
-                opacity: appNameOpacityAnim.value,
-                child: Text(
-                  'E-Touch',
-                  style: Theme.of(context).textTheme.displaySmall!.copyWith(
-                      color: Theme.of(context).primaryColor,
-                      fontSize: 24,
-                      fontFamily: 'audio'),
+    return Container(
+      color: Theme.of(context).primaryColorDark,
+      child: Center(
+        child: Stack(
+          clipBehavior: Clip.none,
+          alignment: AlignmentDirectional.bottomCenter,
+          children: [
+            AnimatedBuilder(
+                animation: logoController,
+                builder: (BuildContext context, Widget? child) => ScaleTransition(
+                      scale: scaleAnim,
+                      child: Image.asset(
+                        logo,
+                        opacity: opacityAnim,
+                      ),
+                    )),
+            AnimatedBuilder(
+              animation: appNameController,
+              builder: (context, child) => Positioned(
+                bottom: positionAnim.value,
+                child: Opacity(
+                  opacity: appNameOpacityAnim.value,
+                  child: Text(
+                    'E-Touch',
+                    style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                        color: Theme.of(context).primaryColor,
+                        fontSize: 24,
+                        fontFamily: 'audio'),
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -15,7 +15,7 @@
   "eInvoiceDashboardDesc" : "Dashboard about the sent E-Invoices",
   "eInvoiceDashboardTopCustomersTitle" : "Most sales customers",
   "moreTxt" : "more",
-  "eInvoiceDashboardAcceptedDocumentsTxt" : "Valid",
+  "eInvoiceDashboardAcceptedDocumentsTxt" : "Valid invoices sent",
   "eInvoiceTxt" : "E-Invoice",
   "eReceiptTxt" : "E-Receipt",
   "eInvoiceDashboardCardValidTitle" : "Valid",

@@ -169,7 +169,7 @@ class RoundedLine extends StatelessWidget {
       height: 6,
       decoration: BoxDecoration(
         color: color,
-        borderRadius: BorderRadius.all(Radius.circular(cardLineRadius)),
+        borderRadius: const BorderRadius.all(Radius.circular(cardLineRadius)),
       ),
     );
   }

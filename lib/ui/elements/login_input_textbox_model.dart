@@ -22,10 +22,11 @@ class _LoginTextFieldState extends State<LoginTextField> {
       onChanged: (txt) {
         widget.onTxtChanged(txt);
       },
+      style: Theme.of(context).textTheme.headlineSmall,
       obscureText: widget.isPassword && passwordInvisible,
       decoration: InputDecoration(
-        contentPadding: EdgeInsets.all(0),
-        border: OutlineInputBorder(
+        contentPadding: const EdgeInsets.all(0),
+        border: const OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(cornersRadiusConst)),
         ),
         enabledBorder: OutlineInputBorder(
@@ -39,10 +40,10 @@ class _LoginTextFieldState extends State<LoginTextField> {
           onPressed: () {},
           icon: widget.isPassword
               ? const Icon(
-                  Icons.lock,
+                  Icons.lock, size: 16,
                 )
               : const Icon(
-                  Icons.account_circle_outlined,
+                  Icons.account_circle_outlined, size: 16,
                 ),
         ),
         suffixIcon: widget.isPassword
@@ -52,8 +53,8 @@ class _LoginTextFieldState extends State<LoginTextField> {
                   setState(() {});
                 },
                 icon: passwordInvisible
-                    ? const Icon(Icons.visibility)
-                    : const Icon(Icons.visibility_off))
+                    ? const Icon(Icons.visibility, size: 16,)
+                    : const Icon(Icons.visibility_off, size: 16,))
             : const Icon(
                 Icons.visibility_off,
                 color: Colors.transparent,

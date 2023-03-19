@@ -1,4 +1,5 @@
 import 'package:etouch/ui/fake_landing.dart';
+import 'package:etouch/ui/screens/splashscreen.dart';
 import 'package:etouch/ui/themes/theme_manager.dart';
 import 'package:etouch/ui/themes/themes.dart';
 import 'package:flutter/material.dart';
@@ -16,13 +17,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'ETouch',
+      title: 'E-Touch',
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: _themeManager.themeMode,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      home: FakeLanding(),
+      home: const SplashScreen(),
     );
   }
 }
