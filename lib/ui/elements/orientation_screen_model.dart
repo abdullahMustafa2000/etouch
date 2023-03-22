@@ -122,6 +122,7 @@ class _DiscussionWidgetState extends State<DiscussionWidget> {
                     ),
                   ),
                   PrimaryClrBtn(
+                    color: primaryColor,
                     content: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,

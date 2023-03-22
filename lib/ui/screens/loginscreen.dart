@@ -35,6 +35,7 @@ class LoginScreen extends StatelessWidget {
           )
         ],
       ),
+      backgroundColor: Theme.of(context).primaryColorDark,
     );
   }
 }
@@ -74,6 +75,7 @@ class LoginInputsWidget extends StatelessWidget {
             height: 24,
           ),
           PrimaryClrBtn(
+              color: Theme.of(context).primaryColor,
               content: Center(
                 child: Text(
                   AppLocalizations.of(context)!.loginTxt,
@@ -101,37 +103,40 @@ class LoginContactUsWidget extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         children: [
-          Row(
-            children: [
-              Expanded(
-                  child: Container(
-                height: 1,
-                decoration: BoxDecoration(
-                    gradient: LinearGradient(colors: [
-                  Theme.of(context).primaryColorDark,
-                  Theme.of(context).primaryColor,
-                ])),
-              )),
-              Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 7),
-                  child: Text(
-                    AppLocalizations.of(context)!.loginContactUsTxt,
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleMedium!
-                        .copyWith(color: Theme.of(context).primaryColor),
-                    textAlign: TextAlign.center,
-                  )),
-              Expanded(
-                  child: Container(
-                height: 1,
-                decoration: BoxDecoration(
-                    gradient: LinearGradient(colors: [
-                  Theme.of(context).primaryColor,
-                  Theme.of(context).primaryColorDark,
-                ])),
-              )),
-            ],
+          Directionality(
+            textDirection: TextDirection.ltr,
+            child: Row(
+              children: [
+                Expanded(
+                    child: Container(
+                  height: 1,
+                  decoration: BoxDecoration(
+                      gradient: LinearGradient(colors: [
+                    Theme.of(context).primaryColorDark,
+                    Theme.of(context).primaryColor,
+                  ])),
+                )),
+                Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 7),
+                    child: Text(
+                      AppLocalizations.of(context)!.loginContactUsTxt,
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleMedium!
+                          .copyWith(color: Theme.of(context).primaryColor),
+                      textAlign: TextAlign.center,
+                    )),
+                Expanded(
+                    child: Container(
+                  height: 1,
+                  decoration: BoxDecoration(
+                      gradient: LinearGradient(colors: [
+                    Theme.of(context).primaryColor,
+                    Theme.of(context).primaryColorDark,
+                  ])),
+                )),
+              ],
+            ),
           ),
           const SizedBox(
             height: 45,

@@ -9,17 +9,25 @@ class ContactUsIconModel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {onIconClicked();},
+      onTap: () {
+        onIconClicked();
+      },
       child: Container(
         width: 42,
         height: 42,
         decoration: BoxDecoration(
           border: Border.all(color: Theme.of(context).primaryColor, width: 1),
-          borderRadius: const BorderRadius.all(Radius.circular(cornersRadiusConst)),
+          borderRadius:
+              const BorderRadius.all(Radius.circular(cornersRadiusConst)),
         ),
         child: SizedBox(
           child: Center(
-            child: Image.asset(icon, width: 19, height: 19,),
+            child: Image.asset(
+              icon,
+              width: 19,
+              height: 19,
+              color: icon==logo?Theme.of(context).primaryColor:null,
+            ),
           ),
         ),
       ),

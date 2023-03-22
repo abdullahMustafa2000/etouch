@@ -32,54 +32,58 @@ class DashboardCard extends StatelessWidget {
   double taxes;
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-            width: MediaQuery.of(context).size.width * .6,
-            decoration: BoxDecoration(
-              color: cardColor,
-              borderRadius:
-                  BorderRadius.all(Radius.circular(cornersRadiusConst)),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(
-                    height: 38,
-                  ),
-                  Text(
-                    '${cardTitle} ($numOfDocuments)',
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyLarge
-                        ?.copyWith(color: titleColor),
-                  ),
-                  const SizedBox(
-                    height: 24,
-                  ),
-                  CardDataRow(
-                    total: total,
-                    taxes: taxes,
-                    txtColor: dataColor,
-                    cardIcon: cardIcon,
-                  ),
-                  const SizedBox(
-                    height: 48,
-                  ),
-                  ProgressBar(
-                      width: progressWidth,
-                      foregroundColor: titleColor,
-                      backgroundColor: progressColor),
-                  const SizedBox(
-                    height: 62,
-                  )
-                ],
+    return Directionality(
+      textDirection: isRTL(context)?TextDirection.rtl:TextDirection.ltr,
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          Container(
+              width: MediaQuery.of(context).size.width * .6,
+              decoration: BoxDecoration(
+                color: cardColor,
+                borderRadius:
+                    const BorderRadius.all(Radius.circular(cornersRadiusConst)),
               ),
-            )),
-      ],
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(
+                      height: 38,
+                    ),
+                    Text(
+                      '$cardTitle ($numOfDocuments)',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.copyWith(color: titleColor),
+                    ),
+                    const SizedBox(
+                      height: 24,
+                    ),
+                    CardDataRow(
+                      total: total,
+                      taxes: taxes,
+                      txtColor: dataColor,
+                      cardIcon: cardIcon,
+                    ),
+                    const SizedBox(
+                      height: 48,
+                    ),
+                    ProgressBar(
+                        width: progressWidth,
+                        foregroundColor: titleColor,
+                        backgroundColor: progressColor),
+                    const SizedBox(
+                      height: 62,
+                    )
+                  ],
+                ),
+              )),
+        ],
+      ),
     );
   }
 }

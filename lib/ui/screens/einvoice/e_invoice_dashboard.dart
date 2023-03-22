@@ -73,7 +73,7 @@ class Documents extends StatelessWidget {
           PieChart(
             dataMap: _list,
             ringStrokeWidth: 40,
-            chartRadius: 128,
+            chartRadius: MediaQuery.of(context).size.width / 3,
             chartType: ChartType.ring,
             baseChartColor: Theme.of(context).primaryColor,
             colorList: [Theme.of(context).primaryColor, secondaryColor],
@@ -100,7 +100,7 @@ class Documents extends StatelessWidget {
               ),
               const Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
               Text(
-                '${AppLocalizations.of(context)!.eInvoiceTxt} (${_list['']})',
+                '${AppLocalizations.of(context)!.eInvoiceTxt} (${_list['']}%)',
                 style: Theme.of(context)
                     .textTheme
                     .labelSmall!
@@ -187,7 +187,7 @@ class _CardsState extends State<Cards> {
   @override
   void initState() {
     super.initState();
-    _pageController = PageController(viewportFraction: .79);
+    _pageController = PageController(viewportFraction: .75);
   }
 
   @override
@@ -196,158 +196,148 @@ class _CardsState extends State<Cards> {
     super.dispose();
   }
 
+  double calcAngle(int index, PageController controller, BuildContext context) {
+    double value = 0.0;
+    if (controller.position.haveDimensions) {
+      value = index - (_pageController.page ?? 0);
+      value = (value * .07).clamp(-1, 1);
+    }
+    return isRTL(context)?-value:value;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      scrollDirection: Axis.vertical,
-      shrinkWrap: true,
-      children: [
-        Container(
-          //height: MediaQuery.of(context).size.height * .3,
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              SizedBox(
-                height: MediaQuery.of(context).size.height * .35,
-                child: PageView(
-                  onPageChanged: (index) {
-                    setState(() {
-                      _activeCard = index;
-                    });
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            height: MediaQuery.of(context).size.height * .30,
+            child: PageView(
+              onPageChanged: (index) {
+                setState(() {
+                  _activeCard = index;
+                });
+              },
+              controller: _pageController,
+              children: [
+                AnimatedBuilder(
+                  animation: _pageController,
+                  builder: (context, child) {
+                    double value = calcAngle(0, _pageController, context);
+                    return Transform.rotate(
+                      angle: pi * value,
+                      child: DashboardCard(
+                          cardTitle: AppLocalizations.of(context)!
+                              .eInvoiceDashboardCardValidTitle,
+                          cardColor: greenCardBGClr,
+                          titleColor: greenCardTitleClr,
+                          dataColor: greenCardDataClr,
+                          progressColor: greenCardProgressClr,
+                          numOfDocuments: 19,
+                          total: 12000,
+                          taxes: 1200,
+                          progressWidth: 100,
+                          cardIcon: greenDBCardIcon),
+                    );
                   },
-                  controller: _pageController,
-                  children: [
-                    AnimatedBuilder(
-                      animation: _pageController,
-                      builder: (context, child) {
-                        double value = 0.0;
-                        if (_pageController.position.haveDimensions) {
-                          value = 0 - (_pageController.page ?? 0);
-                          value = (value * .07).clamp(-1, 1);
-                        }
-                        return Transform.rotate(
-                          angle: pi * value,
-                          child: DashboardCard(
-                              cardTitle: AppLocalizations.of(context)!
-                                  .eInvoiceDashboardCardValidTitle,
-                              cardColor: greenCardBGClr,
-                              titleColor: greenCardTitleClr,
-                              dataColor: greenCardDataClr,
-                              progressColor: greenCardProgressClr,
-                              numOfDocuments: 19,
-                              total: 12000,
-                              taxes: 1200,
-                              progressWidth: 100,
-                              cardIcon: greenDBCardIcon),
-                        );
-                      },
-                    ),
-                    AnimatedBuilder(
-                      animation: _pageController,
-                      builder: (context, child) {
-                        double value = 0.0;
-                        if (_pageController.position.haveDimensions) {
-                          value = 1 - (_pageController.page ?? 0);
-                          value = (value * .07).clamp(-1, 1);
-                        }
-                        return Transform.rotate(
-                          angle: pi * value,
-                          child: DashboardCard(
-                              cardTitle: AppLocalizations.of(context)!
-                                  .eInvoiceDashboardCardInvalidTitle,
-                              cardColor: darkRedCardBGClr,
-                              titleColor: pureWhite,
-                              dataColor: pureWhite,
-                              progressColor: darkRedCardProgressClr,
-                              numOfDocuments: 19,
-                              total: 12000,
-                              taxes: 1200,
-                              progressWidth: 100,
-                              cardIcon: darkRedDBCardIcon),
-                        );
-                      },
-                    ),
-                    AnimatedBuilder(
-                      animation: _pageController,
-                      builder: (context, child) {
-                        double value = 0.0;
-                        if (_pageController.position.haveDimensions) {
-                          value = 2 - (_pageController.page ?? 0);
-                          value = (value * .07).clamp(-1, 1);
-                        }
-                        return Transform.rotate(
-                          angle: pi * value,
-                          child: DashboardCard(
-                              cardTitle: AppLocalizations.of(context)!
-                                  .eInvoiceDashboardCardCancelledTitle,
-                              cardColor: purpleCardBGClr,
-                              titleColor: pureWhite,
-                              dataColor: pureWhite,
-                              progressColor: purpleCardProgressClr,
-                              numOfDocuments: 19,
-                              total: 12000,
-                              taxes: 1200,
-                              progressWidth: 100,
-                              cardIcon: purpleDBCardIcon),
-                        );
-                      },
-                    ),
-                    AnimatedBuilder(
-                      animation: _pageController,
-                      builder: (context, child) {
-                        double value = 0.0;
-                        if (_pageController.position.haveDimensions) {
-                          value = 3 - (_pageController.page ?? 0);
-                          value = (value * .07).clamp(-1, 1);
-                        }
-                        return Transform.rotate(
-                          angle: pi * value,
-                          child: DashboardCard(
-                              cardTitle: AppLocalizations.of(context)!
-                                  .eInvoiceDashboardCardRejectedTitle,
-                              cardColor: lightRedCardBGClr,
-                              titleColor: lightRedCardTitleClr,
-                              dataColor: lightRedCardTitleClr,
-                              progressColor: lightRedCardProgressClr,
-                              numOfDocuments: 19,
-                              total: 12000,
-                              taxes: 1200,
-                              progressWidth: 100,
-                              cardIcon: lightRedDBCardIcon),
-                        );
-                      },
-                    ),
-                  ],
                 ),
-              ),
-              const SizedBox(
-                height: 9.5,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List<Widget>.generate(
-                    4,
-                    (index) => Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4),
-                          child: InkWell(
-                            onTap: () {
-                              setState(() {
-                                _pageController.animateToPage(index,
-                                    duration: const Duration(milliseconds: 500),
-                                    curve: Curves.easeIn);
-                              });
-                            },
-                            child: CircleAvatar(
-                              radius: _activeCard == index ? 12 : 5,
-                              backgroundColor: cardsBG[index],
-                            ),
-                          ),
-                        )),
-              )
-            ],
+                AnimatedBuilder(
+                  animation: _pageController,
+                  builder: (context, child) {
+                    double value = calcAngle(1, _pageController, context);
+                    return Transform.rotate(
+                      angle: pi * value,
+                      child: DashboardCard(
+                          cardTitle: AppLocalizations.of(context)!
+                              .eInvoiceDashboardCardInvalidTitle,
+                          cardColor: darkRedCardBGClr,
+                          titleColor: pureWhite,
+                          dataColor: pureWhite,
+                          progressColor: darkRedCardProgressClr,
+                          numOfDocuments: 19,
+                          total: 12000,
+                          taxes: 1200,
+                          progressWidth: 100,
+                          cardIcon: darkRedDBCardIcon),
+                    );
+                  },
+                ),
+                AnimatedBuilder(
+                  animation: _pageController,
+                  builder: (context, child) {
+                    double value = calcAngle(2, _pageController, context);
+                    return Transform.rotate(
+                      angle: pi * value,
+                      child: DashboardCard(
+                          cardTitle: AppLocalizations.of(context)!
+                              .eInvoiceDashboardCardCancelledTitle,
+                          cardColor: purpleCardBGClr,
+                          titleColor: pureWhite,
+                          dataColor: pureWhite,
+                          progressColor: purpleCardProgressClr,
+                          numOfDocuments: 19,
+                          total: 12000,
+                          taxes: 1200,
+                          progressWidth: 100,
+                          cardIcon: purpleDBCardIcon),
+                    );
+                  },
+                ),
+                AnimatedBuilder(
+                  animation: _pageController,
+                  builder: (context, child) {
+                    double value = calcAngle(3, _pageController, context);
+                    return Transform.rotate(
+                      angle: pi * value,
+                      child: DashboardCard(
+                          cardTitle: AppLocalizations.of(context)!
+                              .eInvoiceDashboardCardRejectedTitle,
+                          cardColor: lightRedCardBGClr,
+                          titleColor: lightRedCardTitleClr,
+                          dataColor: lightRedCardTitleClr,
+                          progressColor: lightRedCardProgressClr,
+                          numOfDocuments: 19,
+                          total: 12000,
+                          taxes: 1200,
+                          progressWidth: 100,
+                          cardIcon: lightRedDBCardIcon),
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
-        )
-      ],
+          const SizedBox(
+            height: 0,
+          ),
+          SizedBox(
+            height: 24,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List<Widget>.generate(
+                  4,
+                  (index) => Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        child: InkWell(
+                          onTap: () {
+                            setState(() {
+                              _pageController.animateToPage(index,
+                                  duration: const Duration(milliseconds: 500),
+                                  curve: Curves.easeIn);
+                            });
+                          },
+                          child: CircleAvatar(
+                            radius: _activeCard == index ? 12 : 5,
+                            backgroundColor: cardsBG[index],
+                          ),
+                        ),
+                      )),
+            ),
+          )
+        ],
+      ),
     );
   }
 }

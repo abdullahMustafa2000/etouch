@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:etouch/ui/screens/orientation/oriantationscreen.dart';
+import 'package:etouch/ui/themes/theme_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -78,6 +79,7 @@ class _SplashScreenState extends State<SplashScreen>
                       child: Image.asset(
                         logo,
                         opacity: opacityAnim,
+                        color: Theme.of(context).primaryColor,
                       ),
                     )),
             AnimatedBuilder(

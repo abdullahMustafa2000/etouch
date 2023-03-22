@@ -21,6 +21,7 @@ class SideMenuModel extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Container(
+        height: double.infinity,
         width: MediaQuery.of(context).size.width * .7,
         padding: const EdgeInsets.only(bottom: 24),
         decoration: BoxDecoration(
@@ -49,6 +50,7 @@ class SideMenuModel extends StatelessWidget {
               onSavesClkd: onSavesClkd,
               onSentClkd: onSentClkd,
               onContactClkd: onContactClkd,
+              isDark: isDarkMood,
             ),
             const Expanded(
                 child: Padding(
@@ -97,7 +99,7 @@ class MenuTopView extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Row(
           children: [
-            Image.asset(whiteLogo),
+            Image.asset(logo, width: 46, height: 49, color: Theme.of(context).primaryColorDark,),
             Text(
               'E-Touch',
               style: TextStyle(
@@ -143,6 +145,7 @@ class MenuProfileWidget extends StatelessWidget {
         child: Row(
           children: [
             const CircleAvatar(
+              ///TODO
               backgroundImage: AssetImage('assets/images/fakeImage.png'),
             ),
             const Padding(padding: EdgeInsets.symmetric(horizontal: 6)),
@@ -162,9 +165,11 @@ class SideMenuOptionsWidget extends StatelessWidget {
       {required this.onChangeMood,
       required this.onSavesClkd,
       required this.onSentClkd,
-      required this.onContactClkd});
+      required this.onContactClkd,
+      required this.isDark});
   Function onChangeMood;
   Function onSavesClkd, onSentClkd, onContactClkd;
+  bool isDark;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -177,8 +182,7 @@ class SideMenuOptionsWidget extends StatelessWidget {
             },
             child: MenuItemWidget(
                 title: AppLocalizations.of(context)!.savedFilesTxt,
-                prefix: Icons.stars,
-                isNightMood: false),
+                prefix: Icons.stars,),
           ),
           InkWell(
             onTap: () {
@@ -186,15 +190,14 @@ class SideMenuOptionsWidget extends StatelessWidget {
             },
             child: MenuItemWidget(
                 title: AppLocalizations.of(context)!.sentFilesTxt,
-                prefix: Icons.upload_file_outlined,
-                isNightMood: false),
+                prefix: Icons.upload_file_outlined,),
           ),
           MenuItemWidget(
             title: AppLocalizations.of(context)!.darkModeTxt,
             prefix: Icons.dark_mode_outlined,
             isNightMood: true,
-            onChangeMood: (bool isDark) {
-              print('change mood');
+            isDark: isDark,
+            onChangeMood: (isDark) {
               onChangeMood(isDark);
             },
           ),
@@ -204,8 +207,7 @@ class SideMenuOptionsWidget extends StatelessWidget {
             },
             child: MenuItemWidget(
                 title: AppLocalizations.of(context)!.loginContactUsTxt,
-                prefix: Icons.local_phone_outlined,
-                isNightMood: false),
+                prefix: Icons.local_phone_outlined,),
           ),
         ],
       ),
@@ -216,19 +218,24 @@ class SideMenuOptionsWidget extends StatelessWidget {
 class MenuItemWidget extends StatefulWidget {
   MenuItemWidget(
       {required this.title,
-      required this.prefix,
-      required this.isNightMood,
-      this.onChangeMood});
+      required this.prefix, this.isNightMood, this.onChangeMood, this.isDark});
   IconData prefix;
   String title;
-  bool isNightMood;
+  //show/hide Switch  , setValue
+  bool? isNightMood;
+  bool? isDark;
   Function? onChangeMood;
   @override
   State<MenuItemWidget> createState() => _MenuItemWidgetState();
 }
 
 class _MenuItemWidgetState extends State<MenuItemWidget> {
-  bool _toggle = false;
+  late bool _toggle;
+  @override
+  void initState() {
+    super.initState();
+    _toggle = widget.isDark??false;
+  }
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -250,10 +257,10 @@ class _MenuItemWidgetState extends State<MenuItemWidget> {
             padding: EdgeInsets.all(0),
           )),
           Visibility(
-            visible: widget.isNightMood,
+            visible: widget.isNightMood??false,
             child: CustomSwitch(
                 value: _toggle,
-                onChanged: (bool val) {
+                onChanged: (val) {
                   widget.onChangeMood!(val);
                   setState(() {
                     _toggle = val;
