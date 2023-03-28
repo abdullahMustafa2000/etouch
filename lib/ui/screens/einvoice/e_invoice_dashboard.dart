@@ -202,7 +202,7 @@ class _CardsState extends State<Cards> {
       value = index - (_pageController.page ?? 0);
       value = (value * .07).clamp(-1, 1);
     }
-    return isRTL(context)?-value:value;
+    return isRTL(context) ? -value : value;
   }
 
   @override
@@ -210,10 +210,9 @@ class _CardsState extends State<Cards> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(
-            height: MediaQuery.of(context).size.height * .30,
+            height: MediaQuery.of(context).size.height/4,
             child: PageView(
               onPageChanged: (index) {
                 setState(() {
@@ -309,9 +308,7 @@ class _CardsState extends State<Cards> {
               ],
             ),
           ),
-          const SizedBox(
-            height: 0,
-          ),
+          const SizedBox(height: 24,),
           SizedBox(
             height: 24,
             child: Row(

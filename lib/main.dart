@@ -1,3 +1,4 @@
+import 'package:etouch/businessLogic/providers/nav_bar_add_btn.dart';
 import 'package:etouch/businessLogic/shared_preferences/theme_mode_preference.dart';
 import 'package:etouch/ui/fake_landing.dart';
 import 'package:etouch/ui/screens/splashscreen.dart';
@@ -35,8 +36,11 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => _themeManager,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => _themeManager),
+        ChangeNotifierProvider(create: (_) => NavBarBtnsProvider()),
+      ],
       child: Consumer<ThemeManager>(
         builder: (BuildContext context, value, Widget? child) {
           return MaterialApp(

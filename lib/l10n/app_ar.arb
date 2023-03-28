@@ -27,5 +27,7 @@
   "savedFilesTxt": "الملفات المحفوظة",
   "sentFilesTxt": "الملفات المرسلة",
   "darkModeTxt": "الوضع الداكن",
-  "nextTxt": "التالي"
+  "nextTxt": "التالي",
+  "sendEInvoiceTitle": "إرسال فاتورة",
+  "sendEReceiptTitle": "إرسال إيصال"
 }

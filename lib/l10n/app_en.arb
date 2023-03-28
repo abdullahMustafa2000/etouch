@@ -27,5 +27,7 @@
   "savedFilesTxt": "Saved documents",
   "sentFilesTxt": "Sent documents",
   "darkModeTxt": "Dark mood",
-  "nextTxt": "Next"
+  "nextTxt": "Next",
+  "sendEInvoiceTitle": "Send E-Invoice",
+  "sendEReceiptTitle": "Send E-Receipt"
 }
