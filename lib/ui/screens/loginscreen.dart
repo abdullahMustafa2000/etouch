@@ -58,7 +58,7 @@ class LoginInputsWidget extends StatelessWidget {
           const SizedBox(
             height: 24,
           ),
-          LoginTextField(
+          LoginTextFieldModel(
             hint: AppLocalizations.of(context)!.loginUsernameTxt,
             isPassword: false,
             onTxtChanged: (txt) {},
@@ -66,7 +66,7 @@ class LoginInputsWidget extends StatelessWidget {
           const SizedBox(
             height: 24,
           ),
-          LoginTextField(
+          LoginTextFieldModel(
             hint: AppLocalizations.of(context)!.loginPasswordTxt,
             isPassword: true,
             onTxtChanged: (txt) {},
@@ -74,7 +74,7 @@ class LoginInputsWidget extends StatelessWidget {
           const SizedBox(
             height: 24,
           ),
-          PrimaryClrBtn(
+          PrimaryClrBtnModel(
               color: Theme.of(context).primaryColor,
               content: Center(
                 child: Text(

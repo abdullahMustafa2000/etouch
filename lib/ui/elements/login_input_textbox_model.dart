@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:etouch/ui/constants.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class LoginTextField extends StatefulWidget {
-  LoginTextField(
+class LoginTextFieldModel extends StatefulWidget {
+  LoginTextFieldModel(
       {required this.hint,
       required this.isPassword,
       required this.onTxtChanged});
@@ -11,10 +11,10 @@ class LoginTextField extends StatefulWidget {
   bool isPassword;
   Function onTxtChanged;
   @override
-  State<LoginTextField> createState() => _LoginTextFieldState();
+  State<LoginTextFieldModel> createState() => _LoginTextFieldModelState();
 }
 
-class _LoginTextFieldState extends State<LoginTextField> {
+class _LoginTextFieldModelState extends State<LoginTextFieldModel> {
   bool passwordInvisible = true;
   @override
   Widget build(BuildContext context) {

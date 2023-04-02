@@ -227,7 +227,7 @@ class _CardsState extends State<Cards> {
                     double value = calcAngle(0, _pageController, context);
                     return Transform.rotate(
                       angle: pi * value,
-                      child: DashboardCard(
+                      child: DashboardCardModel(
                           cardTitle: AppLocalizations.of(context)!
                               .eInvoiceDashboardCardValidTitle,
                           cardColor: greenCardBGClr,
@@ -248,7 +248,7 @@ class _CardsState extends State<Cards> {
                     double value = calcAngle(1, _pageController, context);
                     return Transform.rotate(
                       angle: pi * value,
-                      child: DashboardCard(
+                      child: DashboardCardModel(
                           cardTitle: AppLocalizations.of(context)!
                               .eInvoiceDashboardCardInvalidTitle,
                           cardColor: darkRedCardBGClr,
@@ -269,7 +269,7 @@ class _CardsState extends State<Cards> {
                     double value = calcAngle(2, _pageController, context);
                     return Transform.rotate(
                       angle: pi * value,
-                      child: DashboardCard(
+                      child: DashboardCardModel(
                           cardTitle: AppLocalizations.of(context)!
                               .eInvoiceDashboardCardCancelledTitle,
                           cardColor: purpleCardBGClr,
@@ -290,7 +290,7 @@ class _CardsState extends State<Cards> {
                     double value = calcAngle(3, _pageController, context);
                     return Transform.rotate(
                       angle: pi * value,
-                      child: DashboardCard(
+                      child: DashboardCardModel(
                           cardTitle: AppLocalizations.of(context)!
                               .eInvoiceDashboardCardRejectedTitle,
                           cardColor: lightRedCardBGClr,

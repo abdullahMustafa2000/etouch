@@ -29,5 +29,16 @@
   "darkModeTxt": "Dark mood",
   "nextTxt": "Next",
   "sendEInvoiceTitle": "Send E-Invoice",
-  "sendEReceiptTitle": "Send E-Receipt"
+  "sendEReceiptTitle": "Send E-Receipt",
+  "searchHint": "Search",
+  "createDocumentTitle": "Create document",
+  "branchTxt": "Branch",
+  "customerTxt": "Customer",
+  "treasuryTxt": "Treasury",
+  "inventoryTxt": "Inventory",
+  "currencyTxt": "Currency",
+  "sendToETSTxt": "Send to Egypt taxes?",
+  "dateTxt": "Date:",
+  "orderNumTxt": "Order number:",
+  "chooseFromDropDownTxt": "choose"
 }

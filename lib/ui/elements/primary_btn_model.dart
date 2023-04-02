@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class PrimaryClrBtn extends StatelessWidget {
-  PrimaryClrBtn({required this.content, required this.onPressed, required this.color});
+class PrimaryClrBtnModel extends StatelessWidget {
+  PrimaryClrBtnModel({required this.content, required this.onPressed, required this.color});
   Function onPressed;
   Widget content;
   Color color;

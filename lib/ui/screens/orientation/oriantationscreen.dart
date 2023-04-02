@@ -20,7 +20,7 @@ class _OrientaionScreenState extends State<OrientaionScreen> {
 
   void moveToNextPage(PageController controller) {
     controller.nextPage(
-        duration: const Duration(milliseconds: 800), curve: Curves.easeOut);
+        duration: const Duration(milliseconds: 800), curve: Curves.slowMiddle);
   }
 
   @override

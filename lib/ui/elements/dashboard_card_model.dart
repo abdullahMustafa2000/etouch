@@ -6,8 +6,8 @@ import 'package:etouch/ui/themes/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class DashboardCard extends StatelessWidget {
-  DashboardCard(
+class DashboardCardModel extends StatelessWidget {
+  DashboardCardModel(
       {Key? key,
       required this.cardTitle,
       required this.cardColor,

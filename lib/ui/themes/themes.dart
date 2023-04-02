@@ -29,6 +29,7 @@ var darkRedCardProgressClr = const Color.fromRGBO(249, 131, 143, 1);
 var loginPlaceholderLightClr = const Color.fromRGBO(0, 0, 0, .3);
 var loginPlaceholderDarkClr = const Color.fromRGBO(255, 255, 255, .4);
 var switchThumbColor = const Color.fromRGBO(124, 124, 124, 1);
+var darkGrayColor = const Color.fromRGBO(102, 102, 102, 1);
 ThemeData lightTheme = ThemeData(
   brightness: Brightness.light,
   primaryColor: primaryColor,

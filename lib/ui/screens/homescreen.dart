@@ -163,6 +163,7 @@ class _NavBarAddBtnState extends State<NavBarAddBtn>
     opened = context.watch<NavBarBtnsProvider>().getBtnState;
     return Stack(
       clipBehavior: Clip.none,
+      alignment: Alignment.bottomCenter,
       children: [
         AnimatedPositioned(
           duration: Duration(milliseconds: animDuration),

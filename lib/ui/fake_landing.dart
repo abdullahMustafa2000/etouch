@@ -3,6 +3,7 @@ import 'package:etouch/ui/constants.dart';
 import 'package:etouch/ui/elements/dashboard_card_model.dart';
 import 'package:etouch/ui/elements/orientation_screen_model.dart';
 import 'package:etouch/ui/elements/side_menu_model.dart';
+import 'package:etouch/ui/screens/einvoice/create_document.dart';
 import 'package:etouch/ui/screens/einvoice/e_invoice_dashboard.dart';
 import 'package:etouch/ui/screens/homescreen.dart';
 import 'package:etouch/ui/screens/loginscreen.dart';
@@ -41,8 +42,7 @@ class _FakeLandingState extends State<FakeLanding>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).primaryColorDark,
-      body: Center(child: HomePageScreen()),
+      body: Center(child: CreateDocumentScreen()),
     );
   }
 }

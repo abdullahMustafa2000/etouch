@@ -29,5 +29,17 @@
   "darkModeTxt": "الوضع الداكن",
   "nextTxt": "التالي",
   "sendEInvoiceTitle": "إرسال فاتورة",
-  "sendEReceiptTitle": "إرسال إيصال"
+  "sendEReceiptTitle": "إرسال إيصال",
+  "searchHint": "بحث",
+  "createDocumentTitle": "إنشاء فاتورة",
+  "branchTxt": "الفرع",
+  "customerTxt": "العميل",
+  "treasuryTxt": "الخزينة",
+  "inventoryTxt": "المخزن",
+  "currencyTxt": "العملة",
+  "sendToETSTxt": "إرسال إلي مصلحة الضرائب؟",
+  "dateTxt": "التاريخ:",
+  "orderNumTxt": "رقم الطلب:",
+  "groupInventoryTxt": "المجموعة",
+  "chooseFromDropDownTxt": "اختر"
 }

@@ -121,7 +121,7 @@ class _DiscussionWidgetState extends State<DiscussionWidget> {
                       spacing: 6,
                     ),
                   ),
-                  PrimaryClrBtn(
+                  PrimaryClrBtnModel(
                     color: primaryColor,
                     content: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
