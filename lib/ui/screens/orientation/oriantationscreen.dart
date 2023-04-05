@@ -1,8 +1,8 @@
+import 'package:etouch/main.dart';
 import 'package:etouch/ui/constants.dart';
-import 'package:etouch/ui/elements/orientation_screen_model.dart';
-import 'package:etouch/ui/screens/loginscreen.dart';
+import 'package:etouch/ui/elements/orientation-screen-model.dart';
+import 'package:etouch/ui/screens/login-screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class OrientaionScreen extends StatefulWidget {
   @override
@@ -20,7 +20,7 @@ class _OrientaionScreenState extends State<OrientaionScreen> {
 
   void moveToNextPage(PageController controller) {
     controller.nextPage(
-        duration: const Duration(milliseconds: 800), curve: Curves.slowMiddle);
+        duration: const Duration(milliseconds: 800), curve: Curves.linear);
   }
 
   @override
@@ -31,8 +31,8 @@ class _OrientaionScreenState extends State<OrientaionScreen> {
         controller: pageController,
         children: [
           OrientationModel(
-            title: AppLocalizations.of(context)!.orientationEInvoiceTitle,
-            desc: AppLocalizations.of(context)!.orientationEInvoiceDesc,
+            title: appTxt(context).orientationEInvoiceTitle,
+            desc: appTxt(context).orientationEInvoiceDesc,
             lottiePath: eInvoiceLottiePath,
             controller: pageController,
 
@@ -43,8 +43,8 @@ class _OrientaionScreenState extends State<OrientaionScreen> {
             },
           ),
           OrientationModel(
-            title: AppLocalizations.of(context)!.orientationEReceiptTitle,
-            desc: AppLocalizations.of(context)!.orientationEReceiptDesc,
+            title: appTxt(context).orientationEReceiptTitle,
+            desc: appTxt(context).orientationEReceiptDesc,
             lottiePath: eReceiptLottiePath,
             controller: pageController,
             onNextClick: () {
@@ -54,8 +54,8 @@ class _OrientaionScreenState extends State<OrientaionScreen> {
             },
           ),
           OrientationModel(
-            title: AppLocalizations.of(context)!.orientationWelcomeTitle,
-            desc: AppLocalizations.of(context)!.orientationWelcomeDesc,
+            title: appTxt(context).orientationWelcomeTitle,
+            desc: appTxt(context).orientationWelcomeDesc,
             lottiePath: welcomeLottiePath,
             controller: pageController,
             onNextClick: () {

@@ -1,12 +1,12 @@
-import 'package:etouch/businessLogic/providers/nav_bar_add_btn.dart';
-import 'package:etouch/businessLogic/shared_preferences/theme_mode_preference.dart';
-import 'package:etouch/ui/fake_landing.dart';
-import 'package:etouch/ui/screens/splashscreen.dart';
+import 'package:etouch/businessLogic/providers/navbar-add-btn-manager.dart';
+import 'package:etouch/ui/screens/splash-screen.dart';
 import 'package:etouch/ui/themes/theme_manager.dart';
 import 'package:etouch/ui/themes/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
+
+import 'businessLogic/providers/home-screens-manager.dart';
 
 void main() {
   runApp(const MyApp());
@@ -40,6 +40,7 @@ class _MyAppState extends State<MyApp> {
       providers: [
         ChangeNotifierProvider(create: (_) => _themeManager),
         ChangeNotifierProvider(create: (_) => NavBarBtnsProvider()),
+        ChangeNotifierProvider(create: (_) => HomePagesSwitcher()),
       ],
       child: Consumer<ThemeManager>(
         builder: (BuildContext context, value, Widget? child) {
@@ -51,12 +52,20 @@ class _MyAppState extends State<MyApp> {
             themeMode: _themeManager.themeMode,
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
-            home: FakeLanding(),
+            home: const SplashScreen(),
           );
         },
       ),
     );
   }
+}
+
+AppLocalizations appTxt(BuildContext context) {
+  return AppLocalizations.of(context)!;
+}
+
+ThemeData appTheme(BuildContext context) {
+  return Theme.of(context);
 }
 
 //on switch clicked: themeManager.toggleTheme(on|off)

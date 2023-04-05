@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../businessLogic/shared_preferences/theme_mode_preference.dart';
+import '../../businessLogic/shared_preferences/theme-mode-saver.dart';
 
 class ThemeManager extends ChangeNotifier {
   ThemeModePreference themePref = ThemeModePreference();
