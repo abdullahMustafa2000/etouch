@@ -40,5 +40,12 @@
   "sendToETSTxt": "Send to Egypt taxes?",
   "dateTxt": "Date:",
   "orderNumTxt": "Order number:",
-  "chooseFromDropDownTxt": "choose"
+  "chooseFromDropDownTxt": "choose",
+  "groupOfInventory": "Group",
+  "productsOfInventory": "Product",
+  "balanceOfInventory": "Balance",
+  "quantityOfInventory": "Quantity",
+  "unitOfInventory": "Unit",
+  "priceOfInventory": "Price",
+  "addProductToDocument": "Add product"
 }

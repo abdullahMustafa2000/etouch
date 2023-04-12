@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart' as intl;
 const cornersRadiusConst = 7.0;
 const cardLineRadius = 35.0;

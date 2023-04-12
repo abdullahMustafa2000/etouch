@@ -1,4 +1,5 @@
 import 'package:etouch/businessLogic/providers/navbar-add-btn-manager.dart';
+import 'package:etouch/ui/screens/home-screen.dart';
 import 'package:etouch/ui/screens/splash-screen.dart';
 import 'package:etouch/ui/themes/theme_manager.dart';
 import 'package:etouch/ui/themes/themes.dart';
@@ -52,7 +53,7 @@ class _MyAppState extends State<MyApp> {
             themeMode: _themeManager.themeMode,
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
-            home: const SplashScreen(),
+            home: HomePageScreen(),
           );
         },
       ),
@@ -66,6 +67,10 @@ AppLocalizations appTxt(BuildContext context) {
 
 ThemeData appTheme(BuildContext context) {
   return Theme.of(context);
+}
+
+TextTheme txtTheme(BuildContext context) {
+  return Theme.of(context).textTheme;
 }
 
 //on switch clicked: themeManager.toggleTheme(on|off)

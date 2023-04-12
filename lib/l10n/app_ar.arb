@@ -41,5 +41,12 @@
   "dateTxt": "التاريخ:",
   "orderNumTxt": "رقم الطلب:",
   "groupInventoryTxt": "المجموعة",
-  "chooseFromDropDownTxt": "اختر"
+  "chooseFromDropDownTxt": "اختر",
+  "groupOfInventory": "المجموعة",
+  "productsOfInventory": "الصنف",
+  "balanceOfInventory": "الرصيد",
+  "quantityOfInventory": "الكمية",
+  "unitOfInventory": "وحدة القياس",
+  "priceOfInventory": "السعر",
+  "addProductToDocument": "إضافة أصناف"
 }

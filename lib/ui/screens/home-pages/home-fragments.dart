@@ -66,9 +66,9 @@ class EStack extends StatelessWidget {
     return Stack(
       children: [
         Visibility(
-            visible: index == 0, child: const CreateEInvoiceDocumentScreen()),
+            visible: index == 0, child: CreateEInvoiceDocumentScreen()),
         Visibility(
-            visible: index == 1, child: const CreateEReceiptDocumentScreen()),
+            visible: index == 1, child: CreateEReceiptDocumentScreen()),
       ],
     );
   }

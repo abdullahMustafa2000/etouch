@@ -95,30 +95,28 @@ class _HomeGlassyScreenState extends State<HomeGlassyScreen> {
           opacity: btnState ? 1 : 0,
           duration: Duration(milliseconds: animDuration),
           child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            child: ListView(
               children: [
-                GestureDetector(
-                  onTap: () {
-                    navBtnProvider.addBtnClosed();
-                    homeSwitcherProvider.eInvoiceEReceiptBtnClicked(1);
-                  },
-                  child: iconWidget(
-                      eReceiptBigIcon,
-                      appTxt(context).sendEReceiptTitle,
-                      true,
-                      context),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    navBtnProvider.addBtnClosed();
-                    homeSwitcherProvider.eInvoiceEReceiptBtnClicked(0);
-                  },
-                  child: iconWidget(
-                      eInvoiceBigIcon,
-                      appTxt(context).sendEInvoiceTitle,
-                      false,
-                      context),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        navBtnProvider.addBtnClosed();
+                        homeSwitcherProvider.eInvoiceEReceiptBtnClicked(1);
+                      },
+                      child: iconWidget(eReceiptBigIcon,
+                          appTxt(context).sendEReceiptTitle, true, context),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        navBtnProvider.addBtnClosed();
+                        homeSwitcherProvider.eInvoiceEReceiptBtnClicked(0);
+                      },
+                      child: iconWidget(eInvoiceBigIcon,
+                          appTxt(context).sendEInvoiceTitle, false, context),
+                    ),
+                  ],
                 ),
               ],
             ),

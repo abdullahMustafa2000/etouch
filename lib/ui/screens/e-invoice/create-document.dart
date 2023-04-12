@@ -1,19 +1,103 @@
 import 'package:etouch/main.dart';
 import 'package:etouch/ui/constants.dart';
 import 'package:etouch/ui/elements/dropdown-model.dart';
+import 'package:etouch/ui/elements/product-creation-model.dart';
 import 'package:etouch/ui/themes/themes.dart';
 import 'package:flutter/material.dart';
 
-class CreateEInvoiceDocumentScreen extends StatelessWidget {
-  const CreateEInvoiceDocumentScreen({Key? key}) : super(key: key);
+import '../../../businessLogic/classes/inventory_item_selection_model.dart';
+
+class CreateEInvoiceDocumentScreen extends StatefulWidget {
+  CreateEInvoiceDocumentScreen({Key? key}) : super(key: key);
+
+  @override
+  State<CreateEInvoiceDocumentScreen> createState() =>
+      _CreateEInvoiceDocumentScreenState();
+}
+
+class _CreateEInvoiceDocumentScreenState
+    extends State<CreateEInvoiceDocumentScreen> {
+  int _noOfProducts = 1;
+  late PageController _controller;
+  @override
+  void initState() {
+    super.initState();
+    _controller = PageController(viewportFraction: .8);
+  }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Column(
-        children: [
-          OrderPreRequirementsWidget(),
-        ],
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Column(
+          children: [
+            // customers, treasury, inventory, etc...
+            const OrderPreRequirementsWidget(),
+            // divider,
+            const SizedBox(
+              height: 6,
+            ),
+            // add product details object
+            AddProductWidget(
+              onAddClk: () {
+                setState(() {
+                  _noOfProducts++;
+                });
+              },
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height,
+              child: PageView.builder(
+                controller: _controller,
+                itemBuilder: (context, index) {
+                  return SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      child: ProductCreationModel(
+                        groupsList: [
+                          InventoryItemSelectionModel(name: 'Group1', id: 1),
+                          InventoryItemSelectionModel(name: 'Group2', id: 2),
+                        ],
+                        productsList: [
+                          InventoryItemSelectionModel(name: 'Product1', id: 1),
+                          InventoryItemSelectionModel(name: 'Product2', id: 2),
+                        ],
+                        unitsList: [
+                          InventoryItemSelectionModel(name: 'Meter', id: 1),
+                          InventoryItemSelectionModel(name: 'Kilo', id: 2),
+                        ],
+                        balance: 1000,
+                        price: 255.5,
+                        isPriceEditable: true,
+                        selectedGroup: (InventoryItemSelectionModel? val) {
+                          print(val.toString());
+                        },
+                        selectedProduct: (InventoryItemSelectionModel? val) {
+                          print(val.toString());
+                        },
+                        selectedUnit: (InventoryItemSelectionModel? val) {
+                          print(val.toString());
+                        },
+                        selectedQuantity: (String? val) {
+                          print(val.toString());
+                        },
+                        selectedPrice: (String? val) {
+                          print(val.toString());
+                        },
+                      ));
+                },
+                scrollDirection: Axis.horizontal,
+                itemCount: _noOfProducts,
+              ),
+            ),
+            const SizedBox(
+              height: 24,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -25,9 +109,8 @@ class OrderPreRequirementsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20),
       padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
-      height: 300,
+      margin: const EdgeInsets.symmetric(horizontal: 20),
       width: double.infinity,
       decoration: BoxDecoration(
         borderRadius:
@@ -77,50 +160,50 @@ class CurrencyAndSendToETSRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        Expanded(
-          child: RequiredInfoDesign(
-              label: appTxt(context).customerTxt,
-              dataList: const ['EGP', 'USD']),
-        ),
+        RequiredInfoDesign(
+            label: appTxt(context).customerTxt, dataList: const ['EGP', 'USD']),
       ],
     );
   }
 }
 
-class MyCheckBox extends StatefulWidget {
-  MyCheckBox({Key? key}) : super(key: key);
-
-  @override
-  State<MyCheckBox> createState() => _MyCheckBoxState();
-}
-
-class _MyCheckBoxState extends State<MyCheckBox> {
-  bool _isON = false;
+class AddProductWidget extends StatelessWidget {
+  AddProductWidget({Key? key, required this.onAddClk}) : super(key: key);
+  Function onAddClk;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        setState(() {
-          _isON = !_isON;
-        });
+        onAddClk();
       },
-      child: Container(
-        width: 25,
-        height: 25,
-        decoration: BoxDecoration(
-          color: _isON ? primaryColor : pureWhite,
-          borderRadius:
-              const BorderRadius.all(Radius.circular(cornersRadiusConst)),
-        ),
-        child: _isON
-            ? Icon(
-                Icons.check,
+      child: Column(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: secondaryColor,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(6.0),
+              child: Icon(
+                Icons.add,
                 color: pureWhite,
-              )
-            : null,
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 4,
+          ),
+          Text(
+            appTxt(context).addProductToDocument,
+            style: txtTheme(context)
+                .titleMedium!
+                .copyWith(color: appTheme(context).primaryColor),
+          ),
+        ],
       ),
     );
   }

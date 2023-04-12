@@ -12,6 +12,7 @@ var _level1 = 8.0;
 var primaryColor = const Color.fromRGBO(20, 39, 155, 1);
 var pureWhite = const Color.fromRGBO(255, 255, 255, 1);
 var secondaryColor = const Color.fromRGBO(54, 153, 255, 1);
+var lighterSecondaryClr = const Color.fromRGBO(186, 224, 255, 1);
 var accentColor = const Color.fromRGBO(129, 66, 231, 1);
 var lightAccentColor = const Color.fromRGBO(218, 200, 248, 1);
 var greenCardBGClr= const Color.fromRGBO(201, 247, 245, 1);

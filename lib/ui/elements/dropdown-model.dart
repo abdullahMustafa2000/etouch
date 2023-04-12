@@ -74,7 +74,7 @@ class DecorateDropDown extends StatelessWidget {
           borderRadius: BorderRadius.circular(cornersRadiusConst),
           color: Colors.white),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
         child: DropdownButtonHideUnderline(
           child: dropDown,
         ),
