@@ -1,13 +1,13 @@
 import 'package:etouch/ui/constants.dart';
-import 'package:etouch/ui/elements/side-menu-model.dart';
+import 'package:etouch/ui/elements/side_menu_model.dart';
 import 'package:etouch/ui/themes/theme_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:provider/provider.dart';
-import '../../businessLogic/providers/home-screens-manager.dart';
-import '../../businessLogic/providers/navbar-add-btn-manager.dart';
+import '../../businessLogic/providers/home_screens_manager.dart';
+import '../../businessLogic/providers/navbar_add_btn_manager.dart';
 import '../elements/navbar-btn-add-model.dart';
-import 'home-pages/home-fragments.dart';
+import 'home-pages/home_fragments.dart';
 
 int animDuration = 600;
 

@@ -2,10 +2,10 @@ import 'dart:ui';
 import 'package:etouch/main.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../businessLogic/providers/home-screens-manager.dart';
-import '../../../../businessLogic/providers/navbar-add-btn-manager.dart';
+import '../../../../businessLogic/providers/home_screens_manager.dart';
+import '../../../../businessLogic/providers/navbar_add_btn_manager.dart';
 import '../../../constants.dart';
-import '../../home-screen.dart';
+import '../../home_screen.dart';
 
 class HomeGlassyScreen extends StatefulWidget {
   HomeGlassyScreen({Key? key}) : super(key: key);

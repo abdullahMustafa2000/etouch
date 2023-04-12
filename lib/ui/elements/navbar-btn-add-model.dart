@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../businessLogic/providers/navbar-add-btn-manager.dart';
-import '../screens/home-screen.dart';
+import '../../businessLogic/providers/navbar_add_btn_manager.dart';
+import '../screens/home_screen.dart';
 import '../themes/themes.dart';
 
 class NavBarAddBtn extends StatefulWidget {

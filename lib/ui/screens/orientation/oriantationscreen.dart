@@ -1,7 +1,7 @@
 import 'package:etouch/main.dart';
 import 'package:etouch/ui/constants.dart';
-import 'package:etouch/ui/elements/orientation-screen-model.dart';
-import 'package:etouch/ui/screens/login-screen.dart';
+import 'package:etouch/ui/elements/orientation_screen_model.dart';
+import 'package:etouch/ui/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 
 class OrientaionScreen extends StatefulWidget {

@@ -1,14 +1,14 @@
-import 'package:etouch/businessLogic/providers/home-screens-manager.dart';
-import 'package:etouch/ui/screens/home-pages/pages/e-receipt-dashboard.dart';
+import 'package:etouch/businessLogic/providers/home_screens_manager.dart';
+import 'package:etouch/ui/screens/home-pages/pages/e_receipt_dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../businessLogic/providers/navbar-add-btn-manager.dart';
-import '../e-invoice/create-document.dart';
-import 'pages/e-invoice-dashboard.dart';
-import '../e-receipt/create-document.dart';
-import '../home-screen.dart';
-import 'pages/send-documents-selection.dart';
+import '../../../businessLogic/providers/navbar_add_btn_manager.dart';
+import '../e-invoice/create_document.dart';
+import 'pages/e_invoice_dashboard.dart';
+import '../e-receipt/create_document.dart';
+import '../home_screen.dart';
+import 'pages/choose_documents_to_send.dart';
 
 class Fragments extends StatefulWidget {
   Fragments({Key? key}) : super(key: key);

@@ -1,7 +1,7 @@
 import 'package:etouch/businessLogic/classes/inventory_item_selection_model.dart';
 import 'package:etouch/main.dart';
 import 'package:etouch/ui/constants.dart';
-import 'package:etouch/ui/elements/dropdown-model.dart';
+import 'package:etouch/ui/elements/dropdown_model.dart';
 import 'package:flutter/material.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 

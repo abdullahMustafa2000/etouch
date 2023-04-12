@@ -1,7 +1,7 @@
 import 'package:etouch/main.dart';
 import 'package:etouch/ui/constants.dart';
-import 'package:etouch/ui/elements/dropdown-model.dart';
-import 'package:etouch/ui/elements/product-creation-model.dart';
+import 'package:etouch/ui/elements/dropdown_model.dart';
+import 'package:etouch/ui/elements/product_creation_model.dart';
 import 'package:etouch/ui/themes/themes.dart';
 import 'package:flutter/material.dart';
 

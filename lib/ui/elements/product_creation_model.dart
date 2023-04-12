@@ -1,7 +1,7 @@
 import 'package:etouch/main.dart';
 import 'package:etouch/ui/constants.dart';
-import 'package:etouch/ui/elements/dropdown-search-model.dart';
-import 'package:etouch/ui/elements/login-txt-input-model.dart';
+import 'package:etouch/ui/elements/searchable_dropdown_model.dart';
+import 'package:etouch/ui/elements/login_txt_input_model.dart';
 import 'package:etouch/ui/themes/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

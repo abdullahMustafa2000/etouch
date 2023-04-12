@@ -1,5 +1,5 @@
 // ignore_for_file: must_be_immutable
-import 'package:etouch/ui/screens/home-screen.dart';
+import 'package:etouch/ui/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 
 class FakeLanding extends StatefulWidget {

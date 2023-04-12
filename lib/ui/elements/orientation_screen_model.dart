@@ -1,6 +1,6 @@
 import 'package:etouch/main.dart';
 import 'package:etouch/ui/constants.dart';
-import 'package:etouch/ui/elements/primary-btn-model.dart';
+import 'package:etouch/ui/elements/primary_btn_model.dart';
 import 'package:etouch/ui/themes/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';

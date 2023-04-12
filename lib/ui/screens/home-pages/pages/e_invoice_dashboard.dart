@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:etouch/main.dart';
 import 'package:etouch/ui/constants.dart';
-import 'package:etouch/ui/elements/dashboard-cards-model.dart';
+import 'package:etouch/ui/elements/dashboard_cards_model.dart';
 import 'package:etouch/ui/themes/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:pie_chart/pie_chart.dart';

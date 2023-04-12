@@ -1,13 +1,13 @@
-import 'package:etouch/businessLogic/providers/navbar-add-btn-manager.dart';
-import 'package:etouch/ui/screens/home-screen.dart';
-import 'package:etouch/ui/screens/splash-screen.dart';
+import 'package:etouch/businessLogic/providers/navbar_add_btn_manager.dart';
+import 'package:etouch/ui/screens/home_screen.dart';
+import 'package:etouch/ui/screens/splash_screen.dart';
 import 'package:etouch/ui/themes/theme_manager.dart';
 import 'package:etouch/ui/themes/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
-import 'businessLogic/providers/home-screens-manager.dart';
+import 'businessLogic/providers/home_screens_manager.dart';
 
 void main() {
   runApp(const MyApp());

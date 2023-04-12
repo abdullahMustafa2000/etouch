@@ -1,9 +1,9 @@
 import 'package:etouch/main.dart';
 import 'package:etouch/ui/constants.dart';
-import 'package:etouch/ui/elements/login-contacts-model.dart';
-import 'package:etouch/ui/elements/login-txt-input-model.dart';
-import 'package:etouch/ui/elements/primary-btn-model.dart';
-import 'package:etouch/ui/screens/home-screen.dart';
+import 'package:etouch/ui/elements/login_contacts_model.dart';
+import 'package:etouch/ui/elements/login_txt_input_model.dart';
+import 'package:etouch/ui/elements/primary_btn_model.dart';
+import 'package:etouch/ui/screens/home_screen.dart';
 import 'package:etouch/ui/themes/theme_manager.dart';
 import 'package:flutter/material.dart';
 
