@@ -1,13 +1,12 @@
 // ignore_for_file: must_be_immutable
 import 'dart:ffi';
 
+import 'package:etouch/main.dart';
 import 'package:etouch/ui/constants.dart';
-import 'package:etouch/ui/themes/themes.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class DashboardCard extends StatelessWidget {
-  DashboardCard(
+class DashboardCardModel extends StatelessWidget {
+  DashboardCardModel(
       {Key? key,
       required this.cardTitle,
       required this.cardColor,
@@ -34,31 +33,26 @@ class DashboardCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Container(
+        Expanded(
+          child: Container(
             width: MediaQuery.of(context).size.width * .6,
             decoration: BoxDecoration(
               color: cardColor,
               borderRadius:
-                  BorderRadius.all(Radius.circular(cornersRadiusConst)),
+                  const BorderRadius.all(Radius.circular(cornersRadiusConst)),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Center(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(
-                    height: 38,
-                  ),
                   Text(
-                    '${cardTitle} ($numOfDocuments)',
+                    '$cardTitle ($numOfDocuments)',
                     style: Theme.of(context)
                         .textTheme
                         .bodyLarge
                         ?.copyWith(color: titleColor),
-                  ),
-                  const SizedBox(
-                    height: 24,
                   ),
                   CardDataRow(
                     total: total,
@@ -66,19 +60,15 @@ class DashboardCard extends StatelessWidget {
                     txtColor: dataColor,
                     cardIcon: cardIcon,
                   ),
-                  const SizedBox(
-                    height: 48,
-                  ),
                   ProgressBar(
                       width: progressWidth,
                       foregroundColor: titleColor,
                       backgroundColor: progressColor),
-                  const SizedBox(
-                    height: 62,
-                  )
                 ],
               ),
-            )),
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -106,16 +96,16 @@ class CardDataRow extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              '${AppLocalizations.of(context)!.totalTxt} : $total',
+              '${appTxt(context).totalTxt} : $total',
               style: Theme.of(context)
                   .textTheme
                   .labelLarge!
                   .copyWith(color: txtColor),
             ),
             const SizedBox(
-              height: 10,
+              height: 12,
             ),
-            Text('${AppLocalizations.of(context)!.taxesTxt} : $taxes',
+            Text('${appTxt(context).taxesTxt} : $taxes',
                 style: Theme.of(context)
                     .textTheme
                     .labelLarge!
@@ -169,7 +159,7 @@ class RoundedLine extends StatelessWidget {
       height: 6,
       decoration: BoxDecoration(
         color: color,
-        borderRadius: BorderRadius.all(Radius.circular(cardLineRadius)),
+        borderRadius: const BorderRadius.all(Radius.circular(cardLineRadius)),
       ),
     );
   }

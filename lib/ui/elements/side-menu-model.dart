@@ -1,70 +1,90 @@
+import 'package:etouch/main.dart';
 import 'package:etouch/ui/constants.dart';
 import 'package:etouch/ui/themes/themes.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SideMenuModel extends StatelessWidget {
   SideMenuModel(
       {required this.taxPayerName,
       required this.isDarkMood,
       required this.taxPayerImg,
-      required this.onChangeMood});
+      required this.onChangeMood,
+      required this.onSavesClkd,
+      required this.onSentClkd,
+      required this.onContactClkd,
+      required this.onLogoutClkd});
   String taxPayerName;
   String taxPayerImg;
   bool isDarkMood;
-  Function onChangeMood;
+  Function onChangeMood, onSavesClkd, onSentClkd, onContactClkd, onLogoutClkd;
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width * .7,
-      padding: const EdgeInsets.only(bottom: 24),
-      decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor,
-        borderRadius: const BorderRadius.all(Radius.circular(30)),
-      ),
-      child: Column(
-        children: [
-          const SizedBox(
-            height: 60,
-          ),
-          MenuTopView(),
-          const SizedBox(
-            height: 28,
-          ),
-          Container(
-            height: 1,
-            width: double.infinity,
-            color: secondaryColor,
-          ),
-          MenuProfileWidget(userName: taxPayerName, userImg: taxPayerImg ?? 'assets/images/fakeImage.png'),
-          SideMenuOptionsWidget(
-            onChangeMood: onChangeMood,
-          ),
-          const Expanded(
-              child: Padding(
-            padding: EdgeInsets.all(0),
-          )),
-          Padding(
-            padding: const EdgeInsets.only(right: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Icon(
-                  Icons.logout_sharp,
-                  color: Theme.of(context).primaryColorDark,
-                ),
-                const Padding(padding: EdgeInsets.only(left: 8)),
-                Text(
-                  AppLocalizations.of(context)!.logoutTxt,
-                  style: Theme.of(context)
-                      .textTheme
-                      .headlineSmall!
-                      .copyWith(color: Theme.of(context).primaryColorDark),
-                ),
-              ],
+    return SafeArea(
+      child: Container(
+        height: double.infinity,
+        width: MediaQuery.of(context).size.width * .7,
+        padding: const EdgeInsets.only(bottom: 24),
+        decoration: BoxDecoration(
+          color: Theme.of(context).primaryColor,
+          borderRadius: const BorderRadius.all(Radius.circular(30)),
+        ),
+        child: Column(
+          children: [
+            const SizedBox(
+              height: 60,
             ),
-          )
-        ],
+            MenuTopView(),
+            const SizedBox(
+              height: 28,
+            ),
+            Container(
+              height: 1,
+              width: double.infinity,
+              color: secondaryColor,
+            ),
+            MenuProfileWidget(
+                userName: taxPayerName,
+                userImg: taxPayerImg ?? 'assets/images/fakeImage.png'),
+            SideMenuOptionsWidget(
+              onChangeMood: onChangeMood,
+              onSavesClkd: onSavesClkd,
+              onSentClkd: onSentClkd,
+              onContactClkd: onContactClkd,
+              isDark: isDarkMood,
+            ),
+            const Expanded(
+                child: Padding(
+              padding: EdgeInsets.all(0),
+            )),
+            Padding(
+              padding: const EdgeInsets.only(right: 20),
+              child: InkWell(
+                onTap: () {
+                  onLogoutClkd();
+                },
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Icon(
+                        Icons.logout_sharp,
+                        color: Theme.of(context).primaryColorDark,
+                      ),
+                      const Padding(padding: EdgeInsets.only(left: 8)),
+                      Text(
+                        appTxt(context).logoutTxt,
+                        style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                            color: Theme.of(context).primaryColorDark,
+                            fontFamily: almarai),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -79,7 +99,7 @@ class MenuTopView extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Row(
           children: [
-            Image.asset(whiteLogo),
+            Image.asset(logo, width: 46, height: 49, color: Theme.of(context).primaryColorDark,),
             Text(
               'E-Touch',
               style: TextStyle(
@@ -125,15 +145,15 @@ class MenuProfileWidget extends StatelessWidget {
         child: Row(
           children: [
             const CircleAvatar(
+              ///TODO
               backgroundImage: AssetImage('assets/images/fakeImage.png'),
             ),
             const Padding(padding: EdgeInsets.symmetric(horizontal: 6)),
             Text(
               userName,
-              style: Theme.of(context)
-                  .textTheme
-                  .headlineLarge!
-                  .copyWith(color: Theme.of(context).primaryColorDark),
+              style: Theme.of(context).textTheme.headlineLarge!.copyWith(
+                  color: Theme.of(context).primaryColorDark,
+                  fontFamily: almarai),
             ),
           ],
         ));
@@ -141,31 +161,54 @@ class MenuProfileWidget extends StatelessWidget {
 }
 
 class SideMenuOptionsWidget extends StatelessWidget {
-  SideMenuOptionsWidget({this.onChangeMood});
-  Function? onChangeMood;
+  SideMenuOptionsWidget(
+      {required this.onChangeMood,
+      required this.onSavesClkd,
+      required this.onSentClkd,
+      required this.onContactClkd,
+      required this.isDark});
+  Function onChangeMood;
+  Function onSavesClkd, onSentClkd, onContactClkd;
+  bool isDark;
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 38),
       child: Column(
         children: [
+          InkWell(
+            onTap: () {
+              onSavesClkd();
+            },
+            child: MenuItemWidget(
+                title: appTxt(context).savedFilesTxt,
+                prefix: Icons.stars,),
+          ),
+          InkWell(
+            onTap: () {
+              onSentClkd();
+            },
+            child: MenuItemWidget(
+                title: appTxt(context).sentFilesTxt,
+                prefix: Icons.upload_file_outlined,),
+          ),
           MenuItemWidget(
-              title: AppLocalizations.of(context)!.savedFilesTxt,
-              prefix: Icons.stars,
-              isNightMood: false),
-          MenuItemWidget(
-              title: AppLocalizations.of(context)!.sentFilesTxt,
-              prefix: Icons.upload_file_outlined,
-              isNightMood: false),
-          MenuItemWidget(
-              title: AppLocalizations.of(context)!.darkModeTxt,
-              prefix: Icons.dark_mode_outlined,
-              isNightMood: true,
-          onChangeMood: onChangeMood,),
-          MenuItemWidget(
-              title: AppLocalizations.of(context)!.loginContactUsTxt,
-              prefix: Icons.local_phone_outlined,
-              isNightMood: false),
+            title: appTxt(context).darkModeTxt,
+            prefix: Icons.dark_mode_outlined,
+            isNightMood: true,
+            isDark: isDark,
+            onChangeMood: (isDark) {
+              onChangeMood(isDark);
+            },
+          ),
+          InkWell(
+            onTap: () {
+              onContactClkd();
+            },
+            child: MenuItemWidget(
+                title: appTxt(context).loginContactUsTxt,
+                prefix: Icons.local_phone_outlined,),
+          ),
         ],
       ),
     );
@@ -175,19 +218,24 @@ class SideMenuOptionsWidget extends StatelessWidget {
 class MenuItemWidget extends StatefulWidget {
   MenuItemWidget(
       {required this.title,
-      required this.prefix,
-      required this.isNightMood,
-      this.onChangeMood});
+      required this.prefix, this.isNightMood, this.onChangeMood, this.isDark});
   IconData prefix;
   String title;
-  bool isNightMood;
+  //show/hide Switch  , setValue
+  bool? isNightMood;
+  bool? isDark;
   Function? onChangeMood;
   @override
   State<MenuItemWidget> createState() => _MenuItemWidgetState();
 }
 
 class _MenuItemWidgetState extends State<MenuItemWidget> {
-  bool _toggle = false;
+  late bool _toggle;
+  @override
+  void initState() {
+    super.initState();
+    _toggle = widget.isDark??false;
+  }
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -201,23 +249,21 @@ class _MenuItemWidgetState extends State<MenuItemWidget> {
           const Padding(padding: EdgeInsets.symmetric(horizontal: 7.5)),
           Text(
             widget.title,
-            style: Theme.of(context)
-                .textTheme
-                .headlineSmall!
-                .copyWith(color: Theme.of(context).primaryColorDark),
+            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                color: Theme.of(context).primaryColorDark, fontFamily: almarai),
           ),
           const Expanded(
               child: Padding(
             padding: EdgeInsets.all(0),
           )),
           Visibility(
-            visible: widget.isNightMood,
+            visible: widget.isNightMood??false,
             child: CustomSwitch(
                 value: _toggle,
-                onChanged: (bool val) {
+                onChanged: (val) {
+                  widget.onChangeMood!(val);
                   setState(() {
                     _toggle = val;
-                    widget.onChangeMood!(val);
                   });
                 }),
           ),
