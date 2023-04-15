@@ -3,31 +3,29 @@ import 'package:etouch/ui/constants.dart';
 import 'package:etouch/ui/elements/searchable_dropdown_model.dart';
 import 'package:etouch/ui/themes/themes.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-
 import '../../businessLogic/classes/e_invoice_item_selection_model.dart';
 import 'editable_data.dart';
 import 'primary_btn_model.dart';
 import 'uneditable_data.dart';
 
 class ProductCreationModel extends StatefulWidget {
-  ProductCreationModel(
-      {Key? key,
-      required this.groupsList,
-      required this.productsList,
-      required this.unitsList,
-      required this.balance,
-      required this.productPrice,
-      required this.isPriceEditable,
-      required this.hasGroups,
-      required this.selectedGroup,
-      required this.selectedProduct,
-      required this.selectedUnit,
-      required this.selectedQuantity,
-      required this.selectedPrice,
-      required this.onDeleteItemClicked,
-      required this.moreThanOneItem,})
-      : super(key: key);
+  ProductCreationModel({
+    Key? key,
+    required this.groupsList,
+    required this.productsList,
+    required this.unitsList,
+    required this.balance,
+    required this.productPrice,
+    required this.isPriceEditable,
+    required this.hasGroups,
+    required this.selectedGroup,
+    required this.selectedProduct,
+    required this.selectedUnit,
+    required this.selectedQuantity,
+    required this.selectedPrice,
+    required this.onDeleteItemClicked,
+    required this.moreThanOneItem,
+  }) : super(key: key);
   int balance;
   bool isPriceEditable, hasGroups, moreThanOneItem;
   double productPrice;
@@ -52,6 +50,7 @@ class _ProductCreationModelState extends State<ProductCreationModel> {
     super.initState();
     _prodPrice = widget.productPrice;
   }
+
   void updateTotalPrice(int quantity, double price) {
     setState(() {
       _totalPrice = quantity * price;
@@ -153,13 +152,17 @@ class _ProductCreationModelState extends State<ProductCreationModel> {
                         .displayLarge!
                         .copyWith(color: appTheme(context).primaryColor),
                   ),
-                  const SizedBox(height: 18,),
+                  const SizedBox(
+                    height: 18,
+                  ),
                   Visibility(
                     visible: widget.moreThanOneItem,
                     child: PrimaryClrBtnModel(
                       content: Text(
                         appTxt(context).removeProductFromDocument,
-                        style: txtTheme(context).labelLarge!.copyWith(color: pureWhite),
+                        style: txtTheme(context)
+                            .labelLarge!
+                            .copyWith(color: pureWhite),
                       ),
                       color: closeColor,
                       onPressed: () {

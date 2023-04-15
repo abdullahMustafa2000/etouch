@@ -182,7 +182,7 @@ class PaidCashesWidget extends StatelessWidget {
             const SizedBox(
               height: 6,
             ),
-            content
+            content,
           ],
         ),
       ),

@@ -18,7 +18,8 @@ class OrderPreRequirementsWidget extends StatelessWidget {
       required this.selectedCurrency,
       required this.selectedTreasury,
       required this.selectedBranch,
-      required this.selectedCustomer})
+      required this.selectedCustomer,
+      required this.orderNumber})
       : super(key: key);
   List<EInvoiceDocItemSelectionModel> branchesList,
       inventoriesList,
@@ -30,6 +31,7 @@ class OrderPreRequirementsWidget extends StatelessWidget {
       selectedCurrency,
       selectedTreasury,
       selectedCustomer;
+  int orderNumber;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -92,6 +94,36 @@ class OrderPreRequirementsWidget extends StatelessWidget {
               selectedCustomer(val);
             },
           ),
+          const SizedBox(height: 18,),
+          Container(
+            width: double.infinity,
+            height: 1,
+            color: pureWhite,
+          ),
+          const SizedBox(height: 18,),
+          Row(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('${appTxt(context).dateTxt}:', style: txtTheme(context).labelLarge!.copyWith(color: pureWhite),),
+                  const SizedBox(height: 18,),
+                  Text('${appTxt(context).orderNumTxt}:', style: txtTheme(context).labelLarge!.copyWith(color: pureWhite),),
+                ],
+              ),
+              const SizedBox(width: 24,),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(DateTime.now().toString(), style: txtTheme(context).labelMedium!.copyWith(color: pureWhite),),
+                  const SizedBox(height: 18,),
+                  Text(orderNumber.toString(), style: txtTheme(context).labelMedium!.copyWith(color: pureWhite),),
+                ],
+              ),
+            ],
+          )
         ],
       ),
     );

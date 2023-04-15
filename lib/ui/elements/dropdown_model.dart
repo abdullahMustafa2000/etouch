@@ -1,4 +1,3 @@
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:etouch/businessLogic/classes/e_invoice_item_selection_model.dart';
 import 'package:etouch/ui/themes/themes.dart';
 import 'package:flutter/material.dart';
@@ -28,15 +27,19 @@ class _DropDownMenuModelState extends State<DropDownMenuModel> {
 
   @override
   Widget build(BuildContext context) {
+    print(
+        ('$_curValue ${widget.dataList.first} = ${_curValue == widget.dataList.first}'));
     return DecorateDropDown(
       dropDown: DropdownButtonHideUnderline(
         child: DropdownButton<EInvoiceDocItemSelectionModel>(
           value: _curValue,
           onChanged: (EInvoiceDocItemSelectionModel? value) {
-            setState(() {
-              _curValue = value!;
-              widget.selectedVal(value);
-            });
+            setState(
+              () {
+                _curValue = value!;
+                widget.selectedVal(value);
+              },
+            );
           },
           style: Theme.of(context)
               .textTheme
@@ -44,19 +47,23 @@ class _DropDownMenuModelState extends State<DropDownMenuModel> {
               .copyWith(color: Colors.black),
           items: widget.dataList
               .map<DropdownMenuItem<EInvoiceDocItemSelectionModel>>(
-                  (EInvoiceDocItemSelectionModel item) {
-            return DropdownMenuItem<EInvoiceDocItemSelectionModel>(
-              value: item,
-              child: Text(
-                item.getName,
-                style: Theme.of(context)
-                    .textTheme
-                    .labelMedium!
-                    .copyWith(color: switchThumbColor),
-                overflow: TextOverflow.ellipsis,
-              ),
-            );
-          }).toList(),
+            (EInvoiceDocItemSelectionModel item) {
+              return DropdownMenuItem<EInvoiceDocItemSelectionModel>(
+                value: item,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: Text(
+                    item.getName,
+                    style: Theme.of(context)
+                        .textTheme
+                        .labelMedium!
+                        .copyWith(color: switchThumbColor),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              );
+            },
+          ).toList(),
           icon: Icon(
             Icons.keyboard_arrow_down_sharp,
             color: darkGrayColor,
@@ -81,12 +88,3 @@ class DecorateDropDown extends StatelessWidget {
     );
   }
 }
-
-/*
-dataList.map<DropdownMenuItem<String>>((String item) {
-        return const DropdownMenuItem(
-          value: "S",
-          child: Text("T"),
-        );
-      }).toList()
- */

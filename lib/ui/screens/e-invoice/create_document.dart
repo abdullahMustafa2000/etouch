@@ -57,6 +57,7 @@ class CreateEInvoiceDocumentScreen extends StatelessWidget {
                 selectedCustomer: (EInvoiceDocItemSelectionModel? val) {
                   print(val.toString());
                 },
+                orderNumber: 2202303141,
               ),
               // divider,
               const SizedBox(
