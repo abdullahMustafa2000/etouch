@@ -1,171 +1,115 @@
 import 'package:etouch/main.dart';
-import 'package:etouch/ui/constants.dart';
-import 'package:etouch/ui/elements/dropdown_model.dart';
+import 'package:etouch/ui/elements/e_invoice_doc_taxes.dart';
+import 'package:etouch/ui/elements/primary_btn_model.dart';
 import 'package:etouch/ui/elements/product_creation_model.dart';
 import 'package:etouch/ui/themes/themes.dart';
 import 'package:flutter/material.dart';
 
-import '../../../businessLogic/classes/inventory_item_selection_model.dart';
+import '../../../businessLogic/classes/e_invoice_item_selection_model.dart';
+import '../../elements/e_invoice_document_pre_requairments_model.dart';
 
-class CreateEInvoiceDocumentScreen extends StatefulWidget {
+class CreateEInvoiceDocumentScreen extends StatelessWidget {
   CreateEInvoiceDocumentScreen({Key? key}) : super(key: key);
-
-  @override
-  State<CreateEInvoiceDocumentScreen> createState() =>
-      _CreateEInvoiceDocumentScreenState();
-}
-
-class _CreateEInvoiceDocumentScreenState
-    extends State<CreateEInvoiceDocumentScreen> {
-  int _noOfProducts = 1;
-  late PageController _controller;
-  @override
-  void initState() {
-    super.initState();
-    _controller = PageController(viewportFraction: .8);
-  }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Column(
-          children: [
-            // customers, treasury, inventory, etc...
-            const OrderPreRequirementsWidget(),
-            // divider,
-            const SizedBox(
-              height: 6,
-            ),
-            // add product details object
-            AddProductWidget(
-              onAddClk: () {
-                setState(() {
-                  _noOfProducts++;
-                });
-              },
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height,
-              child: PageView.builder(
-                controller: _controller,
-                itemBuilder: (context, index) {
-                  return SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      child: ProductCreationModel(
-                        groupsList: [
-                          InventoryItemSelectionModel(name: 'Group1', id: 1),
-                          InventoryItemSelectionModel(name: 'Group2', id: 2),
-                        ],
-                        productsList: [
-                          InventoryItemSelectionModel(name: 'Product1', id: 1),
-                          InventoryItemSelectionModel(name: 'Product2', id: 2),
-                        ],
-                        unitsList: [
-                          InventoryItemSelectionModel(name: 'Meter', id: 1),
-                          InventoryItemSelectionModel(name: 'Kilo', id: 2),
-                        ],
-                        balance: 1000,
-                        price: 255.5,
-                        isPriceEditable: true,
-                        selectedGroup: (InventoryItemSelectionModel? val) {
-                          print(val.toString());
-                        },
-                        selectedProduct: (InventoryItemSelectionModel? val) {
-                          print(val.toString());
-                        },
-                        selectedUnit: (InventoryItemSelectionModel? val) {
-                          print(val.toString());
-                        },
-                        selectedQuantity: (String? val) {
-                          print(val.toString());
-                        },
-                        selectedPrice: (String? val) {
-                          print(val.toString());
-                        },
-                      ));
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Column(
+            children: [
+              // customers, treasury, inventory, etc...
+              OrderPreRequirementsWidget(
+                inventoriesList: [
+                  EInvoiceDocItemSelectionModel(id: 101, name: 'Maady'),
+                  EInvoiceDocItemSelectionModel(id: 102, name: 'Madent Nasr'),
+                ],
+                currenciesList: [
+                  EInvoiceDocItemSelectionModel(id: 201, name: 'USD'),
+                  EInvoiceDocItemSelectionModel(id: 202, name: 'EGP'),
+                ],
+                treasuriesList: [
+                  EInvoiceDocItemSelectionModel(id: 301, name: 'Bank'),
+                  EInvoiceDocItemSelectionModel(id: 302, name: 'Store'),
+                ],
+                branchesList: [
+                  EInvoiceDocItemSelectionModel(id: 401, name: 'Egypt'),
+                  EInvoiceDocItemSelectionModel(id: 402, name: 'Iraq'),
+                ],
+                customersList: [
+                  EInvoiceDocItemSelectionModel(id: 501, name: 'Degla'),
+                  EInvoiceDocItemSelectionModel(id: 502, name: 'Visa'),
+                ],
+                selectedInventory: (EInvoiceDocItemSelectionModel? val) {
+                  print(val.toString());
                 },
-                scrollDirection: Axis.horizontal,
-                itemCount: _noOfProducts,
+                selectedCurrency: (EInvoiceDocItemSelectionModel? val) {
+                  print(val.toString());
+                },
+                selectedTreasury: (EInvoiceDocItemSelectionModel? val) {
+                  print(val.toString());
+                },
+                selectedBranch: (EInvoiceDocItemSelectionModel? val) {
+                  print(val.toString());
+                },
+                selectedCustomer: (EInvoiceDocItemSelectionModel? val) {
+                  print(val.toString());
+                },
               ),
-            ),
-            const SizedBox(
-              height: 24,
-            ),
-          ],
+              // divider,
+              const SizedBox(
+                height: 8,
+              ),
+              // add product details object
+              ProductsSelectionWidget(),
+              const SizedBox(
+                height: 24,
+              ),
+
+              DocumentNumbers(
+                taxesList: [
+                  EInvoiceDocItemSelectionModel(id: 10, name: 'A'),
+                  EInvoiceDocItemSelectionModel(id: 11, name: 'B'),
+                ],
+                selectedTax: (EInvoiceDocItemSelectionModel? val) {
+                  print(val);
+                },
+                taxVal: EInvoiceDocItemSelectionModel(id: 12, name: 'PRODUCT'),
+                totalDocPrice: 1000,
+                addToPrice: true,
+                paymentMethods: [
+                  EInvoiceDocItemSelectionModel(id: 100, name: 'Cash'),
+                  EInvoiceDocItemSelectionModel(id: 101, name: 'Visa'),
+                ],
+                selectedPaymentMethod: (EInvoiceDocItemSelectionModel? val) {
+                  print(val);
+                },
+                percentDiscountOrTax: true,
+              ),
+              const SizedBox(
+                height: 24,
+              ),
+              SizedBox(
+                width: double.infinity,
+                child: PrimaryClrBtnModel(
+                    content: Text(
+                      appTxt(context).sendDocument,
+                      style: txtTheme(context)
+                          .titleLarge!
+                          .copyWith(color: appTheme(context).primaryColorDark),
+                    ),
+                    onPressed: () {},
+                    color: appTheme(context).primaryColor),
+              ),
+              const SizedBox(
+                height: 24,
+              ),
+            ],
+          ),
         ),
       ),
-    );
-  }
-}
-
-class OrderPreRequirementsWidget extends StatelessWidget {
-  const OrderPreRequirementsWidget({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
-      margin: const EdgeInsets.symmetric(horizontal: 20),
-      width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius:
-            const BorderRadius.all(Radius.circular(cornersRadiusConst)),
-        gradient: LinearGradient(
-            colors: [accentColor, primaryColor],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter),
-      ),
-      child: Column(
-        children: [
-          Text(
-            appTxt(context).createDocumentTitle,
-            style: Theme.of(context)
-                .textTheme
-                .displayLarge!
-                .copyWith(color: pureWhite),
-          ),
-          const SizedBox(
-            height: 24,
-          ),
-          PreRequirementsRow(
-              label1: appTxt(context).branchTxt,
-              dataList1: const ['maady', 'dokky'],
-              label2: appTxt(context).inventoryTxt,
-              dataList2: const ['mohad', 'mostafa']),
-          const SizedBox(
-            height: 24,
-          ),
-          PreRequirementsRow(
-              label1: appTxt(context).currencyTxt,
-              dataList1: const ['aadfsfadaaafdadfadfdafdfafsdafda', 'fddsrag'],
-              label2: appTxt(context).treasuryTxt,
-              dataList2: const ['tawheed', 'welnoor']),
-          const SizedBox(
-            height: 24,
-          ),
-          CurrencyAndSendToETSRow(),
-        ],
-      ),
-    );
-  }
-}
-
-class CurrencyAndSendToETSRow extends StatelessWidget {
-  const CurrencyAndSendToETSRow({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        RequiredInfoDesign(
-            label: appTxt(context).customerTxt, dataList: const ['EGP', 'USD']),
-      ],
     );
   }
 }
@@ -209,56 +153,92 @@ class AddProductWidget extends StatelessWidget {
   }
 }
 
-class PreRequirementsRow extends StatelessWidget {
-  PreRequirementsRow(
-      {Key? key,
-      required this.label1,
-      required this.dataList1,
-      required this.label2,
-      required this.dataList2})
-      : super(key: key);
-  String label1, label2;
-  List<String> dataList1, dataList2;
+class ProductsSelectionWidget extends StatefulWidget {
+  ProductsSelectionWidget({Key? key}) : super(key: key);
+
   @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Expanded(child: RequiredInfoDesign(label: label1, dataList: dataList1)),
-        const SizedBox(
-          width: 8,
-        ),
-        Expanded(child: RequiredInfoDesign(label: label2, dataList: dataList2)),
-      ],
-    );
-  }
+  State<ProductsSelectionWidget> createState() =>
+      _ProductsSelectionWidgetState();
 }
 
-class RequiredInfoDesign extends StatelessWidget {
-  RequiredInfoDesign({Key? key, required this.label, required this.dataList})
-      : super(key: key);
-  String label;
-  List<String> dataList;
+class _ProductsSelectionWidgetState extends State<ProductsSelectionWidget> {
+  int _noOfProducts = 1;
+
+  late PageController _controller;
+  @override
+  void initState() {
+    super.initState();
+    _controller = PageController(viewportFraction: .8);
+  }
+
+  void animateTo(int page, PageController controller) {
+    controller.animateToPage(page,
+        duration: const Duration(milliseconds: 600), curve: Curves.easeInOut);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
       children: [
-        Text(
-          label,
-          style: Theme.of(context)
-              .textTheme
-              .titleMedium!
-              .copyWith(color: const Color.fromRGBO(218, 198, 248, 1)),
-          overflow: TextOverflow.ellipsis,
+        AddProductWidget(
+          onAddClk: () {
+            setState(() {
+              _noOfProducts++;
+              animateTo(_noOfProducts - 1, _controller);
+            });
+          },
         ),
         const SizedBox(
-          width: 8,
+          height: 8,
         ),
-        Expanded(
-          child: DropDownMenuModel(
-            dataList: dataList,
-            defValue: dataList
-                .first, /*AppLocalizations.of(context)!.chooseFromDropDownTxt*/
+        SizedBox(
+          height: MediaQuery.of(context).size.height / 2,
+          child: PageView.builder(
+            controller: _controller,
+            itemBuilder: (context, index) {
+              return SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: ProductCreationModel(
+                  hasGroups: true,
+                  groupsList: [
+                    EInvoiceDocItemSelectionModel(name: 'Group1', id: 1),
+                    EInvoiceDocItemSelectionModel(name: 'Group2', id: 2),
+                  ],
+                  productsList: [
+                    EInvoiceDocItemSelectionModel(name: 'Product1', id: 1),
+                    EInvoiceDocItemSelectionModel(name: 'Product2', id: 2),
+                  ],
+                  unitsList: [
+                    EInvoiceDocItemSelectionModel(name: 'Meter', id: 1),
+                    EInvoiceDocItemSelectionModel(name: 'Kilo', id: 2),
+                  ],
+                  balance: 1000,
+                  productPrice: 255.5,
+                  isPriceEditable: true,
+                  selectedGroup: (EInvoiceDocItemSelectionModel? val) {
+                    print(val.toString());
+                  },
+                  selectedProduct: (EInvoiceDocItemSelectionModel? val) {
+                    print(val.toString());
+                  },
+                  selectedUnit: (EInvoiceDocItemSelectionModel? val) {
+                    print(val.toString());
+                  },
+                  selectedQuantity: (String? val) {
+                    print(val.toString());
+                  },
+                  selectedPrice: (String? val) {
+                    print(val.toString());
+                  },
+                  moreThanOneItem: _noOfProducts > 1,
+                  onDeleteItemClicked: () {
+                    print("don't delete me please $index");
+                  },
+                ),
+              );
+            },
+            scrollDirection: Axis.horizontal,
+            itemCount: _noOfProducts,
           ),
         ),
       ],

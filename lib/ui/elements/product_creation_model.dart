@@ -1,42 +1,68 @@
 import 'package:etouch/main.dart';
 import 'package:etouch/ui/constants.dart';
 import 'package:etouch/ui/elements/searchable_dropdown_model.dart';
-import 'package:etouch/ui/elements/login_txt_input_model.dart';
 import 'package:etouch/ui/themes/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../businessLogic/classes/inventory_item_selection_model.dart';
+import '../../businessLogic/classes/e_invoice_item_selection_model.dart';
+import 'editable_data.dart';
+import 'primary_btn_model.dart';
+import 'uneditable_data.dart';
 
-class ProductCreationModel extends StatelessWidget {
+class ProductCreationModel extends StatefulWidget {
   ProductCreationModel(
       {Key? key,
       required this.groupsList,
       required this.productsList,
       required this.unitsList,
       required this.balance,
-      required this.price,
+      required this.productPrice,
       required this.isPriceEditable,
+      required this.hasGroups,
       required this.selectedGroup,
       required this.selectedProduct,
       required this.selectedUnit,
       required this.selectedQuantity,
-      required this.selectedPrice})
+      required this.selectedPrice,
+      required this.onDeleteItemClicked,
+      required this.moreThanOneItem,})
       : super(key: key);
   int balance;
-  double price;
-  bool isPriceEditable;
-  List<InventoryItemSelectionModel> groupsList, productsList, unitsList;
+  bool isPriceEditable, hasGroups, moreThanOneItem;
+  double productPrice;
+  List<EInvoiceDocItemSelectionModel>? groupsList, productsList, unitsList;
   Function selectedGroup,
       selectedProduct,
       selectedUnit,
       selectedQuantity,
-      selectedPrice;
+      selectedPrice,
+      onDeleteItemClicked;
+
+  @override
+  State<ProductCreationModel> createState() => _ProductCreationModelState();
+}
+
+class _ProductCreationModelState extends State<ProductCreationModel> {
+  double _totalPrice = 0.0, _prodPrice = 0.0;
+  int _quantity = 0;
+  final ScrollController _controller = ScrollController();
+  @override
+  void initState() {
+    super.initState();
+    _prodPrice = widget.productPrice;
+  }
+  void updateTotalPrice(int quantity, double price) {
+    setState(() {
+      _totalPrice = quantity * price;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 24),
-      margin: const EdgeInsets.symmetric(horizontal: 20),
+      margin: const EdgeInsets.only(right: 20),
       decoration: BoxDecoration(
         borderRadius:
             const BorderRadius.all(Radius.circular(cornersRadiusConst)),
@@ -46,77 +72,105 @@ class ProductCreationModel extends StatelessWidget {
         ),
       ),
       child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            InputTypeRow(
-              label: appTxt(context).groupOfInventory,
-              child: SearchDropdownMenuModel(
-                dataList: groupsList,
-                selectVal: (InventoryItemSelectionModel? val) {
-                  selectedGroup(val);
-                },
-              ),
-            ),
-            InputTypeRow(
-              label: appTxt(context).productsOfInventory,
-              child: SearchDropdownMenuModel(
-                dataList: productsList,
-                selectVal: (InventoryItemSelectionModel? val) {
-                  selectedProduct(val);
-                },
-              ),
-            ),
-            InputTypeRow(
-              label: appTxt(context).balanceOfInventory,
-              child: UnEditableData(
-                data: balance.toDouble(),
-              ),
-            ),
-            InputTypeRow(
-              label: appTxt(context).quantityOfInventory,
-              child: EditableInputData(
-                  data: 0,
-                  onChange: (String? val) {
-                    selectedQuantity(val);
-                  }),
-            ),
-            InputTypeRow(
-              label: appTxt(context).unitOfInventory,
-              child: SearchDropdownMenuModel(
-                dataList: unitsList,
-                selectVal: (InventoryItemSelectionModel? val) {
-                  selectedUnit(val);
-                },
-              ),
-            ),
-            InputTypeRow(
-              label: appTxt(context).priceOfInventory,
-              child: isPriceEditable
-                  ? EditableInputData(
-                      data: price,
-                      onChange: (String? val) {
-                        selectedPrice(val);
-                      })
-                  : UnEditableData(data: price),
-            ),
-            Column(
-              children: [
-                Text(
-                  appTxt(context).totalTxt,
-                  style: txtTheme(context)
-                      .displaySmall!
-                      .copyWith(color: appTheme(context).primaryColor),
+        child: Scrollbar(
+          thumbVisibility: true,
+          controller: _controller,
+          child: ListView(
+            controller: _controller,
+            children: [
+              Visibility(
+                visible: widget.hasGroups,
+                child: InputTypeRow(
+                  label: appTxt(context).groupOfInventory,
+                  child: SearchDropdownMenuModel(
+                    dataList: widget.groupsList,
+                    selectVal: (EInvoiceDocItemSelectionModel? val) {
+                      widget.selectedGroup(val);
+                    },
+                  ),
                 ),
-                Text(
-                  '16200',
-                  style: txtTheme(context)
-                      .displayLarge!
-                      .copyWith(color: appTheme(context).primaryColor),
+              ),
+              InputTypeRow(
+                label: appTxt(context).productsOfInventory,
+                child: SearchDropdownMenuModel(
+                  dataList: widget.productsList,
+                  selectVal: (EInvoiceDocItemSelectionModel? val) {
+                    widget.selectedProduct(val);
+                  },
                 ),
-              ],
-            )
-          ],
+              ),
+              InputTypeRow(
+                label: appTxt(context).balanceOfInventory,
+                child: UnEditableData(
+                  data: widget.balance.toDouble().toString(),
+                ),
+              ),
+              InputTypeRow(
+                label: appTxt(context).quantityOfInventory,
+                child: EditableInputData(
+                    data: 0,
+                    hasInitValue: false,
+                    onChange: (String? val, bool isEmpty) {
+                      widget.selectedQuantity(val);
+                      _quantity = !isEmpty ? int.parse(val!) : 0;
+                      updateTotalPrice(_quantity, _prodPrice);
+                    }),
+              ),
+              InputTypeRow(
+                label: appTxt(context).unitOfInventory,
+                child: SearchDropdownMenuModel(
+                  dataList: widget.unitsList,
+                  selectVal: (EInvoiceDocItemSelectionModel? val) {
+                    widget.selectedUnit(val);
+                  },
+                ),
+              ),
+              InputTypeRow(
+                label: appTxt(context).priceOfInventory,
+                child: widget.isPriceEditable
+                    ? EditableInputData(
+                        data: widget.productPrice,
+                        hasInitValue: true,
+                        onChange: (String? val, bool isEmpty) {
+                          _prodPrice = double.parse(val!);
+                          widget.selectedPrice(val);
+                          updateTotalPrice(
+                              _quantity, !isEmpty ? _prodPrice : 0.0);
+                        })
+                    : UnEditableData(data: widget.productPrice.toString()),
+              ),
+              Column(
+                children: [
+                  Text(
+                    appTxt(context).totalTxt,
+                    style: txtTheme(context)
+                        .displaySmall!
+                        .copyWith(color: appTheme(context).primaryColor),
+                  ),
+                  Text(
+                    _totalPrice.toString(),
+                    style: txtTheme(context)
+                        .displayLarge!
+                        .copyWith(color: appTheme(context).primaryColor),
+                  ),
+                  const SizedBox(height: 18,),
+                  Visibility(
+                    visible: widget.moreThanOneItem,
+                    child: PrimaryClrBtnModel(
+                      content: Text(
+                        appTxt(context).removeProductFromDocument,
+                        style: txtTheme(context).labelLarge!.copyWith(color: pureWhite),
+                      ),
+                      color: closeColor,
+                      onPressed: () {
+                        widget.onDeleteItemClicked();
+                      },
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -148,76 +202,6 @@ class InputTypeRow extends StatelessWidget {
           ),
           Expanded(child: child),
         ],
-      ),
-    );
-  }
-}
-
-class UnEditableData extends StatelessWidget {
-  UnEditableData({Key? key, required this.data}) : super(key: key);
-  double data;
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius:
-            const BorderRadius.all(Radius.circular(cornersRadiusConst)),
-        color: lighterSecondaryClr,
-      ),
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Center(
-        child: Text(
-          data.toString(),
-          style: txtTheme(context)
-              .titleMedium!
-              .copyWith(color: primaryColor, fontSize: 14),
-        ),
-      ),
-    );
-  }
-}
-
-class EditableInputData extends StatefulWidget {
-  EditableInputData({Key? key, required this.data, required this.onChange})
-      : super(key: key);
-  double data;
-  Function onChange;
-
-  @override
-  State<EditableInputData> createState() => _EditableInputDataState();
-}
-
-class _EditableInputDataState extends State<EditableInputData> {
-  final TextEditingController _controller = TextEditingController();
-  @override
-  void initState() {
-    super.initState();
-    _controller.text = widget.data.toString();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-      onChanged: (txt) {
-        widget.onChange(txt);
-      },
-      textAlign: TextAlign.center,
-      keyboardType: TextInputType.number,
-      inputFormatters: <TextInputFormatter>[
-        FilteringTextInputFormatter.digitsOnly
-      ],
-      style: Theme.of(context).textTheme.headlineSmall,
-      decoration: InputDecoration(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-        border: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(cornersRadiusConst)),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Theme.of(context).primaryColor),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Theme.of(context).primaryColor),
-        ),
       ),
     );
   }

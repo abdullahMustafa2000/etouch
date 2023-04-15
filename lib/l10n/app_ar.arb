@@ -48,5 +48,14 @@
   "quantityOfInventory": "الكمية",
   "unitOfInventory": "وحدة القياس",
   "priceOfInventory": "السعر",
-  "addProductToDocument": "إضافة أصناف"
+  "addProductToDocument": "إضافة أصناف",
+  "removeProductFromDocument": "حذف الصنف",
+  "discountsAndTaxes": "الخصومات والضرائب",
+  "totalDocPriceBefore": "إجمالي قبل",
+  "discountOrTax": "الخصم او الاضافه",
+  "totalDocPriceAfter": "إجمالي بعد",
+  "paymentMethods": "طرق الدفع",
+  "paidAmount": "المدفوع",
+  "restOfAmount": "الباقي",
+  "sendDocument": "إرسال"
 }

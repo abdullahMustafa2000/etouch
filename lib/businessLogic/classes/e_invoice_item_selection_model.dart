@@ -1,5 +1,5 @@
-class InventoryItemSelectionModel {
-  InventoryItemSelectionModel({required this.id, required this.name});
+class EInvoiceDocItemSelectionModel {
+  EInvoiceDocItemSelectionModel({required this.id, required this.name});
   String name;
   int id;
   set setId(int comingId) {

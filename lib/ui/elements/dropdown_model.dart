@@ -1,40 +1,54 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:etouch/businessLogic/classes/e_invoice_item_selection_model.dart';
 import 'package:etouch/ui/themes/themes.dart';
 import 'package:flutter/material.dart';
 import '../constants.dart';
 
 class DropDownMenuModel extends StatefulWidget {
-  DropDownMenuModel({Key? key, required this.dataList, required this.defValue})
+  DropDownMenuModel(
+      {Key? key,
+      required this.dataList,
+      required this.defValue,
+      required this.selectedVal})
       : super(key: key);
-  List<String> dataList;
-  String defValue;
+  List<EInvoiceDocItemSelectionModel> dataList;
+  EInvoiceDocItemSelectionModel defValue;
+  Function selectedVal;
   @override
   State<DropDownMenuModel> createState() => _DropDownMenuModelState();
 }
 
 class _DropDownMenuModelState extends State<DropDownMenuModel> {
-  late String _dropDownValue;
-
+  late EInvoiceDocItemSelectionModel _curValue;
   @override
   void initState() {
     super.initState();
-    _dropDownValue = widget.defValue;
+    _curValue = widget.defValue;
   }
 
   @override
   Widget build(BuildContext context) {
     return DecorateDropDown(
       dropDown: DropdownButtonHideUnderline(
-        child: DropdownButton2(
+        child: DropdownButton<EInvoiceDocItemSelectionModel>(
+          value: _curValue,
+          onChanged: (EInvoiceDocItemSelectionModel? value) {
+            setState(() {
+              _curValue = value!;
+              widget.selectedVal(value);
+            });
+          },
           style: Theme.of(context)
               .textTheme
               .labelMedium!
               .copyWith(color: Colors.black),
-          items: widget.dataList.map<DropdownMenuItem<String>>((String item) {
-            return DropdownMenuItem<String>(
+          items: widget.dataList
+              .map<DropdownMenuItem<EInvoiceDocItemSelectionModel>>(
+                  (EInvoiceDocItemSelectionModel item) {
+            return DropdownMenuItem<EInvoiceDocItemSelectionModel>(
               value: item,
               child: Text(
-                item,
+                item.getName,
                 style: Theme.of(context)
                     .textTheme
                     .labelMedium!
@@ -43,20 +57,10 @@ class _DropDownMenuModelState extends State<DropDownMenuModel> {
               ),
             );
           }).toList(),
-          onChanged: (value) {
-            if (value is String) {
-              setState(() {
-                _dropDownValue = value;
-              });
-            }
-          },
-          iconStyleData: IconStyleData(
-            icon: Icon(
-              Icons.keyboard_arrow_down_sharp,
-              color: darkGrayColor,
-            ),
+          icon: Icon(
+            Icons.keyboard_arrow_down_sharp,
+            color: darkGrayColor,
           ),
-          value: _dropDownValue,
           isExpanded: true,
         ),
       ),
@@ -65,7 +69,7 @@ class _DropDownMenuModelState extends State<DropDownMenuModel> {
 }
 
 class DecorateDropDown extends StatelessWidget {
-  DecorateDropDown({required this.dropDown});
+  DecorateDropDown({Key? key, required this.dropDown}) : super(key: key);
   Widget dropDown;
   @override
   Widget build(BuildContext context) {
@@ -73,12 +77,7 @@ class DecorateDropDown extends StatelessWidget {
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(cornersRadiusConst),
           color: Colors.white),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-        child: DropdownButtonHideUnderline(
-          child: dropDown,
-        ),
-      ),
+      child: dropDown,
     );
   }
 }

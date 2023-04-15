@@ -47,5 +47,14 @@
   "quantityOfInventory": "Quantity",
   "unitOfInventory": "Unit",
   "priceOfInventory": "Price",
-  "addProductToDocument": "Add product"
+  "addProductToDocument": "Add product",
+  "removeProductFromDocument": "Delete product",
+  "discountsAndTaxes": "Discounts and taxes",
+  "totalDocPriceBefore": "Total before",
+  "discountOrTax": "Discount or taxes",
+  "totalDocPriceAfter": "Total after",
+  "paymentMethods": "Payment methods",
+  "paidAmount": "Paid",
+  "restOfAmount": "The rest",
+  "sendDocument": "Send"
 }

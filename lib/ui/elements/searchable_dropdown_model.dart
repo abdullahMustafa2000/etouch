@@ -1,4 +1,4 @@
-import 'package:etouch/businessLogic/classes/inventory_item_selection_model.dart';
+import 'package:etouch/businessLogic/classes/e_invoice_item_selection_model.dart';
 import 'package:etouch/main.dart';
 import 'package:etouch/ui/constants.dart';
 import 'package:etouch/ui/elements/dropdown_model.dart';
@@ -9,17 +9,17 @@ class SearchDropdownMenuModel extends StatelessWidget {
   SearchDropdownMenuModel(
       {Key? key, required this.dataList, required this.selectVal})
       : super(key: key);
-  List<InventoryItemSelectionModel> dataList;
+  List<EInvoiceDocItemSelectionModel>? dataList;
   Function selectVal;
   @override
   Widget build(BuildContext context) {
     return DecorateDropDown(
-      dropDown: DropdownSearch<InventoryItemSelectionModel>(
-        itemAsString: (InventoryItemSelectionModel? item) => item!.getName,
+      dropDown: DropdownSearch<EInvoiceDocItemSelectionModel>(
+        itemAsString: (EInvoiceDocItemSelectionModel? item) => item!.getName,
         mode: Mode.MENU,
         showSelectedItems: true,
-        compareFn: (InventoryItemSelectionModel? item,
-            InventoryItemSelectionModel? selected) {
+        compareFn: (EInvoiceDocItemSelectionModel? item,
+            EInvoiceDocItemSelectionModel? selected) {
           return item?.getName == selected?.getName;
         },
         items: dataList,
@@ -38,7 +38,7 @@ class SearchDropdownMenuModel extends StatelessWidget {
                 BorderSide(color: Theme.of(context).primaryColor, width: 1),
           ),
         ),
-        onChanged: (InventoryItemSelectionModel? val) {
+        onChanged: (EInvoiceDocItemSelectionModel? val) {
           selectVal(val);
         },
         showSearchBox: true,
