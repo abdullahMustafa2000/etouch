@@ -18,25 +18,30 @@ class ProductCreationModel extends StatefulWidget {
     required this.productPrice,
     required this.isPriceEditable,
     required this.hasGroups,
-    required this.selectedGroup,
-    required this.selectedProduct,
-    required this.selectedUnit,
-    required this.selectedQuantity,
-    required this.selectedPrice,
-    required this.onDeleteItemClicked,
+    required this.selectedGroupFun,
+    required this.selectedProductFun,
+    required this.selectedUnitFun,
+    required this.selectedQuantityFun,
+    required this.selectedPriceFun,
+    required this.onDeleteItemClickedFun,
     required this.moreThanOneItem,
+    required this.selectedGroupVal,
+    required this.selectedProductVal,
+    required this.selectedUnitVal, required this.selectedQuantityVal,
   }) : super(key: key);
-  int balance;
+  int balance, selectedQuantityVal;
   bool isPriceEditable, hasGroups, moreThanOneItem;
   double productPrice;
   List<EInvoiceDocItemSelectionModel>? groupsList, productsList, unitsList;
-  Function selectedGroup,
-      selectedProduct,
-      selectedUnit,
-      selectedQuantity,
-      selectedPrice,
-      onDeleteItemClicked;
-
+  Function selectedGroupFun,
+      selectedProductFun,
+      selectedUnitFun,
+      selectedQuantityFun,
+      selectedPriceFun,
+      onDeleteItemClickedFun;
+  EInvoiceDocItemSelectionModel? selectedGroupVal,
+      selectedProductVal,
+      selectedUnitVal;
   @override
   State<ProductCreationModel> createState() => _ProductCreationModelState();
 }
@@ -44,11 +49,18 @@ class ProductCreationModel extends StatefulWidget {
 class _ProductCreationModelState extends State<ProductCreationModel> {
   double _totalPrice = 0.0, _prodPrice = 0.0;
   int _quantity = 0;
+  EInvoiceDocItemSelectionModel? _selectedGroupVal,
+      _selectedProductVal,
+      _selectedUnitVal;
   final ScrollController _controller = ScrollController();
   @override
   void initState() {
     super.initState();
     _prodPrice = widget.productPrice;
+    _selectedGroupVal = widget.selectedGroupVal;
+    _selectedProductVal = widget.selectedProductVal;
+    _selectedUnitVal = widget.selectedUnitVal;
+    _quantity = widget.selectedQuantityVal;
   }
 
   void updateTotalPrice(int quantity, double price) {
@@ -59,6 +71,7 @@ class _ProductCreationModelState extends State<ProductCreationModel> {
 
   @override
   Widget build(BuildContext context) {
+    updateTotalPrice(_quantity, _prodPrice);
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 24),
       margin: const EdgeInsets.only(right: 20),
@@ -84,8 +97,10 @@ class _ProductCreationModelState extends State<ProductCreationModel> {
                   child: SearchDropdownMenuModel(
                     dataList: widget.groupsList,
                     selectVal: (EInvoiceDocItemSelectionModel? val) {
-                      widget.selectedGroup(val);
+                      widget.selectedGroupFun(val);
                     },
+                    selectedItem: _selectedGroupVal,
+                    hasBorders: true,
                   ),
                 ),
               ),
@@ -94,8 +109,10 @@ class _ProductCreationModelState extends State<ProductCreationModel> {
                 child: SearchDropdownMenuModel(
                   dataList: widget.productsList,
                   selectVal: (EInvoiceDocItemSelectionModel? val) {
-                    widget.selectedProduct(val);
+                    widget.selectedProductFun(val);
                   },
+                  selectedItem: _selectedProductVal,
+                  hasBorders: true,
                 ),
               ),
               InputTypeRow(
@@ -107,10 +124,10 @@ class _ProductCreationModelState extends State<ProductCreationModel> {
               InputTypeRow(
                 label: appTxt(context).quantityOfInventory,
                 child: EditableInputData(
-                    data: 0,
-                    hasInitValue: false,
+                    data: _quantity.toString(),
+                    hasInitValue: true,
                     onChange: (String? val, bool isEmpty) {
-                      widget.selectedQuantity(val);
+                      widget.selectedQuantityFun(isEmpty ? '0' : val);
                       _quantity = !isEmpty ? int.parse(val!) : 0;
                       updateTotalPrice(_quantity, _prodPrice);
                     }),
@@ -120,19 +137,21 @@ class _ProductCreationModelState extends State<ProductCreationModel> {
                 child: SearchDropdownMenuModel(
                   dataList: widget.unitsList,
                   selectVal: (EInvoiceDocItemSelectionModel? val) {
-                    widget.selectedUnit(val);
+                    widget.selectedUnitFun(val);
                   },
+                  selectedItem: _selectedUnitVal,
+                  hasBorders: true,
                 ),
               ),
               InputTypeRow(
                 label: appTxt(context).priceOfInventory,
                 child: widget.isPriceEditable
                     ? EditableInputData(
-                        data: widget.productPrice,
+                        data: widget.productPrice.toString(),
                         hasInitValue: true,
                         onChange: (String? val, bool isEmpty) {
-                          _prodPrice = double.parse(val!);
-                          widget.selectedPrice(val);
+                          _prodPrice = double.parse(isEmpty ? '0.0' : val!);
+                          widget.selectedPriceFun(isEmpty ? '0' : val);
                           updateTotalPrice(
                               _quantity, !isEmpty ? _prodPrice : 0.0);
                         })
@@ -166,7 +185,7 @@ class _ProductCreationModelState extends State<ProductCreationModel> {
                       ),
                       color: closeColor,
                       onPressed: () {
-                        widget.onDeleteItemClicked();
+                        widget.onDeleteItemClickedFun();
                       },
                     ),
                   ),

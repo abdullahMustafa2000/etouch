@@ -15,7 +15,7 @@ class DocumentNumbers extends StatefulWidget {
       required this.paymentMethods,
       required this.selectedPaymentMethod,
       required this.percentDiscountOrTax});
-  List<EInvoiceDocItemSelectionModel> taxesList, paymentMethods;
+  List<EInvoiceDocItemSelectionModel>? taxesList, paymentMethods;
   Function selectedTax, selectedPaymentMethod;
   EInvoiceDocItemSelectionModel taxVal;
   bool addToPrice, percentDiscountOrTax;
@@ -93,7 +93,7 @@ class CashesWidget extends StatefulWidget {
       {required this.paymentMethods,
       required this.selectedMethod,
       required this.totalOrderPrice});
-  List<EInvoiceDocItemSelectionModel> paymentMethods;
+  List<EInvoiceDocItemSelectionModel>? paymentMethods;
   Function selectedMethod;
   double totalOrderPrice;
 
@@ -128,12 +128,14 @@ class _CashesWidgetState extends State<CashesWidget> {
                 selectVal: (EInvoiceDocItemSelectionModel? val) {
                   widget.selectedMethod(val);
                 },
+                selectedItem: null,
+                hasBorders: true,
               ),
             ),
             PaidCashesWidget(
               data: appTxt(context).paidAmount,
               content: EditableInputData(
-                  data: 0.0,
+                  data: '0.0',
                   onChange: (String? val, bool isEmpty) {
                     calcRestMoney(isEmpty ? '0.0' : val!);
                   },
@@ -191,7 +193,7 @@ class PaidCashesWidget extends StatelessWidget {
 }
 
 class DiscountsAndTaxes extends StatelessWidget {
-  List<EInvoiceDocItemSelectionModel> taxesTypesList;
+  List<EInvoiceDocItemSelectionModel>? taxesTypesList;
   Function selectedTax;
   EInvoiceDocItemSelectionModel taxVal;
   @override
@@ -210,6 +212,8 @@ class DiscountsAndTaxes extends StatelessWidget {
               selectVal: (EInvoiceDocItemSelectionModel? val) {
                 selectedTax(val);
               },
+              selectedItem: null,
+              hasBorders: true,
             ),
           ),
           Text(

@@ -10,7 +10,7 @@ class DropDownMenuModel extends StatefulWidget {
       required this.defValue,
       required this.selectedVal})
       : super(key: key);
-  List<EInvoiceDocItemSelectionModel> dataList;
+  List<EInvoiceDocItemSelectionModel>? dataList;
   EInvoiceDocItemSelectionModel defValue;
   Function selectedVal;
   @override
@@ -27,8 +27,6 @@ class _DropDownMenuModelState extends State<DropDownMenuModel> {
 
   @override
   Widget build(BuildContext context) {
-    print(
-        ('$_curValue ${widget.dataList.first} = ${_curValue == widget.dataList.first}'));
     return DecorateDropDown(
       dropDown: DropdownButtonHideUnderline(
         child: DropdownButton<EInvoiceDocItemSelectionModel>(
@@ -45,7 +43,7 @@ class _DropDownMenuModelState extends State<DropDownMenuModel> {
               .textTheme
               .labelMedium!
               .copyWith(color: Colors.black),
-          items: widget.dataList
+          items: (widget.dataList ?? [])
               .map<DropdownMenuItem<EInvoiceDocItemSelectionModel>>(
             (EInvoiceDocItemSelectionModel item) {
               return DropdownMenuItem<EInvoiceDocItemSelectionModel>(

@@ -11,7 +11,7 @@ class EditableInputData extends StatefulWidget {
         required this.onChange,
         required this.hasInitValue})
       : super(key: key);
-  double data;
+  String data;
   Function onChange;
   bool hasInitValue;
   @override
@@ -25,7 +25,7 @@ class _EditableInputDataState extends State<EditableInputData> {
     super.initState();
     if (widget.hasInitValue) {
       setState(() {
-        _controller.text = widget.data.toString();
+        _controller.text = widget.data;
       });
     }
   }
