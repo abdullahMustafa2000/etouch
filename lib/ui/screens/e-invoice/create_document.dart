@@ -12,15 +12,19 @@ class CreateEInvoiceDocumentScreen extends StatefulWidget {
   CreateEInvoiceDocumentScreen({Key? key}) : super(key: key);
 
   @override
-  State<CreateEInvoiceDocumentScreen> createState() => _CreateEInvoiceDocumentScreenState();
+  State<CreateEInvoiceDocumentScreen> createState() =>
+      _CreateEInvoiceDocumentScreenState();
 }
 
-class _CreateEInvoiceDocumentScreenState extends State<CreateEInvoiceDocumentScreen> {
+class _CreateEInvoiceDocumentScreenState
+    extends State<CreateEInvoiceDocumentScreen> {
   EInvoiceDocItemSelectionModel? selectedWarehouse,
       selectedCurrency,
       selectedTreasury,
       selectedBranch,
-      selectedCustomer, selectedTax, selectedPaymentMethod;
+      selectedCustomer,
+      selectedTax,
+      selectedPaymentMethod;
   late int orderId;
   List<EInvoiceDocItemSelectionModel>? branchesList,
       warehousesList,
@@ -30,44 +34,37 @@ class _CreateEInvoiceDocumentScreenState extends State<CreateEInvoiceDocumentScr
       paymentMethodsList,
       taxesList;
 
-  @override
-  void initState() {
-    super.initState();
-    branchesList = [
+  void _whenBranchSelected(int branchId) {
+    updateCustomers(branchId);
+    updateWarehouses(branchId);
+    updateTreasuries(branchId);
+  }
+
+  Future<List<EInvoiceDocItemSelectionModel>> _getBranches() async {
+    await Future.delayed(const Duration(milliseconds: 1000));
+    return [
       EInvoiceDocItemSelectionModel(id: 1, name: 'Branch1'),
       EInvoiceDocItemSelectionModel(id: 2, name: 'Branch2'),
       EInvoiceDocItemSelectionModel(id: 3, name: 'Branch3'),
     ];
-    warehousesList = [
-      EInvoiceDocItemSelectionModel(id: 1, name: 'Warehouse1'),
-      EInvoiceDocItemSelectionModel(id: 2, name: 'Warehouse2'),
-      EInvoiceDocItemSelectionModel(id: 3, name: 'Warehouse3'),
-    ];
-    currenciesList = [
+  }
+
+  Future<List<EInvoiceDocItemSelectionModel>> _getCurrencies() async {
+    await Future.delayed(const Duration(milliseconds: 1000));
+    return [
       EInvoiceDocItemSelectionModel(id: 1, name: 'Currency1'),
       EInvoiceDocItemSelectionModel(id: 2, name: 'Currency2'),
       EInvoiceDocItemSelectionModel(id: 3, name: 'Currency3'),
     ];
-    treasuriesList = [
-      EInvoiceDocItemSelectionModel(id: 1, name: 'Treasury1'),
-      EInvoiceDocItemSelectionModel(id: 2, name: 'Treasury2'),
-      EInvoiceDocItemSelectionModel(id: 3, name: 'Treasury3'),
-    ];
-    customersList = [
-      EInvoiceDocItemSelectionModel(id: 1, name: 'Customer1'),
-      EInvoiceDocItemSelectionModel(id: 2, name: 'Customer2'),
-      EInvoiceDocItemSelectionModel(id: 3, name: 'Customer3'),
-    ];
-    paymentMethodsList = [
-      EInvoiceDocItemSelectionModel(id: 1, name: 'Payment1'),
-      EInvoiceDocItemSelectionModel(id: 2, name: 'Payment2'),
-      EInvoiceDocItemSelectionModel(id: 3, name: 'Payment3'),
-    ];
-    taxesList = [
-      EInvoiceDocItemSelectionModel(id: 1, name: 'Tax1'),
-      EInvoiceDocItemSelectionModel(id: 2, name: 'Tax2'),
-      EInvoiceDocItemSelectionModel(id: 3, name: 'Tax3'),
-    ];
+  }
+
+  late Future<List<EInvoiceDocItemSelectionModel>> _branches, _currencies;
+
+  @override
+  void initState() {
+    super.initState();
+    _branches = _getBranches();
+    _currencies = _getCurrencies();
     orderId = 1000;
   }
 
@@ -78,102 +75,153 @@ class _CreateEInvoiceDocumentScreenState extends State<CreateEInvoiceDocumentScr
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
-          child: Column(
-            children: [
-              // customers, treasury, inventory, etc...
-              OrderPreRequirementsWidget(
-                inventoriesList: warehousesList,
-                currenciesList: currenciesList,
-                treasuriesList: treasuriesList,
-                branchesList: branchesList,
-                customersList: customersList,
-                selectedWarehouseFun: (EInvoiceDocItemSelectionModel? val) {
-                  setState(() {
-                    selectedWarehouse = val;
-                  });
-                },
-                selectedCurrencyFun: (EInvoiceDocItemSelectionModel? val) {
-                  setState(() {
-                    selectedCurrency = val;
-                  });
-                },
-                selectedTreasuryFun: (EInvoiceDocItemSelectionModel? val) {
-                  setState(() {
-                    selectedTreasury = val;
-                  });
-                },
-                selectedBranchFun: (EInvoiceDocItemSelectionModel? val) {
-                  setState(() {
-                    selectedBranch = val;
-                  });
-                },
-                selectedCustomerFun: (EInvoiceDocItemSelectionModel? val) {
-                  setState(() {
-                    selectedCustomer = val;
-                  });
-                },
-                selectedCustomer: selectedCustomer,
-                selectedBranch: selectedBranch,
-                selectedCurrency: selectedCurrency,
-                selectedTreasury: selectedTreasury,
-                selectedWarehouse: selectedWarehouse,
-                orderNumber: orderId,
-              ),
-              // divider,
-
-              const SizedBox(
-                height: 8,
-              ),
-              // add product details object
-              ProductsSelectionWidget(
-                branchId: selectedBranch?.getId ?? -1,
-                warehouseId: selectedWarehouse?.getId ?? -1,
-              ),
-              const SizedBox(
-                height: 24,
-              ),
-
-              DocumentNumbers(
-                taxesList: taxesList,
-                selectedTax: (EInvoiceDocItemSelectionModel? val) {
-                  setState(() {
-                    selectedTax = val;
-                  });
-                },
-                taxVal: EInvoiceDocItemSelectionModel(id: 12, name: 'PRODUCT'),
-                totalDocPrice: 1000,
-                addToPrice: true,
-                paymentMethods: paymentMethodsList,
-                selectedPaymentMethod: (EInvoiceDocItemSelectionModel? val) {
-                  setState(() {
-                    selectedPaymentMethod = val;
-                  });
-                },
-                percentDiscountOrTax: true,
-              ),
-              const SizedBox(
-                height: 24,
-              ),
-              SizedBox(
-                width: double.infinity,
-                child: PrimaryClrBtnModel(
-                    content: Text(
-                      appTxt(context).sendDocument,
-                      style: txtTheme(context)
-                          .titleLarge!
-                          .copyWith(color: appTheme(context).primaryColorDark),
+          child: FutureBuilder(
+            future: Future.wait([_branches, _currencies]),
+            builder: (context,
+                AsyncSnapshot<List<List<EInvoiceDocItemSelectionModel>>> snap) {
+              if (snap.hasData) {
+                return Column(
+                  children: [
+                    // customers, treasury, inventory, etc...
+                    OrderPreRequirementsWidget(
+                      inventoriesList: warehousesList,
+                      currenciesList: snap.data?[1],
+                      treasuriesList: treasuriesList,
+                      branchesList: snap.data?.first,
+                      customersList: customersList,
+                      selectedWarehouseFun:
+                          (EInvoiceDocItemSelectionModel? val) {
+                        setState(() {
+                          selectedWarehouse = val;
+                        });
+                      },
+                      selectedCurrencyFun:
+                          (EInvoiceDocItemSelectionModel? val) {
+                        setState(() {
+                          selectedCurrency = val;
+                        });
+                      },
+                      selectedTreasuryFun:
+                          (EInvoiceDocItemSelectionModel? val) {
+                        setState(() {
+                          selectedTreasury = val;
+                        });
+                      },
+                      selectedBranchFun: (EInvoiceDocItemSelectionModel? val) {
+                        setState(() {
+                          selectedBranch = val;
+                          _whenBranchSelected(val!.getId);
+                        });
+                      },
+                      selectedCustomerFun:
+                          (EInvoiceDocItemSelectionModel? val) {
+                        setState(() {
+                          selectedCustomer = val;
+                        });
+                      },
+                      selectedCustomer: selectedCustomer,
+                      selectedBranch: selectedBranch,
+                      selectedCurrency: selectedCurrency,
+                      selectedTreasury: selectedTreasury,
+                      selectedWarehouse: selectedWarehouse,
+                      orderNumber: orderId,
                     ),
-                    onPressed: () {},
-                    color: appTheme(context).primaryColor),
-              ),
-              const SizedBox(
-                height: 24,
-              ),
-            ],
+                    // divider,
+
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    // add product details object
+                    ProductsSelectionWidget(
+                      branchId: selectedBranch?.getId ?? -1,
+                      warehouseId: selectedWarehouse?.getId ?? -1,
+                    ),
+                    const SizedBox(
+                      height: 24,
+                    ),
+
+                    DocumentNumbers(
+                      taxesList: taxesList,
+                      selectedTax: (EInvoiceDocItemSelectionModel? val) {
+                        setState(() {
+                          selectedTax = val;
+                        });
+                      },
+                      taxVal: EInvoiceDocItemSelectionModel(
+                          id: 12, name: 'PRODUCT'),
+                      totalDocPrice: 1000,
+                      addToPrice: true,
+                      paymentMethods: paymentMethodsList,
+                      selectedPaymentMethod:
+                          (EInvoiceDocItemSelectionModel? val) {
+                        setState(() {
+                          selectedPaymentMethod = val;
+                        });
+                      },
+                      percentDiscountOrTax: true,
+                    ),
+                    const SizedBox(
+                      height: 24,
+                    ),
+                    SizedBox(
+                      width: double.infinity,
+                      child: PrimaryClrBtnModel(
+                          content: Text(
+                            appTxt(context).sendDocument,
+                            style: txtTheme(context).titleLarge!.copyWith(
+                                color: appTheme(context).primaryColorDark),
+                          ),
+                          onPressed: () {},
+                          color: appTheme(context).primaryColor),
+                    ),
+                    const SizedBox(
+                      height: 24,
+                    ),
+                  ],
+                );
+              } else if (snap.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else {
+                return Center(
+                  child: Text(
+                    'Check Internet connection!',
+                    style: txtTheme(context)
+                        .displayLarge!
+                        .copyWith(color: appTheme(context).primaryColor),
+                  ),
+                );
+              }
+            },
           ),
         ),
       ),
     );
+  }
+
+  void updateCustomers(int branchId) {
+    customersList = [
+      EInvoiceDocItemSelectionModel(id: 1, name: 'Customer1'),
+      EInvoiceDocItemSelectionModel(id: 2, name: 'Customer2'),
+      EInvoiceDocItemSelectionModel(id: 3, name: 'Customer3'),
+    ];
+  }
+
+  void updateWarehouses(int branchId) {
+    warehousesList = [
+      EInvoiceDocItemSelectionModel(id: 1, name: 'Warehouse1'),
+      EInvoiceDocItemSelectionModel(id: 2, name: 'Warehouse2'),
+      EInvoiceDocItemSelectionModel(id: 3, name: 'Warehouse3'),
+    ];
+  }
+
+  void updateTreasuries(int branchId) {
+    treasuriesList = [
+      EInvoiceDocItemSelectionModel(id: 1, name: 'Treasury1'),
+      EInvoiceDocItemSelectionModel(id: 2, name: 'Treasury2'),
+      EInvoiceDocItemSelectionModel(id: 3, name: 'Treasury3'),
+    ];
   }
 }
 
@@ -217,7 +265,9 @@ class AddProductWidget extends StatelessWidget {
 }
 
 class ProductsSelectionWidget extends StatefulWidget {
-  ProductsSelectionWidget({Key? key, required this.branchId, required this.warehouseId}) : super(key: key);
+  ProductsSelectionWidget(
+      {Key? key, required this.branchId, required this.warehouseId})
+      : super(key: key);
   int? branchId, warehouseId;
   @override
   State<ProductsSelectionWidget> createState() =>
@@ -227,38 +277,17 @@ class ProductsSelectionWidget extends StatefulWidget {
 class _ProductsSelectionWidgetState extends State<ProductsSelectionWidget> {
   late PageController _controller;
   late List<ProductModel> productsList;
+  late List<EInvoiceDocItemSelectionModel>? groupsList;
   int _counter = 1;
   @override
   void initState() {
     super.initState();
     _controller = PageController(viewportFraction: .8);
     productsList = [
-      ProductModel(
-          EInvoiceDocItemSelectionModel(name: 'Group1', id: 1),
-          EInvoiceDocItemSelectionModel(name: 'Product1', id: 1),
-          EInvoiceDocItemSelectionModel(name: 'Meter', id: 1),
-          10,
-          20,
-          100,
-          false),
-      ProductModel(
-          EInvoiceDocItemSelectionModel(name: 'Group2', id: 2),
-          EInvoiceDocItemSelectionModel(name: 'Product2', id: 2),
-          EInvoiceDocItemSelectionModel(name: 'Kilo', id: 2),
-          100,
-          200,
-          1000,
-          true),
-      ProductModel(
-          EInvoiceDocItemSelectionModel(name: 'Group1', id: 1),
-          EInvoiceDocItemSelectionModel(name: 'Product1', id: 1),
-          EInvoiceDocItemSelectionModel(name: 'Meter', id: 1),
-          1000,
-          2000,
-          10000,
-          false),
+      ProductModel(null, null, null, null, null, null, false, 0, '')
     ];
-    _counter = productsList.length - 1;
+    groupsList = [];
+    _counter = 1;
   }
 
   @override
@@ -280,8 +309,8 @@ class _ProductsSelectionWidgetState extends State<ProductsSelectionWidget> {
           onAddClk: () {
             setState(() {
               _counter++;
-              productsList
-                  .add(ProductModel(null, null, null, null, null, null, false));
+              productsList.add(ProductModel(
+                  null, null, null, null, null, null, false, 0, ''));
               animateTo(_counter - 1, _controller);
             });
           },
@@ -297,24 +326,13 @@ class _ProductsSelectionWidgetState extends State<ProductsSelectionWidget> {
             itemCount: productsList.length,
             itemBuilder: (context, index) {
               return productsList[index].isDeleted
-                  ? SizedBox()
+                  ? const SizedBox.shrink()
                   : SizedBox(
                       width: MediaQuery.of(context).size.width / 1.2,
                       child: ProductCreationModel(
-                        hasGroups: true,
-                        groupsList: [
-                          EInvoiceDocItemSelectionModel(name: 'Group1', id: 1),
-                          EInvoiceDocItemSelectionModel(name: 'Group2', id: 2),
-                          EInvoiceDocItemSelectionModel(name: 'Group3', id: 3),
-                        ],
-                        productsList: [
-                          EInvoiceDocItemSelectionModel(
-                              name: 'Product1', id: 1),
-                          EInvoiceDocItemSelectionModel(
-                              name: 'Product2', id: 2),
-                          EInvoiceDocItemSelectionModel(
-                              name: 'Product3', id: 3),
-                        ],
+                        hasGroups: groupsList != null,
+                        groupsList: groupsList,
+                        productsList: productsList,
                         unitsList: [
                           EInvoiceDocItemSelectionModel(name: 'Meter', id: 1),
                           EInvoiceDocItemSelectionModel(name: 'Kilo', id: 2),
@@ -369,3 +387,32 @@ class _ProductsSelectionWidgetState extends State<ProductsSelectionWidget> {
     );
   }
 }
+
+/*
+[
+      ProductModel(
+          EInvoiceDocItemSelectionModel(name: 'Group1', id: 1),
+          EInvoiceDocItemSelectionModel(name: 'Product1', id: 1),
+          EInvoiceDocItemSelectionModel(name: 'Meter', id: 1),
+          10,
+          20,
+          100,
+          false),
+      ProductModel(
+          EInvoiceDocItemSelectionModel(name: 'Group2', id: 2),
+          EInvoiceDocItemSelectionModel(name: 'Product2', id: 2),
+          EInvoiceDocItemSelectionModel(name: 'Kilo', id: 2),
+          100,
+          200,
+          1000,
+          true),
+      ProductModel(
+          EInvoiceDocItemSelectionModel(name: 'Group1', id: 1),
+          EInvoiceDocItemSelectionModel(name: 'Product1', id: 1),
+          EInvoiceDocItemSelectionModel(name: 'Meter', id: 1),
+          1000,
+          2000,
+          10000,
+          false),
+    ]
+ */

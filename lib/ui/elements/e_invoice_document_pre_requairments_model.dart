@@ -1,4 +1,4 @@
-import 'package:etouch/ui/elements/searchable_dropdown_model.dart';
+import 'package:etouch/ui/elements/dropdown_model.dart';
 import 'package:flutter/material.dart';
 
 import '../../businessLogic/classes/e_invoice_item_selection_model.dart';
@@ -252,11 +252,10 @@ class RequiredInfoDesign extends StatelessWidget {
           width: 8,
         ),
         Expanded(
-          child: SearchDropdownMenuModel(
-            selectedItem: selectedItem,
+          child: DropDownMenuModel(
+            defValue: dataList != null?dataList!.first:null,
             dataList: dataList,
-            hasBorders: false,
-            selectVal: (EInvoiceDocItemSelectionModel? val) {
+            selectedVal: (EInvoiceDocItemSelectionModel? val) {
               selectedVal(val);
             }, /*AppLocalizations.of(context)!.chooseFromDropDownTxt*/
           ),

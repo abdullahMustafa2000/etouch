@@ -129,7 +129,6 @@ class _CashesWidgetState extends State<CashesWidget> {
                   widget.selectedMethod(val);
                 },
                 selectedItem: null,
-                hasBorders: true,
               ),
             ),
             PaidCashesWidget(
@@ -213,7 +212,6 @@ class DiscountsAndTaxes extends StatelessWidget {
                 selectedTax(val);
               },
               selectedItem: null,
-              hasBorders: true,
             ),
           ),
           Text(

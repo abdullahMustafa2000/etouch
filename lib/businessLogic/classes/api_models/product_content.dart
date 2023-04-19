@@ -1,13 +1,13 @@
 import 'package:etouch/businessLogic/classes/e_invoice_item_selection_model.dart';
 
-class ProductModel {
+class ProductModel extends EInvoiceDocItemSelectionModel {
   EInvoiceDocItemSelectionModel? group;
   EInvoiceDocItemSelectionModel? product, unit;
   int? balance, quantity;
   double? price;
   bool isDeleted;
   ProductModel(this.group, this.product, this.unit, this.balance, this.quantity,
-      this.price, this.isDeleted);
+      this.price, this.isDeleted, int id, String name) : super(id: id, name: name);
 
   @override
   String toString() {

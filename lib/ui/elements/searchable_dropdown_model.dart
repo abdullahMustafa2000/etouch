@@ -10,25 +10,17 @@ class SearchDropdownMenuModel extends StatefulWidget {
       {Key? key,
       required this.dataList,
       required this.selectVal,
-      required this.selectedItem,
-      required this.hasBorders})
+      required this.selectedItem})
       : super(key: key);
   List<EInvoiceDocItemSelectionModel>? dataList;
   Function selectVal;
   EInvoiceDocItemSelectionModel? selectedItem;
-  bool hasBorders;
   @override
   State<SearchDropdownMenuModel> createState() =>
       _SearchDropdownMenuModelState();
 }
 
 class _SearchDropdownMenuModelState extends State<SearchDropdownMenuModel> {
-  late bool _hasBorder;
-  @override
-  void initState() {
-    super.initState();
-    _hasBorder = widget.hasBorders;
-  }
   @override
   Widget build(BuildContext context) {
     return DecorateDropDown(
@@ -43,18 +35,18 @@ class _SearchDropdownMenuModelState extends State<SearchDropdownMenuModel> {
         },
         items: widget.dataList,
         dropdownSearchDecoration: InputDecoration(
-          filled: _hasBorder,
+          filled: true,
           fillColor: appTheme(context).primaryColorDark,
           hintText: appTxt(context).searchHint,
           suffixIcon: const Icon(Icons.keyboard_arrow_down_sharp),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(cornersRadiusConst),
             borderSide:
-                _hasBorder? BorderSide(color: appTheme(context).primaryColor, width: 1): const BorderSide(width: 0),
+                BorderSide(color: appTheme(context).primaryColor, width: 1),
           ),
           focusedBorder: OutlineInputBorder(
             borderSide:
-                _hasBorder? BorderSide(color: Theme.of(context).primaryColor, width: 1):const BorderSide(width: 0),
+                BorderSide(color: Theme.of(context).primaryColor, width: 1),
           ),
         ),
         onChanged: (EInvoiceDocItemSelectionModel? val) {

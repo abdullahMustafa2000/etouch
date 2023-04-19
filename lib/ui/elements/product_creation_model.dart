@@ -1,3 +1,4 @@
+import 'package:etouch/businessLogic/classes/api_models/product_content.dart';
 import 'package:etouch/main.dart';
 import 'package:etouch/ui/constants.dart';
 import 'package:etouch/ui/elements/searchable_dropdown_model.dart';
@@ -32,7 +33,8 @@ class ProductCreationModel extends StatefulWidget {
   int balance, selectedQuantityVal;
   bool isPriceEditable, hasGroups, moreThanOneItem;
   double productPrice;
-  List<EInvoiceDocItemSelectionModel>? groupsList, productsList, unitsList;
+  List<EInvoiceDocItemSelectionModel>? groupsList, unitsList;
+  List<ProductModel>? productsList;
   Function selectedGroupFun,
       selectedProductFun,
       selectedUnitFun,
@@ -100,7 +102,6 @@ class _ProductCreationModelState extends State<ProductCreationModel> {
                       widget.selectedGroupFun(val);
                     },
                     selectedItem: _selectedGroupVal,
-                    hasBorders: true,
                   ),
                 ),
               ),
@@ -112,7 +113,6 @@ class _ProductCreationModelState extends State<ProductCreationModel> {
                     widget.selectedProductFun(val);
                   },
                   selectedItem: _selectedProductVal,
-                  hasBorders: true,
                 ),
               ),
               InputTypeRow(
@@ -140,7 +140,6 @@ class _ProductCreationModelState extends State<ProductCreationModel> {
                     widget.selectedUnitFun(val);
                   },
                   selectedItem: _selectedUnitVal,
-                  hasBorders: true,
                 ),
               ),
               InputTypeRow(
