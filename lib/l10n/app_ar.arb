@@ -57,6 +57,8 @@
   "paymentMethods": "طرق الدفع",
   "paidAmount": "المدفوع",
   "restOfAmount": "الباقي",
-  "sendDocument": "إرسال"
+  "sendDocument": "إرسال",
+  "checkInternetMessage": "تفقد الاتصال بالانترنت",
+  "missingDataWarning": "بعض المعلومات مفقوده"
 
 }

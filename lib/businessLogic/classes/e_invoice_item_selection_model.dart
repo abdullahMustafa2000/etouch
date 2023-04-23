@@ -1,5 +1,5 @@
-class EInvoiceDocItemSelectionModel {
-  EInvoiceDocItemSelectionModel({required this.id, required this.name});
+class BaseAPIObject {
+  BaseAPIObject({required this.id, required this.name});
   String name;
   int id;
   set setId(int comingId) {

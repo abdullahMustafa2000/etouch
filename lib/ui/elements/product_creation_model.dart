@@ -10,38 +10,41 @@ import 'primary_btn_model.dart';
 import 'uneditable_data.dart';
 
 class ProductCreationModel extends StatefulWidget {
-  ProductCreationModel({
-    Key? key,
-    required this.groupsList,
-    required this.productsList,
-    required this.unitsList,
-    required this.balance,
-    required this.productPrice,
-    required this.isPriceEditable,
-    required this.hasGroups,
-    required this.selectedGroupFun,
-    required this.selectedProductFun,
-    required this.selectedUnitFun,
-    required this.selectedQuantityFun,
-    required this.selectedPriceFun,
-    required this.onDeleteItemClickedFun,
-    required this.moreThanOneItem,
-    required this.selectedGroupVal,
-    required this.selectedProductVal,
-    required this.selectedUnitVal, required this.selectedQuantityVal,
-  }) : super(key: key);
+  ProductCreationModel(
+      {Key? key,
+      required this.groupsList,
+      required this.productsList,
+      required this.unitsList,
+      required this.balance,
+      required this.productPrice,
+      required this.isPriceEditable,
+      required this.hasGroups,
+      required this.selectedGroupFun,
+      required this.selectedProductFun,
+      required this.selectedUnitFun,
+      required this.selectedQuantityFun,
+      required this.selectedPriceFun,
+      required this.onDeleteItemClickedFun,
+      required this.moreThanOneItem,
+      required this.selectedGroupVal,
+      required this.selectedProductVal,
+      required this.selectedUnitVal,
+      required this.selectedQuantityVal,
+      required this.totalProductPrice})
+      : super(key: key);
   int balance, selectedQuantityVal;
   bool isPriceEditable, hasGroups, moreThanOneItem;
   double productPrice;
-  List<EInvoiceDocItemSelectionModel>? groupsList, unitsList;
+  List<BaseAPIObject>? groupsList, unitsList;
   List<ProductModel>? productsList;
   Function selectedGroupFun,
       selectedProductFun,
       selectedUnitFun,
       selectedQuantityFun,
       selectedPriceFun,
-      onDeleteItemClickedFun;
-  EInvoiceDocItemSelectionModel? selectedGroupVal,
+      onDeleteItemClickedFun,
+      totalProductPrice;
+  BaseAPIObject? selectedGroupVal,
       selectedProductVal,
       selectedUnitVal;
   @override
@@ -51,7 +54,7 @@ class ProductCreationModel extends StatefulWidget {
 class _ProductCreationModelState extends State<ProductCreationModel> {
   double _totalPrice = 0.0, _prodPrice = 0.0;
   int _quantity = 0;
-  EInvoiceDocItemSelectionModel? _selectedGroupVal,
+  BaseAPIObject? _selectedGroupVal,
       _selectedProductVal,
       _selectedUnitVal;
   final ScrollController _controller = ScrollController();
@@ -69,11 +72,11 @@ class _ProductCreationModelState extends State<ProductCreationModel> {
     setState(() {
       _totalPrice = quantity * price;
     });
+    widget.totalProductPrice(_totalPrice);
   }
 
   @override
   Widget build(BuildContext context) {
-    updateTotalPrice(_quantity, _prodPrice);
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 24),
       margin: const EdgeInsets.only(right: 20),
@@ -98,7 +101,7 @@ class _ProductCreationModelState extends State<ProductCreationModel> {
                   label: appTxt(context).groupOfInventory,
                   child: SearchDropdownMenuModel(
                     dataList: widget.groupsList,
-                    selectVal: (EInvoiceDocItemSelectionModel? val) {
+                    selectVal: (BaseAPIObject? val) {
                       widget.selectedGroupFun(val);
                     },
                     selectedItem: _selectedGroupVal,
@@ -109,7 +112,7 @@ class _ProductCreationModelState extends State<ProductCreationModel> {
                 label: appTxt(context).productsOfInventory,
                 child: SearchDropdownMenuModel(
                   dataList: widget.productsList,
-                  selectVal: (EInvoiceDocItemSelectionModel? val) {
+                  selectVal: (BaseAPIObject? val) {
                     widget.selectedProductFun(val);
                   },
                   selectedItem: _selectedProductVal,
@@ -136,7 +139,7 @@ class _ProductCreationModelState extends State<ProductCreationModel> {
                 label: appTxt(context).unitOfInventory,
                 child: SearchDropdownMenuModel(
                   dataList: widget.unitsList,
-                  selectVal: (EInvoiceDocItemSelectionModel? val) {
+                  selectVal: (BaseAPIObject? val) {
                     widget.selectedUnitFun(val);
                   },
                   selectedItem: _selectedUnitVal,

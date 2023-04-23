@@ -12,9 +12,9 @@ class SearchDropdownMenuModel extends StatefulWidget {
       required this.selectVal,
       required this.selectedItem})
       : super(key: key);
-  List<EInvoiceDocItemSelectionModel>? dataList;
+  List<BaseAPIObject>? dataList;
   Function selectVal;
-  EInvoiceDocItemSelectionModel? selectedItem;
+  BaseAPIObject? selectedItem;
   @override
   State<SearchDropdownMenuModel> createState() =>
       _SearchDropdownMenuModelState();
@@ -24,13 +24,13 @@ class _SearchDropdownMenuModelState extends State<SearchDropdownMenuModel> {
   @override
   Widget build(BuildContext context) {
     return DecorateDropDown(
-      dropDown: DropdownSearch<EInvoiceDocItemSelectionModel>(
+      dropDown: DropdownSearch<BaseAPIObject>(
         selectedItem: widget.selectedItem,
-        itemAsString: (EInvoiceDocItemSelectionModel? item) => item!.getName,
+        itemAsString: (BaseAPIObject? item) => item!.getName,
         mode: Mode.MENU,
         showSelectedItems: true,
-        compareFn: (EInvoiceDocItemSelectionModel? item,
-            EInvoiceDocItemSelectionModel? selected) {
+        compareFn: (BaseAPIObject? item,
+            BaseAPIObject? selected) {
           return item?.getName == selected?.getName;
         },
         items: widget.dataList,
@@ -49,7 +49,7 @@ class _SearchDropdownMenuModelState extends State<SearchDropdownMenuModel> {
                 BorderSide(color: Theme.of(context).primaryColor, width: 1),
           ),
         ),
-        onChanged: (EInvoiceDocItemSelectionModel? val) {
+        onChanged: (BaseAPIObject? val) {
           widget.selectVal(val);
           setState(() {
             widget.selectedItem = val;

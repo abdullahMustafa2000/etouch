@@ -1,10 +1,10 @@
 import 'package:etouch/ui/elements/dropdown_model.dart';
 import 'package:flutter/material.dart';
 
-import '../../businessLogic/classes/e_invoice_item_selection_model.dart';
-import '../../main.dart';
-import '../constants.dart';
-import '../themes/themes.dart';
+import '../../../businessLogic/classes/e_invoice_item_selection_model.dart';
+import '../../../main.dart';
+import '../../constants.dart';
+import '../../themes/themes.dart';
 
 class OrderPreRequirementsWidget extends StatelessWidget {
   OrderPreRequirementsWidget(
@@ -26,7 +26,7 @@ class OrderPreRequirementsWidget extends StatelessWidget {
       required this.selectedTreasury,
       required this.selectedCustomer})
       : super(key: key);
-  List<EInvoiceDocItemSelectionModel>? branchesList,
+  List<BaseAPIObject>? branchesList,
       inventoriesList,
       currenciesList,
       treasuriesList,
@@ -37,7 +37,7 @@ class OrderPreRequirementsWidget extends StatelessWidget {
       selectedTreasuryFun,
       selectedCustomerFun;
   int orderNumber;
-  EInvoiceDocItemSelectionModel? selectedCustomer,
+  BaseAPIObject? selectedCustomer,
       selectedBranch,
       selectedCurrency,
       selectedTreasury,
@@ -72,10 +72,10 @@ class OrderPreRequirementsWidget extends StatelessWidget {
             dataList1: branchesList,
             label2: appTxt(context).inventoryTxt,
             dataList2: inventoriesList,
-            selectedVal1: (EInvoiceDocItemSelectionModel? val1) {
+            selectedVal1: (BaseAPIObject? val1) {
               selectedBranchFun(val1);
             },
-            selectedVal2: (EInvoiceDocItemSelectionModel? val2) {
+            selectedVal2: (BaseAPIObject? val2) {
               selectedWarehouseFun(val2);
             },
             selectedItem1: selectedBranch,
@@ -89,10 +89,10 @@ class OrderPreRequirementsWidget extends StatelessWidget {
             dataList1: currenciesList,
             label2: appTxt(context).treasuryTxt,
             dataList2: treasuriesList,
-            selectedVal1: (EInvoiceDocItemSelectionModel? val1) {
+            selectedVal1: (BaseAPIObject? val1) {
               selectedCurrencyFun(val1);
             },
-            selectedVal2: (EInvoiceDocItemSelectionModel? val2) {
+            selectedVal2: (BaseAPIObject? val2) {
               selectedTreasuryFun(val2);
             },
             selectedItem1: selectedCurrency,
@@ -104,7 +104,7 @@ class OrderPreRequirementsWidget extends StatelessWidget {
           RequiredInfoDesign(
             label: appTxt(context).customerTxt,
             dataList: customersList,
-            selectedVal: (EInvoiceDocItemSelectionModel? val) {
+            selectedVal: (BaseAPIObject? val) {
               selectedCustomerFun(val);
             },
             selectedItem: selectedCustomer,
@@ -188,9 +188,9 @@ class PreRequirementsRow extends StatelessWidget {
       required this.selectedItem2})
       : super(key: key);
   String label1, label2;
-  List<EInvoiceDocItemSelectionModel>? dataList1, dataList2;
+  List<BaseAPIObject>? dataList1, dataList2;
   Function selectedVal1, selectedVal2;
-  EInvoiceDocItemSelectionModel? selectedItem1, selectedItem2;
+  BaseAPIObject? selectedItem1, selectedItem2;
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -200,7 +200,7 @@ class PreRequirementsRow extends StatelessWidget {
           child: RequiredInfoDesign(
             label: label1,
             dataList: dataList1,
-            selectedVal: (EInvoiceDocItemSelectionModel? val) {
+            selectedVal: (BaseAPIObject? val) {
               selectedVal1(val);
             },
             selectedItem: selectedItem1,
@@ -213,7 +213,7 @@ class PreRequirementsRow extends StatelessWidget {
           child: RequiredInfoDesign(
             label: label2,
             dataList: dataList2,
-            selectedVal: (EInvoiceDocItemSelectionModel? val) {
+            selectedVal: (BaseAPIObject? val) {
               selectedVal2(val);
             },
             selectedItem: selectedItem2,
@@ -233,9 +233,9 @@ class RequiredInfoDesign extends StatelessWidget {
       required this.selectedItem})
       : super(key: key);
   String label;
-  List<EInvoiceDocItemSelectionModel>? dataList;
+  List<BaseAPIObject>? dataList;
   Function selectedVal;
-  EInvoiceDocItemSelectionModel? selectedItem;
+  BaseAPIObject? selectedItem;
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -255,7 +255,7 @@ class RequiredInfoDesign extends StatelessWidget {
           child: DropDownMenuModel(
             defValue: dataList != null?dataList!.first:null,
             dataList: dataList,
-            selectedVal: (EInvoiceDocItemSelectionModel? val) {
+            selectedVal: (BaseAPIObject? val) {
               selectedVal(val);
             }, /*AppLocalizations.of(context)!.chooseFromDropDownTxt*/
           ),

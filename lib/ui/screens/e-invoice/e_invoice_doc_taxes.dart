@@ -1,24 +1,27 @@
+import 'package:etouch/businessLogic/classes/api_models/tax_of_document_model.dart';
 import 'package:etouch/main.dart';
 import 'package:etouch/ui/elements/editable_data.dart';
 import 'package:etouch/ui/elements/searchable_dropdown_model.dart';
 import 'package:flutter/material.dart';
-import '../../businessLogic/classes/e_invoice_item_selection_model.dart';
-import 'uneditable_data.dart';
+import '../../../businessLogic/classes/e_invoice_item_selection_model.dart';
+import '../../elements/uneditable_data.dart';
 
 class DocumentNumbers extends StatefulWidget {
-  DocumentNumbers(
-      {required this.taxesList,
-      required this.selectedTax,
-      required this.taxVal,
-      required this.totalDocPrice,
-      required this.addToPrice,
-      required this.paymentMethods,
-      required this.selectedPaymentMethod,
-      required this.percentDiscountOrTax});
-  List<EInvoiceDocItemSelectionModel>? taxesList, paymentMethods;
-  Function selectedTax, selectedPaymentMethod;
-  EInvoiceDocItemSelectionModel taxVal;
-  bool addToPrice, percentDiscountOrTax;
+  DocumentNumbers({
+    required this.taxesList,
+    required this.selectedTaxFun,
+    required this.totalDocPrice,
+    required this.paymentMethods,
+    required this.selectedPaymentMethodFun,
+    required this.selectedTaxVal,
+    required this.selectedPaymentMethodVal,
+    required this.paidAmountFun,
+  });
+  List<BaseAPIObject>? paymentMethods;
+  List<DocumentTaxesModel>? taxesList;
+  Function selectedTaxFun, selectedPaymentMethodFun, paidAmountFun;
+  DocumentTaxesModel? selectedTaxVal;
+  BaseAPIObject? selectedPaymentMethodVal;
   double totalDocPrice;
   @override
   State<DocumentNumbers> createState() => _DocumentNumbersState();
@@ -26,9 +29,16 @@ class DocumentNumbers extends StatefulWidget {
 
 class _DocumentNumbersState extends State<DocumentNumbers> {
   double _amount = 0.0;
+  DocumentTaxesModel? _selectedTax;
+  @override
+  void initState() {
+    _selectedTax = widget.selectedTaxVal;
+    super.initState();
+  }
 
   double calcTotalAfter(double amount) {
-    if (widget.addToPrice) {
+    if (_selectedTax == null) return 0.0;
+    if (_selectedTax!.addToPrice) {
       return widget.totalDocPrice + calcDiscountOrTax(amount);
     } else {
       return widget.totalDocPrice - calcDiscountOrTax(amount);
@@ -36,7 +46,7 @@ class _DocumentNumbersState extends State<DocumentNumbers> {
   }
 
   double calcDiscountOrTax(double amount) {
-    if (widget.percentDiscountOrTax) {
+    if (!_selectedTax!.fixedValue) {
       return widget.totalDocPrice / amount;
     } else {
       return amount;
@@ -53,13 +63,18 @@ class _DocumentNumbersState extends State<DocumentNumbers> {
             Expanded(
               child: DiscountsAndTaxes(
                 taxesTypesList: widget.taxesList,
-                selectedTax: (EInvoiceDocItemSelectionModel? val) {
-                  widget.selectedTax(val);
+                selectedTax: (BaseAPIObject? val) {
                   setState(() {
-                    _amount = val?.getId.toDouble() ?? 0.0;
+                    for (DocumentTaxesModel tax in widget.taxesList ?? []) {
+                      if (tax.getId == (val?.getId ?? 0)) {
+                        _amount = tax.valueOfTax;
+                        break;
+                      }
+                    }
                   });
+                  widget.selectedTaxFun(val, calcTotalAfter(_amount));
                 },
-                taxVal: widget.taxVal,
+                taxVal: _selectedTax,
               ),
             ),
             Expanded(
@@ -78,8 +93,11 @@ class _DocumentNumbersState extends State<DocumentNumbers> {
         ),
         CashesWidget(
           paymentMethods: widget.paymentMethods,
-          selectedMethod: (EInvoiceDocItemSelectionModel? val) {
-            widget.selectedPaymentMethod(val);
+          selectedMethod: (BaseAPIObject? val) {
+            widget.selectedPaymentMethodFun(val);
+          },
+          paidAmountFun: (double amount) {
+            widget.paidAmountFun(amount);
           },
           totalOrderPrice: widget.totalDocPrice,
         ),
@@ -92,9 +110,10 @@ class CashesWidget extends StatefulWidget {
   CashesWidget(
       {required this.paymentMethods,
       required this.selectedMethod,
-      required this.totalOrderPrice});
-  List<EInvoiceDocItemSelectionModel>? paymentMethods;
-  Function selectedMethod;
+      required this.totalOrderPrice,
+      required this.paidAmountFun});
+  List<BaseAPIObject>? paymentMethods;
+  Function selectedMethod, paidAmountFun;
   double totalOrderPrice;
 
   @override
@@ -106,7 +125,6 @@ class _CashesWidgetState extends State<CashesWidget> {
   @override
   void initState() {
     super.initState();
-    _restMoney = widget.totalOrderPrice;
   }
 
   void calcRestMoney(String typedAmount) {
@@ -117,6 +135,7 @@ class _CashesWidgetState extends State<CashesWidget> {
 
   @override
   Widget build(BuildContext context) {
+    _restMoney = widget.totalOrderPrice;
     return Column(
       children: [
         Row(
@@ -125,7 +144,7 @@ class _CashesWidgetState extends State<CashesWidget> {
               data: appTxt(context).paymentMethods,
               content: SearchDropdownMenuModel(
                 dataList: widget.paymentMethods,
-                selectVal: (EInvoiceDocItemSelectionModel? val) {
+                selectVal: (BaseAPIObject? val) {
                   widget.selectedMethod(val);
                 },
                 selectedItem: null,
@@ -137,6 +156,7 @@ class _CashesWidgetState extends State<CashesWidget> {
                   data: '0.0',
                   onChange: (String? val, bool isEmpty) {
                     calcRestMoney(isEmpty ? '0.0' : val!);
+                    widget.paidAmountFun(double.parse(val ?? '0'));
                   },
                   hasInitValue: true),
             ),
@@ -192,9 +212,9 @@ class PaidCashesWidget extends StatelessWidget {
 }
 
 class DiscountsAndTaxes extends StatelessWidget {
-  List<EInvoiceDocItemSelectionModel>? taxesTypesList;
+  List<BaseAPIObject>? taxesTypesList;
   Function selectedTax;
-  EInvoiceDocItemSelectionModel taxVal;
+  DocumentTaxesModel? taxVal;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -208,14 +228,14 @@ class DiscountsAndTaxes extends StatelessWidget {
             margin: const EdgeInsets.symmetric(vertical: 8),
             child: SearchDropdownMenuModel(
               dataList: taxesTypesList,
-              selectVal: (EInvoiceDocItemSelectionModel? val) {
+              selectVal: (BaseAPIObject? val) {
                 selectedTax(val);
               },
-              selectedItem: null,
+              selectedItem: taxVal,
             ),
           ),
           Text(
-            taxVal.name,
+            taxVal?.name ?? '',
             style: txtTheme(context)
                 .labelSmall!
                 .copyWith(color: appTheme(context).primaryColor),

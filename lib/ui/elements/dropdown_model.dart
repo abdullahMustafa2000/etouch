@@ -10,15 +10,15 @@ class DropDownMenuModel extends StatefulWidget {
       required this.defValue,
       required this.selectedVal})
       : super(key: key);
-  List<EInvoiceDocItemSelectionModel>? dataList;
-  EInvoiceDocItemSelectionModel? defValue;
+  List<BaseAPIObject>? dataList;
+  BaseAPIObject? defValue;
   Function selectedVal;
   @override
   State<DropDownMenuModel> createState() => _DropDownMenuModelState(defValue);
 }
 
 class _DropDownMenuModelState extends State<DropDownMenuModel> {
-  EInvoiceDocItemSelectionModel? curValue;
+  BaseAPIObject? curValue;
   _DropDownMenuModelState(this.curValue);
   @override
   void initState() {
@@ -38,9 +38,9 @@ class _DropDownMenuModelState extends State<DropDownMenuModel> {
     try {
       return DecorateDropDown(
         dropDown: DropdownButtonHideUnderline(
-          child: DropdownButton<EInvoiceDocItemSelectionModel>(
+          child: DropdownButton<BaseAPIObject>(
             value: curValue,
-            onChanged: (EInvoiceDocItemSelectionModel? value) {
+            onChanged: (BaseAPIObject? value) {
               setState(
                     () {
                   curValue = value!;
@@ -53,9 +53,9 @@ class _DropDownMenuModelState extends State<DropDownMenuModel> {
                 .labelMedium!
                 .copyWith(color: Colors.black),
             items: (widget.dataList ?? [])
-                .map<DropdownMenuItem<EInvoiceDocItemSelectionModel>>(
-                  (EInvoiceDocItemSelectionModel item) {
-                return DropdownMenuItem<EInvoiceDocItemSelectionModel>(
+                .map<DropdownMenuItem<BaseAPIObject>>(
+                  (BaseAPIObject item) {
+                return DropdownMenuItem<BaseAPIObject>(
                   value: item,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -82,9 +82,9 @@ class _DropDownMenuModelState extends State<DropDownMenuModel> {
     } catch(id) {
       return DecorateDropDown(
         dropDown: DropdownButtonHideUnderline(
-          child: DropdownButton<EInvoiceDocItemSelectionModel>(
+          child: DropdownButton<BaseAPIObject>(
             value: widget.dataList?.first,
-            onChanged: (EInvoiceDocItemSelectionModel? value) {
+            onChanged: (BaseAPIObject? value) {
               setState(
                     () {
                   curValue = value!;
@@ -97,9 +97,9 @@ class _DropDownMenuModelState extends State<DropDownMenuModel> {
                 .labelMedium!
                 .copyWith(color: Colors.black),
             items: (widget.dataList ?? [])
-                .map<DropdownMenuItem<EInvoiceDocItemSelectionModel>>(
-                  (EInvoiceDocItemSelectionModel item) {
-                return DropdownMenuItem<EInvoiceDocItemSelectionModel>(
+                .map<DropdownMenuItem<BaseAPIObject>>(
+                  (BaseAPIObject item) {
+                return DropdownMenuItem<BaseAPIObject>(
                   value: item,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 4),

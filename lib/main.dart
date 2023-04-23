@@ -1,15 +1,21 @@
+import 'package:etouch/api/services.dart';
 import 'package:etouch/businessLogic/providers/navbar_add_btn_manager.dart';
 import 'package:etouch/ui/screens/home_screen.dart';
-import 'package:etouch/ui/screens/splash_screen.dart';
 import 'package:etouch/ui/themes/theme_manager.dart';
 import 'package:etouch/ui/themes/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
-
+import 'businessLogic/providers/e_invoice_doc_manager.dart';
 import 'businessLogic/providers/home_screens_manager.dart';
 
+
+void setupServiceLocator() {
+  GetIt.instance.registerLazySingleton(() => MyApiServices());
+}
 void main() {
+  setupServiceLocator();
   runApp(const MyApp());
 }
 
@@ -42,6 +48,7 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(create: (_) => _themeManager),
         ChangeNotifierProvider(create: (_) => NavBarBtnsProvider()),
         ChangeNotifierProvider(create: (_) => HomePagesSwitcher()),
+        ChangeNotifierProvider(create: (_) => EInvoiceDocProvider()),
       ],
       child: Consumer<ThemeManager>(
         builder: (BuildContext context, value, Widget? child) {

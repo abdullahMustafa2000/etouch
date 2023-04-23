@@ -56,5 +56,7 @@
   "paymentMethods": "Payment methods",
   "paidAmount": "Paid",
   "restOfAmount": "The rest",
-  "sendDocument": "Send"
+  "sendDocument": "Send",
+  "checkInternetMessage": "Check Internet connection!",
+  "missingDataWarning": "Some Info is missing!"
 }

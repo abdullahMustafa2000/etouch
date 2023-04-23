@@ -7,8 +7,8 @@ import 'package:etouch/ui/themes/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:pie_chart/pie_chart.dart';
 
-class EInvoiceDashboardScreen extends StatelessWidget {
-  const EInvoiceDashboardScreen({Key? key}) : super(key: key);
+class EInvoiceDashboardFragment extends StatelessWidget {
+  const EInvoiceDashboardFragment({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

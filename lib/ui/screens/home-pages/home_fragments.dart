@@ -1,14 +1,12 @@
+import 'package:etouch/businessLogic/classes/e_invoice_item_selection_model.dart';
 import 'package:etouch/businessLogic/providers/home_screens_manager.dart';
 import 'package:etouch/ui/screens/home-pages/pages/e_receipt_dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../businessLogic/providers/navbar_add_btn_manager.dart';
 import '../e-invoice/create_document.dart';
 import 'pages/e_invoice_dashboard.dart';
-import '../e-receipt/create_document.dart';
 import '../home_screen.dart';
-import 'pages/choose_documents_to_send.dart';
 
 class Fragments extends StatefulWidget {
   Fragments({Key? key}) : super(key: key);
@@ -43,32 +41,13 @@ class _FragmentsState extends State<Fragments> {
       physics: const NeverScrollableScrollPhysics(),
       controller: _controller,
       children: [
-        const EInvoiceDashboardScreen(),
+        const EInvoiceDashboardFragment(),
         //switch between (choices & documents) screen
-        Stack(
-          children: [
-            Visibility(
-                visible: !fragmentsState, child: EStack(index: stackIndex)),
-            Visibility(visible: fragmentsState, child: HomeGlassyScreen()),
-          ],
+        CreateEInvoiceDocumentFragment(
+          companyId: 1,
+          branches: [BaseAPIObject(id: 1, name: 'Branch1')],
         ),
-        const EReceiptDashboard(),
-      ],
-    );
-  }
-}
-
-class EStack extends StatelessWidget {
-  EStack({required this.index});
-  int index;
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Visibility(
-            visible: index == 0, child: CreateEInvoiceDocumentScreen()),
-        Visibility(
-            visible: index == 1, child: CreateEReceiptDocumentScreen()),
+        const EInvoicesListFragment(),
       ],
     );
   }

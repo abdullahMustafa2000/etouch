@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class EReceiptDashboard extends StatelessWidget {
-  const EReceiptDashboard({Key? key}) : super(key: key);
+class EInvoicesListFragment extends StatelessWidget {
+  const EInvoicesListFragment({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Text(
-        'Hello from E-Receipt',
+        'Hello from E-Invoice Listing',
         style: Theme.of(context)
             .textTheme
             .displayLarge!
