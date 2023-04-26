@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:etouch/api/api_models/login_response.dart';
 import 'package:etouch/main.dart';
 import 'package:etouch/ui/constants.dart';
 import 'package:etouch/ui/elements/dashboard_cards_model.dart';
@@ -8,8 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:pie_chart/pie_chart.dart';
 
 class EInvoiceDashboardFragment extends StatelessWidget {
-  const EInvoiceDashboardFragment({Key? key}) : super(key: key);
-
+  EInvoiceDashboardFragment({Key? key, required this.loginResponse}) : super(key: key);
+  LoginResponse loginResponse;
   @override
   Widget build(BuildContext context) {
     return ListView(

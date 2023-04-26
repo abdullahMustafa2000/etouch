@@ -1,3 +1,4 @@
+import 'package:etouch/api/api_response.dart';
 import 'package:etouch/main.dart';
 import 'package:etouch/ui/constants.dart';
 import 'package:etouch/ui/elements/login_contacts_model.dart';
@@ -6,6 +7,10 @@ import 'package:etouch/ui/elements/primary_btn_model.dart';
 import 'package:etouch/ui/screens/home_screen.dart';
 import 'package:etouch/ui/themes/theme_manager.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+
+import '../../api/api_models/login_response.dart';
+import '../../api/services.dart';
 
 class LoginScreen extends StatelessWidget {
   @override
@@ -41,6 +46,8 @@ class LoginScreen extends StatelessWidget {
 }
 
 class LoginInputsWidget extends StatelessWidget {
+  String? _emailTxt, _passwordTxt;
+  MyApiServices get service => GetIt.I<MyApiServices>();
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -61,7 +68,9 @@ class LoginInputsWidget extends StatelessWidget {
           LoginTextFieldModel(
             hint: appTxt(context).loginUsernameTxt,
             isPassword: false,
-            onTxtChanged: (txt) {},
+            onTxtChanged: (txt) {
+              _emailTxt = txt;
+            },
           ),
           const SizedBox(
             height: 24,
@@ -69,7 +78,9 @@ class LoginInputsWidget extends StatelessWidget {
           LoginTextFieldModel(
             hint: appTxt(context).loginPasswordTxt,
             isPassword: true,
-            onTxtChanged: (txt) {},
+            onTxtChanged: (txt) {
+              _passwordTxt = txt;
+            },
           ),
           const SizedBox(
             height: 24,
@@ -85,13 +96,31 @@ class LoginInputsWidget extends StatelessWidget {
                       .copyWith(color: Theme.of(context).primaryColorDark),
                 ),
               ),
-              onPressed: () {
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => HomePageScreen()));
+              onPressed: () async {
+                if (_emailTxt != null && _passwordTxt != null) {
+                  APIResponse<LoginResponse> res =
+                      await _loginSucceed(_emailTxt!, _passwordTxt!);
+                  if (res.data != null && !res.hasError) {
+                    if (context.mounted) {
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  HomePageScreen(loginResponse: res.data!)));
+                    }
+                  }
+                } else {}
               })
         ],
       ),
     );
+  }
+
+  Future<APIResponse<LoginResponse>> _loginSucceed(
+      String emailTxt, String passwordTxt) async {
+    APIResponse<LoginResponse> response =
+        await service.postLoginInfo(emailTxt, passwordTxt);
+    return response;
   }
 }
 

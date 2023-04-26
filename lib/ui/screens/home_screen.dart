@@ -1,23 +1,26 @@
+import 'package:etouch/api/api_models/login_response.dart';
+import 'package:etouch/api/services.dart';
 import 'package:etouch/ui/constants.dart';
 import 'package:etouch/ui/elements/side_menu_model.dart';
 import 'package:etouch/ui/themes/theme_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
-import '../../businessLogic/providers/home_screens_manager.dart';
-import '../../businessLogic/providers/navbar_add_btn_manager.dart';
-import '../elements/navbar-btn-add-model.dart';
 import 'home-pages/home_fragments.dart';
 
 int animDuration = 600;
 
 class HomePageScreen extends StatefulWidget {
+  HomePageScreen({required this.loginResponse});
+  LoginResponse loginResponse;
   @override
   State<HomePageScreen> createState() => _HomePageScreenState();
 }
 
 class _HomePageScreenState extends State<HomePageScreen> {
   final GlobalKey<ScaffoldState> _key = GlobalKey();
+  MyApiServices get services => GetIt.I<MyApiServices>();
   late ThemeManager themeManager = ThemeManager();
   bool isDark = false;
   @override
@@ -34,7 +37,6 @@ class _HomePageScreenState extends State<HomePageScreen> {
   @override
   Widget build(BuildContext context) {
     themeManager = Provider.of<ThemeManager>(context);
-    var homeSwitcher = context.watch<HomePagesSwitcher>();
     return Scaffold(
       key: _key,
       backgroundColor: Theme.of(context).primaryColorDark,
@@ -90,7 +92,9 @@ class _HomePageScreenState extends State<HomePageScreen> {
             const SizedBox(
               height: 42,
             ),
-            HomePageContent(),
+            Expanded(
+                child: Fragments(loginResponse: widget.loginResponse)
+            )
           ],
         ),
       ),
@@ -101,48 +105,26 @@ class _HomePageScreenState extends State<HomePageScreen> {
         buttonBackgroundColor: Colors.transparent,
         items: [
           Image.asset(eInvoiceNavIcon),
-          const NavBarAddBtn(),
+          const Icon(Icons.add),
           Image.asset(eReceiptNavIcon),
         ],
         onTap: (index) {
-          homeSwitcher.navBtnsClicked();
           switch (index) {
             case 0:
               {
-                context.read<NavBarBtnsProvider>().addBtnClosed();
-                context
-                    .read<NavBarBtnsProvider>()
-                    .eInvoiceEReceiptBtnClicked(index);
                 break;
               }
             case 1:
               {
-                context.read<NavBarBtnsProvider>().changeAddBtnState();
-                context
-                    .read<NavBarBtnsProvider>()
-                    .eInvoiceEReceiptBtnClicked(index);
                 break;
               }
             case 2:
               {
-                context.read<NavBarBtnsProvider>().addBtnClosed();
-                context
-                    .read<NavBarBtnsProvider>()
-                    .eInvoiceEReceiptBtnClicked(index);
                 break;
               }
           }
         },
       ),
-    );
-  }
-}
-
-class HomePageContent extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Fragments()
     );
   }
 }

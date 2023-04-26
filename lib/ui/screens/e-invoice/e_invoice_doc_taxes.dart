@@ -1,8 +1,8 @@
-import 'package:etouch/businessLogic/classes/api_models/tax_of_document_model.dart';
 import 'package:etouch/main.dart';
 import 'package:etouch/ui/elements/editable_data.dart';
 import 'package:etouch/ui/elements/searchable_dropdown_model.dart';
 import 'package:flutter/material.dart';
+import '../../../api/api_models/tax_of_document_model.dart';
 import '../../../businessLogic/classes/e_invoice_item_selection_model.dart';
 import '../../elements/uneditable_data.dart';
 

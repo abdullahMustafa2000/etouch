@@ -1,9 +1,9 @@
-import 'package:etouch/businessLogic/classes/api_models/product_content.dart';
 import 'package:etouch/main.dart';
 import 'package:etouch/ui/constants.dart';
 import 'package:etouch/ui/elements/searchable_dropdown_model.dart';
 import 'package:etouch/ui/themes/themes.dart';
 import 'package:flutter/material.dart';
+import '../../api/api_models/product_content.dart';
 import '../../businessLogic/classes/e_invoice_item_selection_model.dart';
 import 'editable_data.dart';
 import 'primary_btn_model.dart';

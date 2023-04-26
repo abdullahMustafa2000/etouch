@@ -1,10 +1,11 @@
+import 'package:etouch/api/api_models/login_response.dart';
 import 'package:etouch/businessLogic/providers/e_invoice_doc_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
+import '../../../api/api_models/product_content.dart';
 import '../../../api/api_response.dart';
 import '../../../api/services.dart';
-import '../../../businessLogic/classes/api_models/product_content.dart';
 import '../../../businessLogic/classes/e_invoice_item_selection_model.dart';
 import '../../../main.dart';
 import '../../elements/product_creation_model.dart';
@@ -15,8 +16,10 @@ class ProductsSelectionWidget extends StatefulWidget {
     Key? key,
     required this.branchId,
     required this.warehouseId,
+    required this.loginResponse,
   }) : super(key: key);
   int branchId, warehouseId;
+  LoginResponse loginResponse;
   @override
   State<ProductsSelectionWidget> createState() =>
       _ProductsSelectionWidgetState();
@@ -24,34 +27,35 @@ class ProductsSelectionWidget extends StatefulWidget {
 
 class _ProductsSelectionWidgetState extends State<ProductsSelectionWidget> {
   late PageController _controller;
-  late List<ProductModel> productsList;
+  List<ProductModel>? productsList;
   late List<BaseAPIObject>? groupsList, unitsList;
+  BaseAPIObject? _selectedProduct;
+  late LoginResponse _userInfo;
   MyApiServices get service => GetIt.I<MyApiServices>();
   late APIResponse<List<BaseAPIObject>> _apiResponse;
-  int _counter = 1;
   Future<List<BaseAPIObject>> _getGroupsIfExist(
-      int branchId, int warehouseId) async {
+      int branchId, int warehouseId, String token) async {
     if (branchId < 0 || warehouseId < 0) return [];
-    _apiResponse = await service.getGroupsList(branchId, warehouseId);
+    _apiResponse = await service.getGroupsList(branchId, warehouseId, token);
     return _apiResponse.data ?? [];
   }
 
-  Future<List<ProductModel>> _getGroupProducts(int groupId) async {
+  Future<List<ProductModel>> _getGroupProducts(int groupId, String token) async {
     if (groupId < 0) return [];
     APIResponse<List<ProductModel>> apiResponse =
-        await service.getProductsByGroupId(groupId);
+        await service.getProductsByGroupId(groupId, token);
     return apiResponse.data ?? [];
   }
 
-  Future<List<ProductModel>> _getProducts() async {
+  Future<List<ProductModel>> _getProducts(String token) async {
     APIResponse<List<ProductModel>> apiResponse =
-        await service.getProductsList();
+        await service.getProductsList(token);
     return apiResponse.data ?? [];
   }
 
-  Future<List<BaseAPIObject>> _getUnits(int branchId) async {
+  Future<List<BaseAPIObject>> _getUnits(int branchId, String token) async {
     if (branchId < 0) return [];
-    _apiResponse = await service.getUnitsList(branchId);
+    _apiResponse = await service.getUnitsList(branchId, token);
     return _apiResponse.data ?? [];
   }
 
@@ -77,10 +81,10 @@ class _ProductsSelectionWidgetState extends State<ProductsSelectionWidget> {
   void initState() {
     _branchId = widget.branchId;
     _warehouseId = widget.warehouseId;
+    _userInfo = widget.loginResponse;
     _controller = PageController(viewportFraction: .8);
-    productsList = [emptyProduct];
-    _unitsFuture = _getUnits(_branchId);
-    _groupsFuture = _getGroupsIfExist(_branchId, _warehouseId);
+    _unitsFuture = _getUnits(_branchId, _userInfo.token);
+    _groupsFuture = _getGroupsIfExist(_branchId, _warehouseId, _userInfo.token);
     super.initState();
   }
 
@@ -103,9 +107,8 @@ class _ProductsSelectionWidgetState extends State<ProductsSelectionWidget> {
         AddProductWidget(
           onAddClk: () {
             setState(() {
-              _counter++;
-              productsList.add(emptyProduct);
-              animateTo(_counter - 1, _controller);
+              productsList?.add(emptyProduct);
+              animateTo(productsList?.length ?? 1 - 1, _controller);
             });
           },
         ),
@@ -117,85 +120,74 @@ class _ProductsSelectionWidgetState extends State<ProductsSelectionWidget> {
           child: FutureBuilder(
             future: Future.wait([_unitsFuture, _groupsFuture]),
             builder: (context, AsyncSnapshot<List<List<BaseAPIObject>>> snap) {
-              if (snap.hasData) {
-                initData(snap);
-                return ListView.builder(
-                  controller: _controller,
-                  scrollDirection: Axis.horizontal,
-                  itemCount: productsList.length,
-                  itemBuilder: (context, index) {
-                    return productsList[index].isDeleted
-                        ? const SizedBox.shrink()
-                        : SizedBox(
-                            width: MediaQuery.of(context).size.width / 1.2,
-                            child: ProductCreationModel(
-                              hasGroups: checkGroupExistence(groupsList),
-                              groupsList: groupsList,
-                              productsList: productsList,
-                              unitsList: unitsList,
-                              balance: productsList[index].balance ?? 0,
-                              productPrice:
-                                  productsList[index].productPrice ?? 0.0,
-                              isPriceEditable:
-                                  productsList[index].isPriceEditable,
-                              selectedGroupFun: (BaseAPIObject? val) {
-                                setState(() {
-                                  productsList[index].group = val;
-                                  _whenGroupSelected(val?.getId ?? -1);
-                                  documentProvider.listUpdated(productsList);
-                                });
-                              },
-                              selectedProductFun: (ProductModel? val) {
-                                setState(() {
-                                  productsList[index].name = val?.getName ?? '';
-                                  productsList[index].id = val?.getId ?? -1;
-                                  documentProvider.listUpdated(productsList);
-                                });
-                              },
-                              selectedUnitFun: (BaseAPIObject? val) {
-                                setState(() {
-                                  productsList[index].unit = val;
-                                  documentProvider.listUpdated(productsList);
-                                });
-                              },
-                              selectedQuantityFun: (String? val) {
-                                setState(() {
-                                  productsList[index].quantity =
-                                      int.parse(val!);
-                                  documentProvider.listUpdated(productsList);
-                                });
-                              },
-                              selectedPriceFun: (String? val) {
-                                setState(() {
-                                  productsList[index].productPrice =
-                                      double.parse(val!);
-                                  documentProvider.listUpdated(productsList);
-                                });
-                              },
-                              moreThanOneItem: productsList.length > 1,
-                              onDeleteItemClickedFun: () {
-                                setState(() {
-                                  productsList.removeAt(index);
-                                  documentProvider.listUpdated(productsList);
-                                  _counter--;
-                                });
-                              },
-                              selectedGroupVal: productsList[index].group,
-                              selectedProductVal: productsList[index],
-                              selectedUnitVal: productsList[index].unit,
-                              selectedQuantityVal:
-                                  productsList[index].quantity ?? 0,
-                              totalProductPrice: (double? price) {
-                                productsList[index].totalPrice = price ?? 0.0;
-                                documentProvider.priceUpdated(productsList);
-                              },
-                            ),
-                          );
-                  },
-                );
-              } else {
-                return const SizedBox.shrink();
-              }
+              initData(snap, _userInfo.token);
+              return ListView.builder(
+                controller: _controller,
+                scrollDirection: Axis.horizontal,
+                itemCount: productsList?.length ?? 1,
+                itemBuilder: (context, index) {
+                  return SizedBox(
+                    width: MediaQuery.of(context).size.width / 1.2,
+                    child: ProductCreationModel(
+                      hasGroups: checkGroupExistence(groupsList),
+                      groupsList: groupsList,
+                      productsList: productsList,
+                      unitsList: unitsList,
+                      balance: productsList?[index].balance ?? 0,
+                      productPrice: productsList?[index].productPrice ?? 0.0,
+                      isPriceEditable: productsList?[index].isPriceEditable ?? false,
+                      selectedGroupFun: (BaseAPIObject? val) {
+                        setState(() {
+                          productsList?[index].group = val;
+                          _whenGroupSelected(val?.getId ?? -1, _userInfo.token);
+                          documentProvider.listUpdated(productsList??[]);
+                        });
+                      },
+                      selectedProductFun: (BaseAPIObject? val) {
+                        setState(() {
+                          _selectedProduct = val;
+                          productsList?[index].name = val?.getName ?? '';
+                          productsList?[index].id = val?.getId ?? -1;
+                          documentProvider.listUpdated(productsList??[]);
+                        });
+                      },
+                      selectedUnitFun: (BaseAPIObject? val) {
+                        setState(() {
+                          productsList?[index].unit = val;
+                          documentProvider.listUpdated(productsList??[]);
+                        });
+                      },
+                      selectedQuantityFun: (String? val) {
+                        setState(() {
+                          productsList?[index].quantity = int.parse(val!);
+                          documentProvider.listUpdated(productsList??[]);
+                        });
+                      },
+                      selectedPriceFun: (String? val) {
+                        setState(() {
+                          productsList?[index].productPrice = double.parse(val!);
+                          documentProvider.listUpdated(productsList??[]);
+                        });
+                      },
+                      moreThanOneItem: (productsList?.length ?? 1) > 1,
+                      onDeleteItemClickedFun: () {
+                        setState(() {
+                          productsList!.removeAt(index);
+                          documentProvider.listUpdated(productsList??[]);
+                        });
+                      },
+                      selectedGroupVal: productsList?[index].group,
+                      selectedProductVal: _selectedProduct,
+                      selectedUnitVal: productsList?[index].unit,
+                      selectedQuantityVal: productsList?[index].quantity ?? 0,
+                      totalProductPrice: (double? price) {
+                        productsList?[index].totalPrice = price ?? 0.0;
+                        documentProvider.priceUpdated(productsList??[]);
+                      },
+                    ),
+                  );
+                },
+              );
             },
           ),
         ),
@@ -203,18 +195,18 @@ class _ProductsSelectionWidgetState extends State<ProductsSelectionWidget> {
     );
   }
 
-  void initData(AsyncSnapshot<List<List<BaseAPIObject>>> snap) async {
+  void initData(AsyncSnapshot<List<List<BaseAPIObject>>> snap, String token) async {
     unitsList = snap.data?.first;
     groupsList = snap.data?[1];
     if (!checkGroupExistence(groupsList)) {
-      productsList = await _getProducts();
+      productsList = await _getProducts(token);
       setState(() {});
     }
   }
 
-  void _whenGroupSelected(int groupId) async {
-    if (groupId <= 0) return;
-    productsList = await _getGroupProducts(groupId);
+  void _whenGroupSelected(int groupId, String token) async {
+    if (groupId < 0) return;
+    productsList = await _getGroupProducts(groupId, token);
     setState(() {});
   }
 }

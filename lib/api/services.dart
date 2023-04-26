@@ -1,30 +1,23 @@
 import 'dart:convert';
 
 import 'package:etouch/api/api_response.dart';
-import 'package:etouch/businessLogic/classes/api_models/product_content.dart';
-import 'package:etouch/businessLogic/classes/api_models/sales_order.dart';
 import 'package:etouch/businessLogic/classes/e_invoice_item_selection_model.dart';
 import 'package:http/http.dart' as http;
+
+import 'api_models/login_response.dart';
+import 'api_models/product_content.dart';
+import 'api_models/sales_order.dart';
 
 class MyApiServices {
   MyApiServices();
   static const base_url = '/api/';
-  static const token = '';
-  static const headers = {
-    'access-token': token,
-  };
 
-  static const currencies_endpoint = '';
-  static const warehouses_endpoint = '';
-  static const treasuries_endpoint = '';
-  static const groups_endpoint = '';
-  static const products_by_group_endpoint = '';
-  static const units_endpoint = '';
-  static const payment_methods_endpoint = '';
-  static const taxes_discounts_endpoint = '';
-
-  Future<APIResponse<List<BaseAPIObject>>> baseObjectRequest(String endpoint) {
-    return http.get(base_url + endpoint, headers: headers).then((data) {
+  Future<APIResponse<List<BaseAPIObject>>> baseObjectRequest(
+      String endpoint, String token) async {
+    return await http.get(base_url + endpoint, headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    }).then((data) {
       if (data.statusCode == 200) {
         final jsonData = json.decode(data.body);
         final dataSet = <BaseAPIObject>[];
@@ -47,33 +40,44 @@ class MyApiServices {
     });
   }
 
-  Future<APIResponse<List<BaseAPIObject>>> getCustomersList(int branchId) {
+  Future<APIResponse<List<BaseAPIObject>>> getCustomersList(
+      int branchId, String token) {
     return baseObjectRequest(
-        'accounting/Account/GetCustomersByBranchId?{$branchId}');
+        'accounting/Account/GetCustomersByBranchId?{$branchId}', token);
   }
 
-  Future<APIResponse<List<BaseAPIObject>>> getCurrenciesList(int companyId) {
-    return baseObjectRequest('etax/ETax/GetCurrenciesByCompanyId?{$companyId}');
+  Future<APIResponse<List<BaseAPIObject>>> getCurrenciesList(
+      int companyId, String token) {
+    return baseObjectRequest(
+        'etax/ETax/GetCurrenciesByCompanyId?{$companyId}', token);
   }
 
-  Future<APIResponse<List<BaseAPIObject>>> getWarehousesList(int branchId) {
+  Future<APIResponse<List<BaseAPIObject>>> getWarehousesList(
+      int branchId, String token) {
     return baseObjectRequest(
-        'inventory/Inventory/GetWarehousesByBranchId?{$branchId}');
+        'inventory/Inventory/GetWarehousesByBranchId?{$branchId}', token);
   }
 
-  Future<APIResponse<List<BaseAPIObject>>> getTreasuriesList(int branchId) {
+  Future<APIResponse<List<BaseAPIObject>>> getTreasuriesList(
+      int branchId, String token) {
     return baseObjectRequest(
-        'accounting/Account/GetTreasuriesByBranchId?{branchId=$branchId}');
+        'accounting/Account/GetTreasuriesByBranchId?{branchId=$branchId}',
+        token);
   }
 
   Future<APIResponse<List<BaseAPIObject>>> getGroupsList(
-      int branchId, int warehouseId) {
+      int branchId, int warehouseId, String token) {
     return baseObjectRequest(
-        'inventory/Inventory/GetGroupsByWarehouseId?{$branchId}&$warehouseId');
+        'inventory/Inventory/GetGroupsByWarehouseId?{$branchId}&$warehouseId',
+        token);
   }
 
-  Future<APIResponse<List<ProductModel>>> getProductsByGroupId(int groupId) {
-    return http.get('$base_url/', headers: headers).then((data) {
+  Future<APIResponse<List<ProductModel>>> getProductsByGroupId(
+      int groupId, String token) async {
+    return await http.get('$base_url/', headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    }).then((data) {
       if (data.statusCode == 200) {
         final jsonData = json.decode(data.body);
         final dataSet = <ProductModel>[];
@@ -103,8 +107,11 @@ class MyApiServices {
     });
   }
 
-  Future<APIResponse<List<ProductModel>>> getProductsList() {
-    return http.get('$base_url/', headers: headers).then((data) {
+  Future<APIResponse<List<ProductModel>>> getProductsList(String token) async {
+    return await http.get('$base_url/', headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    }).then((data) {
       if (data.statusCode == 200) {
         final jsonData = json.decode(data.body);
         final dataSet = <ProductModel>[];
@@ -134,29 +141,59 @@ class MyApiServices {
     });
   }
 
-  Future<APIResponse<List<BaseAPIObject>>> getUnitsList(int branchId) {
-    return baseObjectRequest(units_endpoint);
+  Future<APIResponse<List<BaseAPIObject>>> getUnitsList(
+      int branchId, String token) {
+    return baseObjectRequest('', token);
   }
 
   Future<APIResponse<List<BaseAPIObject>>> getPaymentMethodsList(
-      int companyId) {
+      int companyId, String token) {
     return baseObjectRequest(
-        'accounting/Account/GetPaymentMethodsByCompanyId?{$companyId}');
+        'accounting/Account/GetPaymentMethodsByCompanyId?{$companyId}', token);
   }
 
-  Future<APIResponse<List<BaseAPIObject>>> getTaxesList(int branchId) {
-    return baseObjectRequest(taxes_discounts_endpoint);
+  Future<APIResponse<List<BaseAPIObject>>> getTaxesList(
+      int branchId, String token) {
+    return baseObjectRequest('', token);
   }
 
-  Future<APIResponse<bool>> postEInvoiceDocument(SalesOrder order) {
-    return http
+  Future<APIResponse<bool>> postEInvoiceDocument(
+      SalesOrder order, String token) async {
+    return await http
         .post('${base_url}inventory/Inventory/SubmitDocument',
-            headers: headers, body: order.toJson(order))
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+            body: order.toJson(order))
         .then((value) {
       if (value.statusCode == 200) {
         return APIResponse<bool>(data: true);
       }
       return APIResponse<bool>(data: false);
     }).catchError((_) => APIResponse<bool>(data: false));
+  }
+
+  Future<APIResponse<LoginResponse>> postLoginInfo(
+      String username, String password) async {
+    return await http
+        .post('${base_url}Account/Login',
+            body: json.encode({'UserName': username, "Password": password}))
+        .then((value) {
+      if (value.statusCode >= 200) {
+        var response = json.decode(value.body);
+        LoginResponse loginResponse = LoginResponse(
+          token: response['token'],
+          expiration: response['expiration'],
+          userRules: response['userRoles'],
+          foundationId: response['foundationId'],
+          companyId: response['companyId'],
+          userBranches: response['userBranches'],
+        );
+        return APIResponse(data: loginResponse);
+      }
+      return APIResponse<LoginResponse>(data: null, hasError: true);
+    }).catchError(
+            (_) => APIResponse<LoginResponse>(data: null, hasError: true));
   }
 }

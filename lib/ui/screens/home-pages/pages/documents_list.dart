@@ -1,8 +1,9 @@
+import 'package:etouch/api/api_models/login_response.dart';
 import 'package:flutter/material.dart';
 
 class EInvoicesListFragment extends StatelessWidget {
-  const EInvoicesListFragment({Key? key}) : super(key: key);
-
+  EInvoicesListFragment({Key? key, required this.loginResponse}) : super(key: key);
+  LoginResponse loginResponse;
   @override
   Widget build(BuildContext context) {
     return Center(
