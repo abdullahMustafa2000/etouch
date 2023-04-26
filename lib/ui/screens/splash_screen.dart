@@ -1,11 +1,15 @@
 import 'dart:async';
-import 'package:etouch/ui/screens/orientation/oriantationscreen.dart';
+import 'package:etouch/api/api_models/login_response.dart';
+import 'package:etouch/businessLogic/shared_preferences/user_info_saver.dart';
+import 'package:etouch/ui/screens/home_screen.dart';
+import 'package:etouch/ui/screens/login_screen.dart';
+import 'package:etouch/ui/screens/orientation/orientation_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../constants.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
-
   @override
   State<SplashScreen> createState() => _SplashScreenState();
 }
@@ -13,15 +17,23 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen>
     with TickerProviderStateMixin {
   late AnimationController logoController, appNameController;
-
   late Animation<double> opacityAnim, appNameOpacityAnim;
   late Animation<double> scaleAnim;
   late Animation<double> positionAnim;
   late Animation<EdgeInsets> padding;
   late Animation<BorderRadius> borderRadius;
   late Animation<Color> color;
+  late SharedPreferences preferences;
+  UserInfoPreferences userInfoPreferences = UserInfoPreferences();
+  Future<LoginResponse> getUserInfo() async {
+    preferences = await SharedPreferences.getInstance();
+    return await userInfoPreferences.retrieveUserInfo();
+  }
+
+  late LoginResponse userInfo;
   @override
   void initState() {
+    getUserInfo().then((info) => userInfo = info);
     super.initState();
     logoController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 800))
@@ -48,9 +60,25 @@ class _SplashScreenState extends State<SplashScreen>
       if (status == AnimationStatus.completed) appNameController.forward();
     });
     Timer(
-        const Duration(milliseconds: 2100),
-        () => Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => OrientaionScreen())));
+      const Duration(milliseconds: 2100),
+      () => Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) {
+          // value added and = false
+          if (!(preferences.getBool('FirstOpen') != null && !preferences.getBool('FirstOpen')!)) {
+            return OrientaionScreen();
+          } else {
+            preferences.setBool('FirstOpen', false);
+            if (userInfo.token == '' ||
+                userInfo.expiration.isBefore(DateTime.now())) {
+              return LoginScreen();
+            } else {
+              return HomePageScreen(loginResponse: userInfo);
+            }
+          }
+        }),
+      ),
+    );
   }
 
   @override
@@ -70,7 +98,8 @@ class _SplashScreenState extends State<SplashScreen>
           children: [
             AnimatedBuilder(
                 animation: logoController,
-                builder: (BuildContext context, Widget? child) => ScaleTransition(
+                builder: (BuildContext context, Widget? child) =>
+                    ScaleTransition(
                       scale: scaleAnim,
                       child: Image.asset(
                         logo,

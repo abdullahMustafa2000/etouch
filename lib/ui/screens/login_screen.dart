@@ -1,11 +1,11 @@
 import 'package:etouch/api/api_response.dart';
+import 'package:etouch/businessLogic/shared_preferences/user_info_saver.dart';
 import 'package:etouch/main.dart';
 import 'package:etouch/ui/constants.dart';
 import 'package:etouch/ui/elements/login_contacts_model.dart';
 import 'package:etouch/ui/elements/login_txt_input_model.dart';
 import 'package:etouch/ui/elements/primary_btn_model.dart';
 import 'package:etouch/ui/screens/home_screen.dart';
-import 'package:etouch/ui/themes/theme_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
@@ -102,11 +102,14 @@ class LoginInputsWidget extends StatelessWidget {
                       await _loginSucceed(_emailTxt!, _passwordTxt!);
                   if (res.data != null && !res.hasError) {
                     if (context.mounted) {
+                      UserInfoPreferences().saveUserInfo(res.data!);
                       Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  HomePageScreen(loginResponse: res.data!)));
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              HomePageScreen(loginResponse: res.data!),
+                        ),
+                      );
                     }
                   }
                 } else {}
@@ -125,7 +128,6 @@ class LoginInputsWidget extends StatelessWidget {
 }
 
 class LoginContactUsWidget extends StatelessWidget {
-  final ThemeManager _themeManager = ThemeManager();
   @override
   Widget build(BuildContext context) {
     return Padding(
