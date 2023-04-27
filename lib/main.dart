@@ -1,4 +1,5 @@
 import 'package:etouch/api/services.dart';
+import 'package:etouch/ui/fake_landing.dart';
 import 'package:etouch/ui/screens/home_screen.dart';
 import 'package:etouch/ui/screens/login_screen.dart';
 import 'package:etouch/ui/themes/theme_manager.dart';
@@ -58,7 +59,7 @@ class _MyAppState extends State<MyApp> {
             themeMode: _themeManager.themeMode,
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
-            home: LoginScreen(),
+            home: FakeLanding(),
           );
         },
       ),

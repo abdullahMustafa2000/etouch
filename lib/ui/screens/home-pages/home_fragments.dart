@@ -2,7 +2,7 @@ import 'package:etouch/api/api_models/login_response.dart';
 import 'package:etouch/businessLogic/classes/e_invoice_item_selection_model.dart';
 import 'package:etouch/ui/screens/home-pages/pages/documents_list.dart';
 import 'package:flutter/material.dart';
-import '../e-invoice/create_document.dart';
+import 'pages/create_document.dart';
 import 'pages/e_invoice_dashboard.dart';
 import '../home_screen.dart';
 

@@ -1,9 +1,9 @@
 import 'dart:convert';
-
+import 'package:etouch/api/api_models/dashboard/submitted_doc_statuses.dart';
 import 'package:etouch/api/api_response.dart';
 import 'package:etouch/businessLogic/classes/e_invoice_item_selection_model.dart';
 import 'package:http/http.dart' as http;
-
+import 'api_models/dashboard/dashboard_response.dart';
 import 'api_models/login_response.dart';
 import 'api_models/product_content.dart';
 import 'api_models/sales_order.dart';
@@ -174,6 +174,41 @@ class MyApiServices {
     }).catchError((_) => APIResponse<bool>(data: false));
   }
 
+  Future<APIResponse<DashboardResponse>> getDashboard(String token,
+      {int branchId = 5, int s = 10}) async {
+    return await http
+        .get('${base_url}etax/ETax/EInvoiceDashboard?{$branchId}&$s', headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    }).then((value) {
+      if (value.statusCode == 200) {
+        var jsonBody = json.decode(value.body);
+        final List<BaseAPIObject> sales =
+            DashboardResponse.basicObjList(jsonBody['sales']);
+        final List<BaseAPIObject> topReceivers =
+            DashboardResponse.basicObjList(jsonBody['topReceivers']);
+        final List<BaseAPIObject> invoiceTypes =
+            DashboardResponse.basicObjList(jsonBody['invoiceTypes']);
+        final valid = SubmissionsStatuses.fromJson(jsonBody['valid']);
+        final invalid = SubmissionsStatuses.fromJson(jsonBody['invalid']);
+        final cancelled = SubmissionsStatuses.fromJson(jsonBody['cancelled']);
+        final rejected = SubmissionsStatuses.fromJson(jsonBody['rejected']);
+        final submitted = SubmissionsStatuses.fromJson(jsonBody['submitted']);
+        final response = DashboardResponse(
+            valid: valid,
+            invalid: invalid,
+            cancelled: cancelled,
+            rejected: rejected,
+            submitted: submitted,
+            sales: sales,
+            topReceivers: topReceivers,
+            invoiceTypes: invoiceTypes);
+        return APIResponse<DashboardResponse>(data: response);
+      }
+      return APIResponse<DashboardResponse>(data: null);
+    }).catchError((_) => APIResponse<DashboardResponse>(data: null));
+  }
+
   Future<APIResponse<LoginResponse>> postLoginInfo(
       String username, String password) async {
     return await http
@@ -182,13 +217,18 @@ class MyApiServices {
         .then((value) {
       if (value.statusCode >= 200) {
         var response = json.decode(value.body);
+        final List<BaseAPIObject> userBranches =
+            (response['userBranches'] as List<BaseAPIObject>)
+                .map((branch) => BaseAPIObject(
+                    id: response['id'], name: response['description']))
+                .toList();
         LoginResponse loginResponse = LoginResponse(
           token: response['token'],
           expiration: response['expiration'],
           userRules: response['userRoles'],
           foundationId: response['foundationId'],
           companyId: response['companyId'],
-          userBranches: response['userBranches'],
+          userBranches: userBranches,
         );
         return APIResponse(data: loginResponse);
       }

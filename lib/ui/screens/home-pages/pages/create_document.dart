@@ -10,12 +10,12 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
-import '../../../api/api_models/product_content.dart';
-import '../../../api/api_models/sales_order.dart';
-import '../../../api/api_models/tax_of_document_model.dart';
-import '../../../businessLogic/classes/e_invoice_item_selection_model.dart';
-import 'e_invoice_document_pre_requairments_model.dart';
-import 'products_widget.dart';
+import '../../../../api/api_models/product_content.dart';
+import '../../../../api/api_models/sales_order.dart';
+import '../../../../api/api_models/tax_of_document_model.dart';
+import '../../../../businessLogic/classes/e_invoice_item_selection_model.dart';
+import '../../e-invoice/e_invoice_document_pre_requairments_model.dart';
+import '../../e-invoice/products_widget.dart';
 
 class CreateEInvoiceDocumentFragment extends StatefulWidget {
   CreateEInvoiceDocumentFragment({required this.loginResponse});

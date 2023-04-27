@@ -25,13 +25,13 @@ class EInvoiceDashboardFragment extends StatelessWidget {
             const SizedBox(
               height: 10,
             ),
-            Customers(),
+            TopCustomers(),
             const SizedBox(
               height: 10,
             ),
             Documents(),
             const SizedBox(
-              height: 40,
+              height: 42,
             ),
           ],
         )
@@ -115,11 +115,13 @@ class Documents extends StatelessWidget {
   }
 }
 
-class Customers extends StatelessWidget {
+class TopCustomers extends StatelessWidget {
   Map<String, double> dataMap = {
     'سي باك لمواد التعبئة والتغليف': 86.0,
     'شركة العلمين لصناعة الكرتون المضلع': 13,
   };
+
+  TopCustomers({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Padding(
