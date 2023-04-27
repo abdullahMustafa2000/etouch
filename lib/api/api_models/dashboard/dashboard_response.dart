@@ -1,10 +1,11 @@
 import 'package:etouch/api/api_models/dashboard/submitted_doc_statuses.dart';
+import 'package:etouch/api/api_models/map_response.dart';
 import 'package:etouch/businessLogic/classes/e_invoice_item_selection_model.dart';
 
 class DashboardResponse {
 
   SubmissionsStatuses valid, invalid, cancelled, rejected, submitted;
-  List<BaseAPIObject> sales, topReceivers, invoiceTypes;
+  List<APIMapResponse> sales, topReceivers, invoiceTypes;
 
   DashboardResponse(
       {required this.valid,
@@ -28,9 +29,9 @@ class DashboardResponse {
     };
   }
 
-  static List<BaseAPIObject> basicObjList(Map<String, dynamic> json) {
-    return (json['invoiceTypes'] as List<BaseAPIObject>)
-        .map((sale) => BaseAPIObject(id: json['key'], name: json['value']))
+  static List<APIMapResponse> basicObjList(Map<String, dynamic> json) {
+    return (json['invoiceTypes'] as List<APIMapResponse>)
+        .map((sale) => APIMapResponse(key: json['key'], value: json['value']))
         .toList();
   }
 }

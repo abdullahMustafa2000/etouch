@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:etouch/api/api_models/dashboard/submitted_doc_statuses.dart';
+import 'package:etouch/api/api_models/map_response.dart';
 import 'package:etouch/api/api_response.dart';
 import 'package:etouch/businessLogic/classes/e_invoice_item_selection_model.dart';
 import 'package:http/http.dart' as http;
@@ -175,7 +176,7 @@ class MyApiServices {
   }
 
   Future<APIResponse<DashboardResponse>> getDashboard(String token,
-      {int branchId = 5, int s = 10}) async {
+      {int branchId = 0, int s = 10}) async {
     return await http
         .get('${base_url}etax/ETax/EInvoiceDashboard?{$branchId}&$s', headers: {
       'Content-Type': 'application/json',
@@ -183,11 +184,11 @@ class MyApiServices {
     }).then((value) {
       if (value.statusCode == 200) {
         var jsonBody = json.decode(value.body);
-        final List<BaseAPIObject> sales =
+        final List<APIMapResponse> sales =
             DashboardResponse.basicObjList(jsonBody['sales']);
-        final List<BaseAPIObject> topReceivers =
+        final List<APIMapResponse> topReceivers =
             DashboardResponse.basicObjList(jsonBody['topReceivers']);
-        final List<BaseAPIObject> invoiceTypes =
+        final List<APIMapResponse> invoiceTypes =
             DashboardResponse.basicObjList(jsonBody['invoiceTypes']);
         final valid = SubmissionsStatuses.fromJson(jsonBody['valid']);
         final invalid = SubmissionsStatuses.fromJson(jsonBody['invalid']);

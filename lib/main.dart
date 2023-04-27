@@ -1,4 +1,5 @@
 import 'package:etouch/api/services.dart';
+import 'package:etouch/businessLogic/providers/dashboard_manager.dart';
 import 'package:etouch/ui/fake_landing.dart';
 import 'package:etouch/ui/screens/home_screen.dart';
 import 'package:etouch/ui/screens/login_screen.dart';
@@ -48,6 +49,7 @@ class _MyAppState extends State<MyApp> {
       providers: [
         ChangeNotifierProvider(create: (_) => _themeManager),
         ChangeNotifierProvider(create: (_) => EInvoiceDocProvider()),
+        ChangeNotifierProvider(create: (_) => DashboardProvider()),
       ],
       child: Consumer<ThemeManager>(
         builder: (BuildContext context, value, Widget? child) {
