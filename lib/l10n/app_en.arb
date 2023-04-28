@@ -58,5 +58,10 @@
   "restOfAmount": "The rest",
   "sendDocument": "Send",
   "checkInternetMessage": "Check Internet connection!",
-  "missingDataWarning": "Some Info is missing!"
+  "missingDataWarning": "Some Info is missing!",
+  "customerRegistrationNumber": "Customer registration number",
+  "customerName": "Customer name",
+  "documentSubmissionDate": "Submission date",
+  "totalPriceForListing": "Total amount",
+  "statusDocumentForListing": "Status"
 }

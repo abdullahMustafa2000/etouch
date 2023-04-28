@@ -3,6 +3,8 @@ import 'package:etouch/api/api_models/login_response.dart';
 import 'package:etouch/ui/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 
+import 'elements/document_for_listing_model.dart';
+
 class FakeLanding extends StatefulWidget {
   @override
   State<FakeLanding> createState() => _FakeLandingState();
@@ -31,15 +33,45 @@ class _FakeLandingState extends State<FakeLanding>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-          child: HomePageScreen(
-              loginResponse: LoginResponse(
-                  token: '',
-                  expiration: DateTime.now(),
-                  userRules: [],
-                  foundationId: 1,
-                  companyId: 2,
-                  userBranches: []))),
-    );
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Center(
+      child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              DocumentForListingWidget(
+                  cardTitle: 'asdffa',
+                  registrationId: 1.toString(),
+                  customerName: 'degla',
+                  submissionDate: DateTime.now().toString(),
+                  totalAmount: 1200.toString(),
+                  status: 'valid'),
+              DocumentForListingWidget(
+                  cardTitle: 'asdffa',
+                  registrationId: 1.toString(),
+                  customerName: 'degla',
+                  submissionDate: DateTime.now().toString(),
+                  totalAmount: 1200.toString(),
+                  status: 'invalid'),
+              DocumentForListingWidget(
+                  cardTitle: 'asdffa',
+                  registrationId: 1.toString(),
+                  customerName: 'degla',
+                  submissionDate: DateTime.now().toString(),
+                  totalAmount: 1200.toString(),
+                  status: 'rejected'),
+              DocumentForListingWidget(
+                  cardTitle: 'asdffa',
+                  registrationId: 1.toString(),
+                  customerName: 'degla',
+                  submissionDate: DateTime.now().toString(),
+                  totalAmount: 1200.toString(),
+                  status: 'cancelled'),
+            ],
+      )
+    ),
+          ),
+        ));
   }
 }

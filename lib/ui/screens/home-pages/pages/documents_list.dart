@@ -6,13 +6,14 @@ class EInvoicesListFragment extends StatelessWidget {
   LoginResponse loginResponse;
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        'Hello from E-Invoice Listing',
-        style: Theme.of(context)
-            .textTheme
-            .displayLarge!
-            .copyWith(color: Theme.of(context).primaryColor),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        children: [
+          //title
+          //list of search options
+          //search btn
+        ],
       ),
     );
   }

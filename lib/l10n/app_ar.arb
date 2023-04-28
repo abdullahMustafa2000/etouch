@@ -59,6 +59,10 @@
   "restOfAmount": "الباقي",
   "sendDocument": "إرسال",
   "checkInternetMessage": "تفقد الاتصال بالانترنت",
-  "missingDataWarning": "بعض المعلومات مفقوده"
-
+  "missingDataWarning": "بعض المعلومات مفقوده",
+  "customerRegistrationNumber": "رقم تسجيل العميل",
+  "customerName": "إسم العميل",
+  "documentSubmissionDate": "تاريخ إصدار الفاتورة",
+  "totalPriceForListing": "إجمالي المبلغ",
+  "statusDocumentForListing": "الحالة"
 }
