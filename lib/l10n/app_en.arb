@@ -67,5 +67,11 @@
   "representationNumber": "Acknowledgement id",
   "localNumber": "Local number",
   "submissionNumber": "Submission number",
-  "category": "Category"
+  "category": "Category",
+  "eInvoicesListTitle": "EInvoices",
+  "sellerName": "Buyer",
+  "typeOfDocSides": "Type",
+  "addressOfDocSides": "Address",
+  "eTaxRegistrationId": "E-Tax registration number",
+  "buyerName": "Customer name"
 }

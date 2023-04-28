@@ -50,20 +50,6 @@ class _CreateEInvoiceDocumentFragmentState
   MyApiServices get service => GetIt.I<MyApiServices>();
   late APIResponse<List<BaseAPIObject>> _apiResponse;
 
-  void _whenBranchSelected(int branchId, String token) {
-    if (branchId < 0 || branchId == selectedBranch?.getId) return;
-    updateCustomers(branchId, token);
-    updateWarehouses(branchId, token);
-    updateTreasuries(branchId, token);
-    setState(() {});
-  }
-
-  Future<List<BaseAPIObject>> _getCurrencies(
-      int companyId, String token) async {
-    _apiResponse = await service.getCurrenciesList(companyId, token);
-    return _apiResponse.data ?? [];
-  }
-
   @override
   void initState() {
     _userInfo = widget.loginResponse;
@@ -86,7 +72,7 @@ class _CreateEInvoiceDocumentFragmentState
           child: FutureBuilder(
             future: _currenciesFuture,
             builder: (context, AsyncSnapshot<List<BaseAPIObject>> snap) {
-              if (snap.hasData) {
+              if (true) {
                 initData(snap, _userInfo.token);
                 return Column(
                   children: [
@@ -228,12 +214,13 @@ class _CreateEInvoiceDocumentFragmentState
 
   void initData(AsyncSnapshot<List<BaseAPIObject>> snap, String token) {
     currenciesList = snap.data;
+    var first = branchesList!.isEmpty?null : branchesList!.first;
     selectedCustomer = customersList?.first;
     selectedWarehouse = warehousesList?.first;
     selectedCurrency = currenciesList?.first;
     selectedPaymentMethod = paymentMethodsList?.first;
-    selectedBranch = branchesList?.first;
-    _whenBranchSelected(branchesList?.first.getId ?? -1, token);
+    selectedBranch = first;
+    _whenBranchSelected(first?.id ?? -1, token);
   }
 
   void updateCustomers(int branchId, String token) async {
@@ -274,5 +261,19 @@ class _CreateEInvoiceDocumentFragmentState
         _startAnim();
       }
     }
+  }
+
+  void _whenBranchSelected(int branchId, String token) {
+    if (branchId < 0 || branchId == selectedBranch?.getId) return;
+    updateCustomers(branchId, token);
+    updateWarehouses(branchId, token);
+    updateTreasuries(branchId, token);
+    setState(() {});
+  }
+
+  Future<List<BaseAPIObject>> _getCurrencies(
+      int companyId, String token) async {
+    _apiResponse = await service.getCurrenciesList(companyId, token);
+    return _apiResponse.data ?? [];
   }
 }

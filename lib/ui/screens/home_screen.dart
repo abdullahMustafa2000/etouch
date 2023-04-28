@@ -4,6 +4,7 @@ import 'package:etouch/businessLogic/providers/navigation_bottom_manager.dart';
 import 'package:etouch/ui/constants.dart';
 import 'package:etouch/ui/elements/side_menu_model.dart';
 import 'package:etouch/ui/themes/theme_manager.dart';
+import 'package:etouch/ui/themes/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:get_it/get_it.dart';
@@ -19,13 +20,16 @@ class HomePageScreen extends StatefulWidget {
   State<HomePageScreen> createState() => _HomePageScreenState();
 }
 
-class _HomePageScreenState extends State<HomePageScreen> {
+class _HomePageScreenState extends State<HomePageScreen>
+    with TickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _key = GlobalKey();
   MyApiServices get services => GetIt.I<MyApiServices>();
   late ThemeManager themeManager = ThemeManager();
   bool isDark = false;
+  TabController? con;
   @override
   void initState() {
+    con = TabController(length: 3, vsync: this);
     super.initState();
     getCurrentThemeMode();
   }
@@ -87,6 +91,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
                   Icon(
                     Icons.notifications_sharp,
                     color: Theme.of(context).primaryColor,
+                    size: 28,
                   )
                 ],
               ),
@@ -94,13 +99,66 @@ class _HomePageScreenState extends State<HomePageScreen> {
             const SizedBox(
               height: 42,
             ),
-            Expanded(
-                child: Fragments(loginResponse: widget.loginResponse)
-            )
+            Expanded(child: Fragments(loginResponse: widget.loginResponse))
           ],
         ),
       ),
-      bottomNavigationBar: CurvedNavigationBar(
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.only(bottom: 16),
+        decoration: BoxDecoration(
+          color: pureWhite,
+        ),
+        child: TabBar(
+          controller: con,
+          indicatorColor: primaryColor,
+          indicatorSize: TabBarIndicatorSize.tab,
+          indicatorWeight: 2.5,
+          overlayColor: MaterialStateProperty.all(
+            Colors.white,
+          ),
+          onTap: (index) {
+            bottomNavigator.updatePageIndex(index);
+          },
+          labelStyle: const TextStyle(
+            fontSize: 0,
+          ),
+          labelColor: Colors.white,
+          unselectedLabelStyle: const TextStyle(
+            fontSize: 11,
+          ),
+          tabs: [
+            Tab(
+                icon: Image.asset(
+              bottomNavigator.indexOfPage == 0
+                  ? bottomNavHome
+                  : unSelectedNavHome,
+              width: 24,
+              height: 24,
+            )),
+            Tab(
+                icon: Image.asset(
+                    bottomNavigator.indexOfPage == 1
+                        ? bottomNavSend
+                        : unSelectedNavSend,
+                    width: 24,
+                    height: 24)),
+            Tab(
+                icon: Image.asset(
+              bottomNavigator.indexOfPage == 2
+                  ? bottomNavDoc
+                  : unSelectedNavDoc,
+              width: 24,
+              height: 24,
+            )),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/*
+CurvedNavigationBar(
         index: 0,
         color: Theme.of(context).primaryColor,
         backgroundColor: Colors.transparent,
@@ -114,6 +172,4 @@ class _HomePageScreenState extends State<HomePageScreen> {
           bottomNavigator.updatePageIndex(index);
         },
       ),
-    );
-  }
-}
+ */

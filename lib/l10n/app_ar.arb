@@ -68,5 +68,11 @@
   "representationNumber": "الرقم التعريفي",
   "localNumber": "الرقم الداخلي",
   "submissionNumber": "رقم الإستلام",
-  "category": "الفئة"
+  "category": "الفئة",
+  "eInvoicesListTitle": "الفواتير الإلكترونية",
+  "sellerName": "البائع",
+  "typeOfDocSides": "النوع",
+  "addressOfDocSides": "العنوان",
+  "eTaxRegistrationId": "رقم التسجيل الضريبي",
+  "buyerName": "إسم العميل"
 }

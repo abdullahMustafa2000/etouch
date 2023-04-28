@@ -20,6 +20,15 @@ class EInvoicesListFragment extends StatelessWidget {
         child: Column(
           children: [
             //title
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 20),
+              child: Text(
+                appTxt(context).eInvoicesListTitle,
+                style: txtTheme(context)
+                    .displayLarge!
+                    .copyWith(color: appTheme(context).primaryColor),
+              ),
+            ),
             //list of search options
             SearchView(
               loginResponse: loginResponse,
@@ -28,13 +37,14 @@ class EInvoicesListFragment extends StatelessWidget {
               margin: const EdgeInsets.symmetric(vertical: 20),
               height: 1,
               width: MediaQuery.of(context).size.width / 2,
-              color: Colors.black,
+              color: appTheme(context).primaryColor,
             ),
             //documents list
             SizedBox(
               height: MediaQuery.of(context).size.height / 2,
               child: ListView.builder(
                 itemBuilder: (context, index) {
+                  var list = ['valid','invalid','rejected','cancelled'];
                   return Container(
                     margin: const EdgeInsets.symmetric(vertical: 9),
                     child: DocumentForListingWidget(
@@ -43,14 +53,16 @@ class EInvoicesListFragment extends StatelessWidget {
                         customerName: 'Hesham',
                         submissionDate: DateTime.now().toString(),
                         totalAmount: 12000.toString(),
-                        status: 'valid'),
+                        status: list[index]),
                   );
                 },
-                itemCount: 10,
+                itemCount: 4,
                 scrollDirection: Axis.vertical,
               ),
             ),
-            const SizedBox(height: 20,),
+            const SizedBox(
+              height: 20,
+            ),
             //total amount view
             Container(
               width: MediaQuery.of(context).size.width / 1.5,
@@ -61,11 +73,26 @@ class EInvoicesListFragment extends StatelessWidget {
                     const BorderRadius.all(Radius.circular(cornersRadiusConst)),
               ),
               child: Center(
-                child: Text(
-                  'Hello',
-                  style: txtTheme(context)
-                      .titleMedium!
-                      .copyWith(color: primaryColor),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        appTxt(context).totalTxt,
+                        style: txtTheme(context)
+                            .titleMedium!
+                            .copyWith(color: primaryColor),
+                      ),
+                    ),
+                    Expanded(
+                      child: Text(
+                        '69519.43',
+                        style: txtTheme(context)
+                            .titleMedium!
+                            .copyWith(color: primaryColor, fontSize: 14),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -90,17 +117,17 @@ class SearchView extends StatelessWidget {
         _searchRow(
             appTxt(context).representationNumber,
             EditableInputData(
-                data: '', onChange: (txt) {}, hasInitValue: false),
+                data: '', onChange: (txt, isEmpty) {}, hasInitValue: false),
             context),
         _searchRow(
             appTxt(context).localNumber,
             EditableInputData(
-                data: '', onChange: (txt) {}, hasInitValue: false),
+                data: '', onChange: (txt, isEmpty) {}, hasInitValue: false),
             context),
         _searchRow(
             appTxt(context).submissionNumber,
             EditableInputData(
-                data: '', onChange: (txt) {}, hasInitValue: false),
+                data: '', onChange: (txt, isEmpty) {}, hasInitValue: false),
             context),
         _searchRow(
             appTxt(context).category,
@@ -124,7 +151,7 @@ class SearchView extends StatelessWidget {
         PurpleButtonModel(
             content: Text(
               appTxt(context).searchHint,
-              style: txtTheme(context).titleLarge!.copyWith(color: pureWhite),
+              style: txtTheme(context).headlineMedium!.copyWith(color: pureWhite),
             ),
             width: MediaQuery.of(context).size.width / 1.5,
             onTap: () {}),
@@ -142,7 +169,7 @@ class SearchView extends StatelessWidget {
             child: Text(
               label,
               style: txtTheme(context)
-                  .labelLarge!
+                  .titleLarge!
                   .copyWith(color: appTheme(context).primaryColor),
               overflow: TextOverflow.ellipsis,
             ),

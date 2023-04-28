@@ -28,7 +28,10 @@ class _DropDownMenuModelState extends State<DropDownMenuModel> {
   @override
   void didUpdateWidget(covariant DropDownMenuModel oldWidget) {
     setState(() {
-      curValue = curValue ?? widget.dataList?.first;
+      curValue = curValue ??
+          (widget.dataList != null && widget.dataList!.isNotEmpty
+              ? widget.dataList!.first
+              : null);
     });
     super.didUpdateWidget(oldWidget);
   }
@@ -42,7 +45,7 @@ class _DropDownMenuModelState extends State<DropDownMenuModel> {
             value: curValue,
             onChanged: (BaseAPIObject? value) {
               setState(
-                    () {
+                () {
                   curValue = value!;
                   widget.selectedVal(value);
                 },
@@ -52,9 +55,8 @@ class _DropDownMenuModelState extends State<DropDownMenuModel> {
                 .textTheme
                 .labelMedium!
                 .copyWith(color: Colors.black),
-            items: (widget.dataList ?? [])
-                .map<DropdownMenuItem<BaseAPIObject>>(
-                  (BaseAPIObject item) {
+            items: (widget.dataList ?? []).map<DropdownMenuItem<BaseAPIObject>>(
+              (BaseAPIObject item) {
                 return DropdownMenuItem<BaseAPIObject>(
                   value: item,
                   child: Padding(
@@ -79,14 +81,14 @@ class _DropDownMenuModelState extends State<DropDownMenuModel> {
           ),
         ),
       );
-    } catch(id) {
+    } catch (id) {
       return DecorateDropDown(
         dropDown: DropdownButtonHideUnderline(
           child: DropdownButton<BaseAPIObject>(
             value: widget.dataList?.first,
             onChanged: (BaseAPIObject? value) {
               setState(
-                    () {
+                () {
                   curValue = value!;
                   widget.selectedVal(value);
                 },
@@ -96,9 +98,8 @@ class _DropDownMenuModelState extends State<DropDownMenuModel> {
                 .textTheme
                 .labelMedium!
                 .copyWith(color: Colors.black),
-            items: (widget.dataList ?? [])
-                .map<DropdownMenuItem<BaseAPIObject>>(
-                  (BaseAPIObject item) {
+            items: (widget.dataList ?? []).map<DropdownMenuItem<BaseAPIObject>>(
+              (BaseAPIObject item) {
                 return DropdownMenuItem<BaseAPIObject>(
                   value: item,
                   child: Padding(

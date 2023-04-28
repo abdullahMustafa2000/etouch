@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable
 import 'package:etouch/api/api_models/login_response.dart';
 import 'package:etouch/ui/screens/home_screen.dart';
+import 'package:etouch/ui/screens/preview_doc.dart';
 import 'package:flutter/material.dart';
 
 class FakeLanding extends StatefulWidget {
@@ -31,16 +32,24 @@ class _FakeLandingState extends State<FakeLanding>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: SafeArea(
-      child: HomePageScreen(
-        loginResponse: LoginResponse(
-            token: 'token',
-            expiration: DateTime.now(),
-            userRules: [],
-            foundationId: 1,
-            companyId: 1,
-            userBranches: []),
+      body: Center(
+        child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 20),
+            child: DocumentPreviewScreen(),
+        ),
       ),
-    ));
+    );
   }
 }
+
+/*
+HomePageScreen(
+          loginResponse: LoginResponse(
+              token: 'token',
+              expiration: DateTime.now(),
+              userRules: [],
+              foundationId: 1,
+              companyId: 1,
+              userBranches: []),
+        )
+ */

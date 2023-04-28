@@ -97,7 +97,7 @@ class _DiscussionWidgetState extends State<DiscussionWidget> {
               widget.desc,
               style: Theme.of(context)
                   .textTheme
-                  .displaySmall!
+                  .headlineSmall!
                   .copyWith(color: primaryColor),
             ),
             const SizedBox(

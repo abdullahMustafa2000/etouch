@@ -253,7 +253,7 @@ class RequiredInfoDesign extends StatelessWidget {
         ),
         Expanded(
           child: DropDownMenuModel(
-            defValue: dataList != null?dataList!.first:null,
+            defValue: dataList != null && dataList!.isNotEmpty?dataList!.first:null,
             dataList: dataList,
             selectedVal: (BaseAPIObject? val) {
               selectedVal(val);

@@ -51,14 +51,19 @@ class DocumentForListingWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Image.asset(icon[status]!),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 7),
-                child: Text(
-                  cardTitle,
-                  style: txtTheme(context)
-                      .labelLarge!
-                      .copyWith(color: txtClr[status]),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      cardTitle,
+                      style: txtTheme(context)
+                          .titleLarge!
+                          .copyWith(color: txtClr[status]),
+                    ),
+                    Image.asset(icon[status]!),
+                  ],
                 ),
               ),
               _dataRow(appTxt(context).customerRegistrationNumber,
@@ -87,12 +92,12 @@ class DocumentForListingWidget extends StatelessWidget {
         children: [
           Text(
             '$label: ',
-            style: txtTheme(context).titleMedium!.copyWith(color: txtClr, fontSize: 10),
+            style: txtTheme(context).titleMedium!.copyWith(color: txtClr, fontSize: 12),
             overflow: TextOverflow.ellipsis,
           ),
           Text(
             data,
-            style: txtTheme(context).labelLarge!.copyWith(color: txtClr, fontSize: 10),
+            style: txtTheme(context).labelLarge!.copyWith(color: txtClr, fontSize: 12),
             overflow: TextOverflow.ellipsis,
           ),
         ],

@@ -26,6 +26,15 @@ var greenDBCardIcon = '${iconsPathConst}greenCardIcon.png';
 var lightRedDBCardIcon = '${iconsPathConst}lightCardIcon.png';
 var darkRedDBCardIcon = '${iconsPathConst}darkRedCardIcon.png';
 var purpleDBCardIcon = '${iconsPathConst}purpleCardIcon.png';
+
+var bottomNavSend = '${iconsPathConst}sSend.png';
+var bottomNavHome = '${iconsPathConst}sHome.png';
+var bottomNavDoc = '${iconsPathConst}sDocument.png';
+
+var unSelectedNavSend = '${iconsPathConst}send.png';
+var unSelectedNavHome = '${iconsPathConst}home.png';
+var unSelectedNavDoc = '${iconsPathConst}document.png';
+
 const almarai = 'almarai';
 var eInvoiceLottiePath = '${animationPath}eInvoiceAnim.json';
 var eReceiptLottiePath = '${animationPath}eReceiptAnim.json';
