@@ -1,5 +1,5 @@
 import 'package:etouch/api/api_models/login_response.dart';
-import 'package:etouch/businessLogic/providers/e_invoice_doc_manager.dart';
+import 'package:etouch/businessLogic/providers/create_doc_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';

@@ -1,7 +1,7 @@
 import 'package:etouch/api/api_models/login_response.dart';
 import 'package:etouch/api/api_response.dart';
 import 'package:etouch/api/services.dart';
-import 'package:etouch/businessLogic/providers/e_invoice_doc_manager.dart';
+import 'package:etouch/businessLogic/providers/create_doc_manager.dart';
 import 'package:etouch/main.dart';
 import 'package:etouch/ui/screens/e-invoice/e_invoice_doc_taxes.dart';
 import 'package:etouch/ui/elements/primary_btn_model.dart';

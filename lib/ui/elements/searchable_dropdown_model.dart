@@ -9,11 +9,11 @@ class SearchDropdownMenuModel extends StatefulWidget {
   SearchDropdownMenuModel(
       {Key? key,
       required this.dataList,
-      required this.selectVal,
+      required this.onItemSelected,
       required this.selectedItem})
       : super(key: key);
   List<BaseAPIObject>? dataList;
-  Function selectVal;
+  Function onItemSelected;
   BaseAPIObject? selectedItem;
   @override
   State<SearchDropdownMenuModel> createState() =>
@@ -50,7 +50,7 @@ class _SearchDropdownMenuModelState extends State<SearchDropdownMenuModel> {
           ),
         ),
         onChanged: (BaseAPIObject? val) {
-          widget.selectVal(val);
+          widget.onItemSelected(val);
           setState(() {
             widget.selectedItem = val;
           });

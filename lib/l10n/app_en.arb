@@ -63,5 +63,9 @@
   "customerName": "Customer name",
   "documentSubmissionDate": "Submission date",
   "totalPriceForListing": "Total amount",
-  "statusDocumentForListing": "Status"
+  "statusDocumentForListing": "Status",
+  "representationNumber": "Acknowledgement id",
+  "localNumber": "Local number",
+  "submissionNumber": "Submission number",
+  "category": "Category"
 }

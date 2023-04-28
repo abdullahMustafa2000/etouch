@@ -144,7 +144,7 @@ class _CashesWidgetState extends State<CashesWidget> {
               data: appTxt(context).paymentMethods,
               content: SearchDropdownMenuModel(
                 dataList: widget.paymentMethods,
-                selectVal: (BaseAPIObject? val) {
+                onItemSelected: (BaseAPIObject? val) {
                   widget.selectedMethod(val);
                 },
                 selectedItem: null,
@@ -228,7 +228,7 @@ class DiscountsAndTaxes extends StatelessWidget {
             margin: const EdgeInsets.symmetric(vertical: 8),
             child: SearchDropdownMenuModel(
               dataList: taxesTypesList,
-              selectVal: (BaseAPIObject? val) {
+              onItemSelected: (BaseAPIObject? val) {
                 selectedTax(val);
               },
               selectedItem: taxVal,

@@ -1,7 +1,9 @@
 import 'package:etouch/api/api_models/login_response.dart';
 import 'package:etouch/businessLogic/classes/e_invoice_item_selection_model.dart';
+import 'package:etouch/businessLogic/providers/navigation_bottom_manager.dart';
 import 'package:etouch/ui/screens/home-pages/pages/documents_list.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'pages/create_document.dart';
 import 'pages/e_invoice_dashboard.dart';
 import '../home_screen.dart';
@@ -29,12 +31,15 @@ class _FragmentsState extends State<Fragments> {
 
   @override
   Widget build(BuildContext context) {
+    var bottomNavigator = context.watch<BottomNavigationProvider>();
+    if (_controller.hasClients) {
+      moveToPage(_controller, bottomNavigator.indexOfPage);
+    }
     return PageView(
       physics: const NeverScrollableScrollPhysics(),
       controller: _controller,
       children: [
         EInvoiceDashboardFragment(loginResponse: widget.loginResponse),
-        //switch between (choices & documents) screen
         CreateEInvoiceDocumentFragment(
             loginResponse: widget.loginResponse,
         ),

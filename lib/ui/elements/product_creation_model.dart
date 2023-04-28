@@ -101,7 +101,7 @@ class _ProductCreationModelState extends State<ProductCreationModel> {
                   label: appTxt(context).groupOfInventory,
                   child: SearchDropdownMenuModel(
                     dataList: widget.groupsList,
-                    selectVal: (BaseAPIObject? val) {
+                    onItemSelected: (BaseAPIObject? val) {
                       widget.selectedGroupFun(val);
                     },
                     selectedItem: _selectedGroupVal,
@@ -112,7 +112,7 @@ class _ProductCreationModelState extends State<ProductCreationModel> {
                 label: appTxt(context).productsOfInventory,
                 child: SearchDropdownMenuModel(
                   dataList: widget.productsList,
-                  selectVal: (BaseAPIObject? val) {
+                  onItemSelected: (BaseAPIObject? val) {
                     widget.selectedProductFun(val);
                   },
                   selectedItem: _selectedProductVal,
@@ -139,7 +139,7 @@ class _ProductCreationModelState extends State<ProductCreationModel> {
                 label: appTxt(context).unitOfInventory,
                 child: SearchDropdownMenuModel(
                   dataList: widget.unitsList,
-                  selectVal: (BaseAPIObject? val) {
+                  onItemSelected: (BaseAPIObject? val) {
                     widget.selectedUnitFun(val);
                   },
                   selectedItem: _selectedUnitVal,

@@ -1,5 +1,6 @@
 import 'package:etouch/api/services.dart';
 import 'package:etouch/businessLogic/providers/dashboard_manager.dart';
+import 'package:etouch/businessLogic/providers/navigation_bottom_manager.dart';
 import 'package:etouch/ui/fake_landing.dart';
 import 'package:etouch/ui/screens/home_screen.dart';
 import 'package:etouch/ui/screens/login_screen.dart';
@@ -10,7 +11,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'businessLogic/providers/e_invoice_doc_manager.dart';
+import 'businessLogic/providers/create_doc_manager.dart';
 
 
 void setupServiceLocator() {
@@ -50,6 +51,7 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(create: (_) => _themeManager),
         ChangeNotifierProvider(create: (_) => EInvoiceDocProvider()),
         ChangeNotifierProvider(create: (_) => DashboardProvider()),
+        ChangeNotifierProvider(create: (_) => BottomNavigationProvider()),
       ],
       child: Consumer<ThemeManager>(
         builder: (BuildContext context, value, Widget? child) {

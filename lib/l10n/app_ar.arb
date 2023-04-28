@@ -64,5 +64,9 @@
   "customerName": "إسم العميل",
   "documentSubmissionDate": "تاريخ إصدار الفاتورة",
   "totalPriceForListing": "إجمالي المبلغ",
-  "statusDocumentForListing": "الحالة"
+  "statusDocumentForListing": "الحالة",
+  "representationNumber": "الرقم التعريفي",
+  "localNumber": "الرقم الداخلي",
+  "submissionNumber": "رقم الإستلام",
+  "category": "الفئة"
 }

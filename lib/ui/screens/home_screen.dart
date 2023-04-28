@@ -1,5 +1,6 @@
 import 'package:etouch/api/api_models/login_response.dart';
 import 'package:etouch/api/services.dart';
+import 'package:etouch/businessLogic/providers/navigation_bottom_manager.dart';
 import 'package:etouch/ui/constants.dart';
 import 'package:etouch/ui/elements/side_menu_model.dart';
 import 'package:etouch/ui/themes/theme_manager.dart';
@@ -37,6 +38,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
   @override
   Widget build(BuildContext context) {
     themeManager = Provider.of<ThemeManager>(context);
+    var bottomNavigator = Provider.of<BottomNavigationProvider>(context);
     return Scaffold(
       key: _key,
       backgroundColor: Theme.of(context).primaryColorDark,
@@ -109,20 +111,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
           Image.asset(eReceiptNavIcon),
         ],
         onTap: (index) {
-          switch (index) {
-            case 0:
-              {
-                break;
-              }
-            case 1:
-              {
-                break;
-              }
-            case 2:
-              {
-                break;
-              }
-          }
+          bottomNavigator.updatePageIndex(index);
         },
       ),
     );
