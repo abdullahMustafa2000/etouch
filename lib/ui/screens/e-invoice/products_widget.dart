@@ -47,12 +47,6 @@ class _ProductsSelectionWidgetState extends State<ProductsSelectionWidget> {
     return apiResponse.data ?? [];
   }
 
-  Future<List<ProductModel>> _getProducts(String token) async {
-    APIResponse<List<ProductModel>> apiResponse =
-        await service.getProductsList(token);
-    return apiResponse.data ?? [];
-  }
-
   Future<List<BaseAPIObject>> _getUnits(int branchId, String token) async {
     if (branchId < 0) return [];
     _apiResponse = await service.getUnitsList(branchId, token);
@@ -198,10 +192,6 @@ class _ProductsSelectionWidgetState extends State<ProductsSelectionWidget> {
   void initData(AsyncSnapshot<List<List<BaseAPIObject>>> snap, String token) async {
     unitsList = snap.data?.first;
     groupsList = snap.data?[1];
-    if (!checkGroupExistence(groupsList)) {
-      productsList = await _getProducts(token);
-      setState(() {});
-    }
   }
 
   void _whenGroupSelected(int groupId, String token) async {

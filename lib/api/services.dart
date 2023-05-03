@@ -108,40 +108,6 @@ class MyApiServices {
     });
   }
 
-  Future<APIResponse<List<ProductModel>>> getProductsList(String token) async {
-    return await http.get('$base_url/', headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token'
-    }).then((data) {
-      if (data.statusCode == 200) {
-        final jsonData = json.decode(data.body);
-        final dataSet = <ProductModel>[];
-        for (var product in jsonData) {
-          final element = ProductModel(
-              group: product['group'],
-              unit: product['unit'],
-              balance: product['balance'],
-              productPrice: product['price'],
-              isDeleted: false,
-              id: product['id'],
-              name: product['name'],
-              isPriceEditable: product['editable']);
-          dataSet.add(element);
-        }
-        return APIResponse<List<ProductModel>>(
-          data: dataSet,
-          hasError: false,
-        );
-      } else {
-        return APIResponse(
-          data: null,
-          hasError: true,
-          errorMessage: 'put your finger in your ass',
-        );
-      }
-    });
-  }
-
   Future<APIResponse<List<BaseAPIObject>>> getUnitsList(
       int branchId, String token) {
     return baseObjectRequest('', token);
