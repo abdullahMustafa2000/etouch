@@ -33,6 +33,7 @@ class EInvoicesListFragment extends StatelessWidget {
             SearchView(
               loginResponse: loginResponse,
             ),
+            //separation line
             Container(
               margin: const EdgeInsets.symmetric(vertical: 20),
               height: 1,
@@ -63,7 +64,7 @@ class EInvoicesListFragment extends StatelessWidget {
             const SizedBox(
               height: 20,
             ),
-            //total amount view
+            //total amount
             Container(
               width: MediaQuery.of(context).size.width / 1.5,
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),

@@ -96,23 +96,37 @@ class LoginInputsWidget extends StatelessWidget {
                       .copyWith(color: Theme.of(context).primaryColorDark),
                 ),
               ),
-              onPressed: () async {
-                if (_emailTxt != null && _passwordTxt != null) {
-                  APIResponse<LoginResponse> res =
-                      await _loginSucceed(_emailTxt!, _passwordTxt!);
-                  if (res.data != null && !res.hasError) {
-                    if (context.mounted) {
-                      UserInfoPreferences().saveUserInfo(res.data!);
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              HomePageScreen(loginResponse: res.data!),
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        HomePageScreen(loginResponse:LoginResponse(
+                            token: 'token',
+                            expiration: DateTime.now(),
+                            userRules: [],
+                            foundationId: 1,
+                            companyId: 1,
+                            userBranches: []),
                         ),
-                      );
-                    }
-                  }
-                } else {}
+                  ),
+                );
+                // if (_emailTxt != null && _passwordTxt != null) {
+                //   APIResponse<LoginResponse> res =
+                //       await _loginSucceed(_emailTxt!, _passwordTxt!);
+                //   if (res.data != null && !res.hasError) {
+                //     if (context.mounted) {
+                //       UserInfoPreferences().saveUserInfo(res.data!);
+                //       // Navigator.pushReplacement(
+                //       //   context,
+                //       //   MaterialPageRoute(
+                //       //     builder: (context) =>
+                //       //         HomePageScreen(loginResponse: res.data!),
+                //       //   ),
+                //       // );
+                //     }
+                //   }
+                // } else {}
               })
         ],
       ),

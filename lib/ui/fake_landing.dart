@@ -33,10 +33,7 @@ class _FakeLandingState extends State<FakeLanding>
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20),
-            child: DocumentPreviewScreen(),
-        ),
+        child: DocumentPreviewScreen(),
       ),
     );
   }

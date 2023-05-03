@@ -4,6 +4,7 @@ import 'package:etouch/businessLogic/providers/navigation_bottom_manager.dart';
 import 'package:etouch/ui/fake_landing.dart';
 import 'package:etouch/ui/screens/home_screen.dart';
 import 'package:etouch/ui/screens/login_screen.dart';
+import 'package:etouch/ui/screens/splash_screen.dart';
 import 'package:etouch/ui/themes/theme_manager.dart';
 import 'package:etouch/ui/themes/themes.dart';
 import 'package:flutter/material.dart';

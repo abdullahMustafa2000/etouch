@@ -156,6 +156,14 @@ class TopCustomers extends StatelessWidget {
   Map<String, double> data = {'': 0};
   DashboardResponse? dashboardResponse;
   TopCustomers({required this.dashboardResponse});
+  final colorList = <Color>[
+    const Color(0xfffdcb6e),
+    const Color(0xff0984e3),
+    const Color(0xfffd79a8),
+    const Color(0xffe17055),
+    const Color(0xff6c5ce7),
+  ];
+
   @override
   Widget build(BuildContext context) {
     for (APIMapResponse customer in dashboardResponse?.topReceivers ?? []) {
@@ -191,17 +199,21 @@ class TopCustomers extends StatelessWidget {
             dataMap: data,
             chartRadius: MediaQuery.of(context).size.width / 2,
             legendOptions: LegendOptions(
-                legendPosition: LegendPosition.bottom,
-                legendTextStyle: Theme.of(context)
-                    .textTheme
-                    .titleSmall!
-                    .copyWith(color: Theme.of(context).primaryColor)),
+              legendPosition: LegendPosition.bottom,
+              showLegends: true,
+              legendTextStyle: Theme.of(context)
+                  .textTheme
+                  .titleSmall!
+                  .copyWith(color: Theme.of(context).primaryColor),
+            ),
             chartValuesOptions: ChartValuesOptions(
-                showChartValuesInPercentage: true,
-                chartValueStyle: Theme.of(context)
-                    .textTheme
-                    .titleSmall!
-                    .copyWith(color: Theme.of(context).primaryColor)),
+              showChartValuesInPercentage: false,
+              chartValueStyle: Theme.of(context)
+                  .textTheme
+                  .titleSmall!
+                  .copyWith(color: Colors.black),
+            ),
+              emptyColor: Theme.of(context).primaryColor,
           )
         ],
       ),
