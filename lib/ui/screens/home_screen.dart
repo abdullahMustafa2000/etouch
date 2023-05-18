@@ -3,6 +3,7 @@ import 'package:etouch/api/services.dart';
 import 'package:etouch/businessLogic/providers/navigation_bottom_manager.dart';
 import 'package:etouch/ui/constants.dart';
 import 'package:etouch/ui/elements/side_menu_model.dart';
+import 'package:etouch/ui/screens/login_screen.dart';
 import 'package:etouch/ui/themes/theme_manager.dart';
 import 'package:etouch/ui/themes/themes.dart';
 import 'package:flutter/material.dart';
@@ -53,10 +54,15 @@ class _HomePageScreenState extends State<HomePageScreen>
           onChangeMood: (isDark) {
             themeManager.toggleTheme(isDark);
           },
-          onSavesClkd: () {},
-          onSentClkd: () {},
           onContactClkd: () {},
-          onLogoutClkd: () {}),
+          onBackClkd: () {
+            _key.currentState?.closeDrawer();
+          },
+          onLogoutClkd: () {
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (ctx) => LoginScreen()),
+                (route) => false);
+          }),
       body: SafeArea(
         child: Column(
           children: [
@@ -68,9 +74,12 @@ class _HomePageScreenState extends State<HomePageScreen>
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   InkWell(
-                    child: Image.asset(
-                      isRTL(context) ? rotatedSideMenuIcon : sideMenuIcon,
-                      color: Theme.of(context).primaryColor,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Image.asset(
+                        isRTL(context) ? rotatedSideMenuIcon : sideMenuIcon,
+                        color: Theme.of(context).primaryColor,
+                      ),
                     ),
                     onTap: () {
                       if (!_key.currentState!.isDrawerOpen) {

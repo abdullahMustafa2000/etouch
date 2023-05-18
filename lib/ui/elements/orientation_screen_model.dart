@@ -112,7 +112,7 @@ class _DiscussionWidgetState extends State<DiscussionWidget> {
                 children: [
                   SmoothPageIndicator(
                     controller: widget.pageController,
-                    count: 3,
+                    count: 2,
                     effect: ExpandingDotsEffect(
                       activeDotColor: primaryColor,
                       dotColor: const Color.fromRGBO(20, 39, 155, .3),

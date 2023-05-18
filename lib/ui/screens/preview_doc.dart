@@ -1,3 +1,4 @@
+import 'package:etouch/businessLogic/classes/document_for_listing.dart';
 import 'package:etouch/main.dart';
 import 'package:etouch/ui/themes/themes.dart';
 import 'package:flutter/material.dart';
@@ -6,10 +7,13 @@ import 'package:etouch/ui/elements/primary_btn_model.dart';
 import '../constants.dart';
 
 class DocumentPreviewScreen extends StatelessWidget {
+  DocumentPreviewScreen({required this.document});
+  DocumentForListing document;
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+      color: appTheme(context).primaryColorDark,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -23,15 +27,17 @@ class DocumentPreviewScreen extends StatelessWidget {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter),
             ),
-            child: const Center(
-              child: InvoiceTopContainer(),
+            child: Center(
+              child: InvoiceTopContainer(documentInfo: document),
             ),
           ),
           const SizedBox(
             height: 20,
           ),
           MoneyDetailsWidget(),
-          const SizedBox(height: 24,),
+          const SizedBox(
+            height: 24,
+          ),
           BtnsWidgt(),
         ],
       ),
@@ -40,8 +46,8 @@ class DocumentPreviewScreen extends StatelessWidget {
 }
 
 class InvoiceTopContainer extends StatelessWidget {
-  const InvoiceTopContainer({Key? key}) : super(key: key);
-
+  InvoiceTopContainer({Key? key, required this.documentInfo}) : super(key: key);
+  DocumentForListing documentInfo;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -63,20 +69,22 @@ class InvoiceTopContainer extends StatelessWidget {
                   child:
                       _dataRow(appTxt(context).localNumber, 'info', context)),
               Expanded(
-                child: _dataRow(
-                    appTxt(context).statusDocumentForListing, 'info', context),
+                child: _dataRow(appTxt(context).statusDocumentForListing,
+                    documentInfo.status, context),
               ),
             ],
           ),
-          _dataRow(appTxt(context).documentSubmissionDate, 'info', context),
+          _dataRow(appTxt(context).documentSubmissionDate,
+              getFormattedDate(documentInfo.submissionDate), context),
           Container(
             color: pureWhite,
             height: .3,
             width: double.infinity,
           ),
-          _dataRow(appTxt(context).sellerName, 'name', context),
-          _dataRow(appTxt(context).eTaxRegistrationId, 'info', context),
-          _dataRow(appTxt(context).typeOfDocSides, 'info', context),
+          _dataRow(appTxt(context).sellerName, documentInfo.ownerName, context),
+          _dataRow(appTxt(context).eTaxRegistrationId,
+              documentInfo.registrationId.toString(), context),
+          _dataRow(appTxt(context).typeOfDocSides, documentInfo.type, context),
           _dataRow(appTxt(context).addressOfDocSides, 'info', context),
           Container(
             color: pureWhite,
@@ -171,7 +179,7 @@ class BtnsWidgt extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 6),
           child: PrimaryClrBtnModel(
               content: Text(
-                'cancel',
+                appTxt(context).cancelDocument,
                 style:
                     txtTheme(context).titleMedium!.copyWith(color: pureWhite),
               ),
@@ -179,18 +187,20 @@ class BtnsWidgt extends StatelessWidget {
               color: closeColor),
         )),
         Expanded(
-            child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 6),
-          child: PrimaryClrBtnModel(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 6),
+            child: PrimaryClrBtnModel(
               content: Text(
-                'download PDF',
+                appTxt(context).downloadDocument,
                 style: txtTheme(context)
                     .titleMedium!
                     .copyWith(color: primaryColor),
               ),
               onPressed: () {},
-              color: lighterSecondaryClr),
-        )),
+              color: lighterSecondaryClr,
+            ),
+          ),
+        ),
       ],
     );
   }

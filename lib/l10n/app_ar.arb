@@ -74,5 +74,7 @@
   "typeOfDocSides": "النوع",
   "addressOfDocSides": "العنوان",
   "eTaxRegistrationId": "رقم التسجيل الضريبي",
-  "buyerName": "إسم العميل"
+  "buyerName": "إسم العميل",
+  "cancelDocument": "إلغاء الفاتورة",
+  "downloadDocument": "تحميل PDF"
 }

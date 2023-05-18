@@ -73,5 +73,7 @@
   "typeOfDocSides": "Type",
   "addressOfDocSides": "Address",
   "eTaxRegistrationId": "E-Tax registration number",
-  "buyerName": "Customer name"
+  "buyerName": "Customer name",
+  "cancelDocument": "cancel submission",
+  "downloadDocument": "download PDF"
 }

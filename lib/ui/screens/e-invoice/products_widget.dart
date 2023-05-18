@@ -27,7 +27,7 @@ class ProductsSelectionWidget extends StatefulWidget {
 
 class _ProductsSelectionWidgetState extends State<ProductsSelectionWidget> {
   late PageController _controller;
-  List<ProductModel>? productsList;
+  late List<ProductModel> productsList;
   late List<BaseAPIObject>? groupsList, unitsList;
   BaseAPIObject? _selectedProduct;
   late LoginResponse _userInfo;
@@ -73,6 +73,7 @@ class _ProductsSelectionWidgetState extends State<ProductsSelectionWidget> {
   late EInvoiceDocProvider documentProvider;
   @override
   void initState() {
+    productsList = [emptyProduct];
     _branchId = widget.branchId;
     _warehouseId = widget.warehouseId;
     _userInfo = widget.loginResponse;
@@ -102,7 +103,7 @@ class _ProductsSelectionWidgetState extends State<ProductsSelectionWidget> {
           onAddClk: () {
             setState(() {
               productsList?.add(emptyProduct);
-              animateTo(productsList?.length ?? 1 - 1, _controller);
+              animateTo(productsList.length - 1, _controller);
             });
           },
         ),
@@ -118,7 +119,7 @@ class _ProductsSelectionWidgetState extends State<ProductsSelectionWidget> {
               return ListView.builder(
                 controller: _controller,
                 scrollDirection: Axis.horizontal,
-                itemCount: productsList?.length ?? 1,
+                itemCount: productsList.length,
                 itemBuilder: (context, index) {
                   return SizedBox(
                     width: MediaQuery.of(context).size.width / 1.2,

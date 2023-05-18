@@ -64,7 +64,7 @@ class _MyAppState extends State<MyApp> {
             themeMode: _themeManager.themeMode,
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
-            home: FakeLanding(),
+            home: SplashScreen(),
           );
         },
       ),
@@ -85,5 +85,5 @@ TextTheme txtTheme(BuildContext context) {
 }
 
 String getFormattedDate(DateTime when) {
-  return DateFormat('yyyy-MM-ddTHH:mm:ssZ').format(when);
+  return DateFormat("yyyy-MM-ddTHH:mm:ss'Z'").format(when);
 }

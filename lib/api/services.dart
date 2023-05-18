@@ -15,7 +15,7 @@ class MyApiServices {
 
   Future<APIResponse<List<BaseAPIObject>>> baseObjectRequest(
       String endpoint, String token) async {
-    return await http.get(base_url + endpoint, headers: {
+    return await http.get(Uri.http(base_url, endpoint), headers: {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token'
     }).then((data) {
@@ -75,7 +75,7 @@ class MyApiServices {
 
   Future<APIResponse<List<ProductModel>>> getProductsByGroupId(
       int groupId, String token) async {
-    return await http.get('$base_url/', headers: {
+    return await http.get(Uri.http(base_url, ''), headers: {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token'
     }).then((data) {
@@ -127,7 +127,7 @@ class MyApiServices {
   Future<APIResponse<bool>> postEInvoiceDocument(
       SalesOrder order, String token) async {
     return await http
-        .post('${base_url}inventory/Inventory/SubmitDocument',
+        .post(Uri.http(base_url, 'inventory/Inventory/SubmitDocument'),
             headers: {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
@@ -144,7 +144,7 @@ class MyApiServices {
   Future<APIResponse<DashboardResponse>> getDashboard(String token,
       {int branchId = 0, int s = 10}) async {
     return await http
-        .get('${base_url}etax/ETax/EInvoiceDashboard?{$branchId}&$s', headers: {
+        .get(Uri.http(base_url, 'etax/ETax/EInvoiceDashboard?{$branchId}&$s'), headers: {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token'
     }).then((value) {
@@ -179,7 +179,7 @@ class MyApiServices {
   Future<APIResponse<LoginResponse>> postLoginInfo(
       String username, String password) async {
     return await http
-        .post('${base_url}Account/Login',
+        .post(Uri.http(base_url, 'Account/Login'),
             body: json.encode({'UserName': username, "Password": password}))
         .then((value) {
       if (value.statusCode >= 200) {

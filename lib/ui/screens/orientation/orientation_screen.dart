@@ -35,18 +35,6 @@ class _OrientaionScreenState extends State<OrientaionScreen> {
             desc: appTxt(context).orientationEInvoiceDesc,
             lottiePath: eInvoiceLottiePath,
             controller: pageController,
-
-            onNextClick: () {
-              setState(() {
-                moveToNextPage(pageController);
-              });
-            },
-          ),
-          OrientationModel(
-            title: appTxt(context).orientationEReceiptTitle,
-            desc: appTxt(context).orientationEReceiptDesc,
-            lottiePath: eReceiptLottiePath,
-            controller: pageController,
             onNextClick: () {
               setState(() {
                 moveToNextPage(pageController);
@@ -59,10 +47,8 @@ class _OrientaionScreenState extends State<OrientaionScreen> {
             lottiePath: welcomeLottiePath,
             controller: pageController,
             onNextClick: () {
-              setState(() {
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => LoginScreen()));
-              });
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => LoginScreen()));
             },
           ),
         ],

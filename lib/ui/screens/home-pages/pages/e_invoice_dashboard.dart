@@ -83,7 +83,7 @@ class EInvoiceDashboardFragment extends StatelessWidget {
 
 class Documents extends StatelessWidget {
   final Map<String, double> _list = {
-    '': 100,
+    '': 0,
   };
   DashboardResponse? dashboardResponse;
   Documents({Key? key, required this.dashboardResponse}) : super(key: key);
@@ -213,7 +213,7 @@ class TopCustomers extends StatelessWidget {
                   .titleSmall!
                   .copyWith(color: Colors.black),
             ),
-              emptyColor: Theme.of(context).primaryColor,
+              //emptyColor: loginPlaceholderLightClr,
           )
         ],
       ),
@@ -275,7 +275,7 @@ class _CardsState extends State<Cards> {
         future:
             getDashboardInfo(widget.token, dashboardProvider.numOfDocuments),
         builder: (context, AsyncSnapshot<APIResponse<DashboardResponse>> snap) {
-          if (snap.hasData) {
+          if (true/*snap.hasData*/) {
             DashboardResponse? response = snap.data?.data;
             _valid = response?.valid;
             _invalid = response?.invalid;

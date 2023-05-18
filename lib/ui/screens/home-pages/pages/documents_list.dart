@@ -6,12 +6,50 @@ import 'package:etouch/ui/elements/editable_data.dart';
 import 'package:etouch/ui/elements/purple_btn.dart';
 import 'package:etouch/ui/elements/searchable_dropdown_model.dart';
 import 'package:etouch/ui/themes/themes.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide ModalBottomSheetRoute;
+import '../../../../businessLogic/classes/document_for_listing.dart';
+import '../../preview_doc.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 class EInvoicesListFragment extends StatelessWidget {
   EInvoicesListFragment({Key? key, required this.loginResponse})
       : super(key: key);
   LoginResponse loginResponse;
+  var list = ['valid', 'invalid', 'rejected', 'cancelled'];
+  List<DocumentForListing> documents = [
+    DocumentForListing(
+        type: 'Purchases',
+        id: 1,
+        registrationId: 12,
+        ownerName: 'Hesham',
+        submissionDate: DateTime.now(),
+        totalAmount: 12000,
+        status: 'valid'),
+    DocumentForListing(
+        type: 'Sales',
+        id: 1,
+        registrationId: 22,
+        ownerName: 'Mohamed',
+        submissionDate: DateTime.now(),
+        totalAmount: 13000,
+        status: 'invalid'),
+    DocumentForListing(
+        type: 'Purchases',
+        id: 1,
+        registrationId: 32,
+        ownerName: 'Ali',
+        submissionDate: DateTime.now(),
+        totalAmount: 14000,
+        status: 'rejected'),
+    DocumentForListing(
+        type: 'Sales',
+        id: 1,
+        registrationId: 42,
+        ownerName: 'Mustafa',
+        submissionDate: DateTime.now(),
+        totalAmount: 15000,
+        status: 'cancelled'),
+  ];
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -45,19 +83,31 @@ class EInvoicesListFragment extends StatelessWidget {
               height: MediaQuery.of(context).size.height / 2,
               child: ListView.builder(
                 itemBuilder: (context, index) {
-                  var list = ['valid','invalid','rejected','cancelled'];
                   return Container(
                     margin: const EdgeInsets.symmetric(vertical: 9),
-                    child: DocumentForListingWidget(
-                        cardTitle: 'Title',
-                        registrationId: 123456789.toString(),
-                        customerName: 'Hesham',
-                        submissionDate: DateTime.now().toString(),
-                        totalAmount: 12000.toString(),
-                        status: list[index]),
+                    child: InkWell(
+                      onTap: () {
+                        showMaterialModalBottomSheet(
+                          context: context,
+                          builder: (context) => SingleChildScrollView(
+                            controller: ModalScrollController.of(context),
+                            child: DocumentPreviewScreen(document: documents[index]),
+                          ),
+                        );
+                      },
+                      child: DocumentForListingWidget(
+                          cardTitle: documents[index].type,
+                          registrationId:
+                              documents[index].registrationId.toString(),
+                          customerName: documents[index].ownerName,
+                          submissionDate:
+                              getFormattedDate(documents[index].submissionDate),
+                          totalAmount: documents[index].totalAmount.toString(),
+                          status: documents[index].status),
+                    ),
                   );
                 },
-                itemCount: 4,
+                itemCount: documents.length,
                 scrollDirection: Axis.vertical,
               ),
             ),
@@ -152,7 +202,8 @@ class SearchView extends StatelessWidget {
         PurpleButtonModel(
             content: Text(
               appTxt(context).searchHint,
-              style: txtTheme(context).headlineMedium!.copyWith(color: pureWhite),
+              style:
+                  txtTheme(context).headlineMedium!.copyWith(color: pureWhite),
             ),
             width: MediaQuery.of(context).size.width / 1.5,
             onTap: () {}),

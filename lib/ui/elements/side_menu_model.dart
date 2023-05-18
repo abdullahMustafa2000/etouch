@@ -9,14 +9,13 @@ class SideMenuModel extends StatelessWidget {
       required this.isDarkMood,
       required this.taxPayerImg,
       required this.onChangeMood,
-      required this.onSavesClkd,
-      required this.onSentClkd,
       required this.onContactClkd,
+      required this.onBackClkd,
       required this.onLogoutClkd});
   String taxPayerName;
   String taxPayerImg;
   bool isDarkMood;
-  Function onChangeMood, onSavesClkd, onSentClkd, onContactClkd, onLogoutClkd;
+  Function onChangeMood, onContactClkd, onLogoutClkd, onBackClkd;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -33,7 +32,7 @@ class SideMenuModel extends StatelessWidget {
             const SizedBox(
               height: 60,
             ),
-            MenuTopView(),
+            MenuTopView(onBackClkd: onBackClkd,),
             const SizedBox(
               height: 28,
             ),
@@ -47,42 +46,10 @@ class SideMenuModel extends StatelessWidget {
                 userImg: taxPayerImg ?? 'assets/images/fakeImage.png'),
             SideMenuOptionsWidget(
               onChangeMood: onChangeMood,
-              onSavesClkd: onSavesClkd,
-              onSentClkd: onSentClkd,
               onContactClkd: onContactClkd,
+              onLogoutClkd: onLogoutClkd,
               isDark: isDarkMood,
             ),
-            const Expanded(
-                child: Padding(
-              padding: EdgeInsets.all(0),
-            )),
-            Padding(
-              padding: const EdgeInsets.only(right: 20),
-              child: InkWell(
-                onTap: () {
-                  onLogoutClkd();
-                },
-                child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Icon(
-                        Icons.logout_sharp,
-                        color: Theme.of(context).primaryColorDark,
-                      ),
-                      const Padding(padding: EdgeInsets.only(left: 8)),
-                      Text(
-                        appTxt(context).logoutTxt,
-                        style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                            color: Theme.of(context).primaryColorDark,
-                            fontFamily: almarai),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            )
           ],
         ),
       ),
@@ -91,6 +58,8 @@ class SideMenuModel extends StatelessWidget {
 }
 
 class MenuTopView extends StatelessWidget {
+  MenuTopView({required this.onBackClkd});
+  Function onBackClkd;
   @override
   Widget build(BuildContext context) {
     return Directionality(
@@ -98,31 +67,45 @@ class MenuTopView extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Image.asset(logo, width: 46, height: 49, color: Theme.of(context).primaryColorDark,),
-            Text(
-              'E-Touch',
-              style: TextStyle(
-                  color: Theme.of(context).primaryColorDark,
-                  fontSize: 24,
-                  fontWeight: FontWeight.w500,
-                  fontFamily: 'audio'),
+            Image.asset(
+              logo,
+              width: 46,
+              height: 49,
+              color: Theme.of(context).primaryColorDark,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 6),
+              child: Text(
+                'E-Touch',
+                style: TextStyle(
+                    color: Theme.of(context).primaryColorDark,
+                    fontSize: 24,
+                    fontWeight: FontWeight.w500,
+                    fontFamily: 'audio'),
+              ),
             ),
             Expanded(child: Container()),
-            Align(
-              alignment: Alignment.center,
-              child: Container(
-                width: 28,
-                height: 28,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Theme.of(context).primaryColorDark,
-                ),
-                child: Center(
-                  child: Icon(
-                    Icons.arrow_forward_ios_outlined,
-                    color: Theme.of(context).primaryColor,
-                    size: 17,
+            InkWell(
+              onTap: () {
+                onBackClkd();
+              },
+              child: Align(
+                alignment: Alignment.center,
+                child: Container(
+                  width: 28,
+                  height: 28,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Theme.of(context).primaryColorDark,
+                  ),
+                  child: Center(
+                    child: Icon(
+                      Icons.arrow_forward_ios_outlined,
+                      color: Theme.of(context).primaryColor,
+                      size: 17,
+                    ),
                   ),
                 ),
               ),
@@ -145,7 +128,6 @@ class MenuProfileWidget extends StatelessWidget {
         child: Row(
           children: [
             const CircleAvatar(
-              ///TODO
               backgroundImage: AssetImage('assets/images/fakeImage.png'),
             ),
             const Padding(padding: EdgeInsets.symmetric(horizontal: 6)),
@@ -163,12 +145,11 @@ class MenuProfileWidget extends StatelessWidget {
 class SideMenuOptionsWidget extends StatelessWidget {
   SideMenuOptionsWidget(
       {required this.onChangeMood,
-      required this.onSavesClkd,
-      required this.onSentClkd,
       required this.onContactClkd,
+      required this.onLogoutClkd,
       required this.isDark});
   Function onChangeMood;
-  Function onSavesClkd, onSentClkd, onContactClkd;
+  Function onContactClkd, onLogoutClkd;
   bool isDark;
   @override
   Widget build(BuildContext context) {
@@ -176,22 +157,6 @@ class SideMenuOptionsWidget extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 38),
       child: Column(
         children: [
-          InkWell(
-            onTap: () {
-              onSavesClkd();
-            },
-            child: MenuItemWidget(
-                title: appTxt(context).savedFilesTxt,
-                prefix: Icons.stars,),
-          ),
-          InkWell(
-            onTap: () {
-              onSentClkd();
-            },
-            child: MenuItemWidget(
-                title: appTxt(context).sentFilesTxt,
-                prefix: Icons.upload_file_outlined,),
-          ),
           MenuItemWidget(
             title: appTxt(context).darkModeTxt,
             prefix: Icons.dark_mode_outlined,
@@ -206,9 +171,17 @@ class SideMenuOptionsWidget extends StatelessWidget {
               onContactClkd();
             },
             child: MenuItemWidget(
-                title: appTxt(context).loginContactUsTxt,
-                prefix: Icons.local_phone_outlined,),
+              title: appTxt(context).loginContactUsTxt,
+              prefix: Icons.local_phone_outlined,
+            ),
           ),
+          InkWell(
+            onTap: () {
+              onLogoutClkd();
+            },
+            child: MenuItemWidget(
+                title: appTxt(context).logoutTxt, prefix: Icons.logout_sharp),
+          )
         ],
       ),
     );
@@ -218,7 +191,10 @@ class SideMenuOptionsWidget extends StatelessWidget {
 class MenuItemWidget extends StatefulWidget {
   MenuItemWidget(
       {required this.title,
-      required this.prefix, this.isNightMood, this.onChangeMood, this.isDark});
+      required this.prefix,
+      this.isNightMood,
+      this.onChangeMood,
+      this.isDark});
   IconData prefix;
   String title;
   //show/hide Switch  , setValue
@@ -234,8 +210,9 @@ class _MenuItemWidgetState extends State<MenuItemWidget> {
   @override
   void initState() {
     super.initState();
-    _toggle = widget.isDark??false;
+    _toggle = widget.isDark ?? false;
   }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -257,7 +234,7 @@ class _MenuItemWidgetState extends State<MenuItemWidget> {
             padding: EdgeInsets.all(0),
           )),
           Visibility(
-            visible: widget.isNightMood??false,
+            visible: widget.isNightMood ?? false,
             child: CustomSwitch(
                 value: _toggle,
                 onChanged: (val) {

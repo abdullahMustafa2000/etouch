@@ -3,6 +3,7 @@ import 'package:etouch/api/api_response.dart';
 import 'package:etouch/api/services.dart';
 import 'package:etouch/businessLogic/providers/create_doc_manager.dart';
 import 'package:etouch/main.dart';
+import 'package:etouch/ui/elements/purple_btn.dart';
 import 'package:etouch/ui/screens/e-invoice/e_invoice_doc_taxes.dart';
 import 'package:etouch/ui/elements/primary_btn_model.dart';
 import 'package:etouch/ui/themes/themes.dart';
@@ -160,31 +161,31 @@ class _CreateEInvoiceDocumentFragmentState
                     //send document btn
                     SizedBox(
                       width: double.infinity,
-                      child: PrimaryClrBtnModel(
-                          content: Text(
-                            appTxt(context).sendDocument,
-                            style: txtTheme(context).titleLarge!.copyWith(
-                                color: appTheme(context).primaryColorDark),
-                          ),
-                          onPressed: () {
-                            _submitDocument(
-                                SalesOrder(
-                                    branchId: selectedBranch?.getId ?? -1,
-                                    treasuryId: selectedTreasury?.getId ?? -1,
-                                    warehouseId: selectedWarehouse?.getId ?? -1,
-                                    totalOrderAmount:
-                                        documentProvider.getTotalPrice(),
-                                    orderAmountAfterTaxes:
-                                        _totalAmountAfterTaxes,
-                                    customerId: selectedCustomer?.getId ?? -1,
-                                    paid: _paidAmount,
-                                    currencyId: selectedCurrency?.getId ?? -1,
-                                    productsList:
-                                        documentProvider.getProductsList(),
-                                    orderDate: ''),
-                                _userInfo.token);
-                          },
-                          color: appTheme(context).primaryColor),
+                      child: PurpleButtonModel(
+                        content: Text(
+                          appTxt(context).sendDocument,
+                          style: txtTheme(context).titleLarge!.copyWith(
+                              color: appTheme(context).primaryColorDark),
+                        ),
+                        onTap: () {
+                          _submitDocument(
+                              SalesOrder(
+                                  branchId: selectedBranch?.getId ?? -1,
+                                  treasuryId: selectedTreasury?.getId ?? -1,
+                                  warehouseId: selectedWarehouse?.getId ?? -1,
+                                  totalOrderAmount:
+                                      documentProvider.getTotalPrice(),
+                                  orderAmountAfterTaxes: _totalAmountAfterTaxes,
+                                  customerId: selectedCustomer?.getId ?? -1,
+                                  paid: _paidAmount,
+                                  currencyId: selectedCurrency?.getId ?? -1,
+                                  productsList:
+                                      documentProvider.getProductsList(),
+                                  orderDate: ''),
+                              _userInfo.token);
+                        },
+                        width: double.infinity,
+                      ),
                     ),
                     const SizedBox(
                       height: 24,
@@ -214,7 +215,7 @@ class _CreateEInvoiceDocumentFragmentState
 
   void initData(AsyncSnapshot<List<BaseAPIObject>> snap, String token) {
     currenciesList = snap.data;
-    var first = branchesList!.isEmpty?null : branchesList!.first;
+    var first = branchesList!.isEmpty ? null : branchesList!.first;
     selectedCustomer = customersList?.first;
     selectedWarehouse = warehousesList?.first;
     selectedCurrency = currenciesList?.first;

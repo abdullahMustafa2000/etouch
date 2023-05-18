@@ -21,9 +21,14 @@ class LoginScreen extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Image.asset(
-                loginTopImage,
-                fit: BoxFit.fitWidth,
+              ClipRRect(
+                borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(30),
+                    bottomRight: Radius.circular(30)),
+                child: Image.asset(
+                  loginTopImage,
+                  fit: BoxFit.fill,
+                ),
               ),
               const SizedBox(
                 height: 24,
@@ -100,15 +105,15 @@ class LoginInputsWidget extends StatelessWidget {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>
-                        HomePageScreen(loginResponse:LoginResponse(
-                            token: 'token',
-                            expiration: DateTime.now(),
-                            userRules: [],
-                            foundationId: 1,
-                            companyId: 1,
-                            userBranches: []),
-                        ),
+                    builder: (context) => HomePageScreen(
+                      loginResponse: LoginResponse(
+                          token: 'token',
+                          expiration: DateTime.now(),
+                          userRules: [],
+                          foundationId: 1,
+                          companyId: 1,
+                          userBranches: []),
+                    ),
                   ),
                 );
                 // if (_emailTxt != null && _passwordTxt != null) {
