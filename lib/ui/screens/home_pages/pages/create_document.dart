@@ -1,9 +1,11 @@
 import 'package:etouch/api/api_models/login_response.dart';
 import 'package:etouch/api/api_response.dart';
 import 'package:etouch/api/services.dart';
+import 'package:etouch/businessLogic/classes/document_for_listing.dart';
 import 'package:etouch/businessLogic/providers/create_doc_manager.dart';
 import 'package:etouch/main.dart';
 import 'package:etouch/ui/elements/purple_btn.dart';
+import 'package:etouch/ui/screens/after_submission_screen.dart';
 import 'package:etouch/ui/screens/e-invoice/e_invoice_doc_taxes.dart';
 import 'package:etouch/ui/elements/primary_btn_model.dart';
 import 'package:etouch/ui/themes/themes.dart';
@@ -239,29 +241,44 @@ class _CreateEInvoiceDocumentFragmentState
     treasuriesList = _apiResponse.data;
   }
 
-  void _startAnim() {}
-
   void _submitDocument(SalesOrder order, String token) async {
-    if (order.branchId < 0 ||
-        order.warehouseId < 0 ||
-        order.currencyId < 0 ||
-        order.treasuryId < 0 ||
-        order.customerId < 0) {
-      Fluttertoast.showToast(
-          msg: appTxt(context).missingDataWarning,
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: closeColor,
-          textColor: Colors.white,
-          fontSize: 16.0);
-    } else {
-      order.orderDate = getFormattedDate(DateTime.now());
-      APIResponse response = await service.postEInvoiceDocument(order, token);
-      if (response.data) {
-        _startAnim();
-      }
-    }
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AfterSubmissionScreen(
+          hasError: false,
+          document: DocumentForListing(
+              type: 'Purchases',
+              id: 1,
+              registrationId: 12,
+              ownerName: 'Hesham',
+              submissionDate: DateTime.now(),
+              totalAmount: 12000,
+              status: 'valid'),
+          errorMessage: 'not sending because...',
+        ),
+      ),
+    );
+    // if (order.branchId < 0 ||
+    //     order.warehouseId < 0 ||
+    //     order.currencyId < 0 ||
+    //     order.treasuryId < 0 ||
+    //     order.customerId < 0) {
+    //   Fluttertoast.showToast(
+    //       msg: appTxt(context).missingDataWarning,
+    //       toastLength: Toast.LENGTH_SHORT,
+    //       gravity: ToastGravity.CENTER,
+    //       timeInSecForIosWeb: 1,
+    //       backgroundColor: closeColor,
+    //       textColor: Colors.white,
+    //       fontSize: 16.0);
+    // } else {
+    //   order.orderDate = getFormattedDate(DateTime.now());
+    //   APIResponse response = await service.postEInvoiceDocument(order, token);
+    //   if (response.data) {
+    //     _startAnim();
+    //   }
+    // }
   }
 
   void _whenBranchSelected(int branchId, String token) {

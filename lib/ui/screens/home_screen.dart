@@ -7,10 +7,9 @@ import 'package:etouch/ui/screens/login_screen.dart';
 import 'package:etouch/ui/themes/theme_manager.dart';
 import 'package:etouch/ui/themes/themes.dart';
 import 'package:flutter/material.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
-import 'home-pages/home_fragments.dart';
+import 'home_pages/home_fragments.dart';
 
 int animDuration = 600;
 

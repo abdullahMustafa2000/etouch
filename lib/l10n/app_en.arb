@@ -75,5 +75,8 @@
   "eTaxRegistrationId": "E-Tax registration number",
   "buyerName": "Customer name",
   "cancelDocument": "cancel submission",
-  "downloadDocument": "download PDF"
+  "downloadDocument": "download PDF",
+  "closeCurrent": "close",
+  "showDoc": "Show document",
+  "docSent": "Document sent!"
 }

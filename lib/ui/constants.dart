@@ -37,8 +37,9 @@ var unSelectedNavDoc = '${iconsPathConst}document.png';
 
 const almarai = 'almarai';
 var eInvoiceLottiePath = '${animationPath}eInvoiceAnim.json';
-var eReceiptLottiePath = '${animationPath}eReceiptAnim.json';
 var welcomeLottiePath = '${animationPath}welcomeAnim.json';
+var errorLottiePath = '${animationPath}error_anim.json';
+var sendLottiePath = '${animationPath}sendAnim.json';
 
 bool isRTL(BuildContext context) {
   return intl.Bidi.isRtlLanguage(Localizations.localeOf(context).languageCode);

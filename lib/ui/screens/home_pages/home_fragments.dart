@@ -1,7 +1,6 @@
 import 'package:etouch/api/api_models/login_response.dart';
-import 'package:etouch/businessLogic/classes/e_invoice_item_selection_model.dart';
 import 'package:etouch/businessLogic/providers/navigation_bottom_manager.dart';
-import 'package:etouch/ui/screens/home-pages/pages/documents_list.dart';
+import 'package:etouch/ui/screens/home_pages/pages/documents_list.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'pages/create_document.dart';
@@ -9,8 +8,8 @@ import 'pages/e_invoice_dashboard.dart';
 import '../home_screen.dart';
 
 class Fragments extends StatefulWidget {
-  Fragments({Key? key, required this.loginResponse}) : super(key: key);
-  LoginResponse loginResponse;
+  const Fragments({Key? key, required this.loginResponse}) : super(key: key);
+  final LoginResponse loginResponse;
   @override
   State<Fragments> createState() => _FragmentsState();
 }

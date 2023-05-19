@@ -76,5 +76,8 @@
   "eTaxRegistrationId": "رقم التسجيل الضريبي",
   "buyerName": "إسم العميل",
   "cancelDocument": "إلغاء الفاتورة",
-  "downloadDocument": "تحميل PDF"
+  "downloadDocument": "تحميل PDF",
+  "closeCurrent": "إغلاق",
+  "showDoc": "عرض الفاتورة",
+  "docSent": "تم الإرسال !"
 }
