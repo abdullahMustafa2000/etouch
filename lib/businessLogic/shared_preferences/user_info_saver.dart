@@ -13,13 +13,13 @@ class UserInfoPreferences {
 
   void saveUserInfo(LoginResponse res) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    preferences.setString(TOKEN_PREF, res.token);
-    preferences.setInt(COMPANY_ID_PREF, res.companyId);
-    preferences.setInt(FOUNDATION_ID_PREF, res.foundationId);
-    preferences.setStringList(TOKEN_PREF, res.userRules);
-    preferences.setString(EXPIRATION_DATE, res.expiration.toIso8601String());
-    preferences.setString(
-        USER_BRANCHES, BaseAPIObject.encode(res.userBranches));
+    preferences.setString(TOKEN_PREF, res.token!);
+    preferences.setInt(COMPANY_ID_PREF, res.companyId!);
+    preferences.setInt(FOUNDATION_ID_PREF, res.foundationId!);
+    preferences.setStringList(TOKEN_PREF, res.userRoles!);
+    preferences.setString(EXPIRATION_DATE, res.expiration!.toIso8601String());
+    // preferences.setString(
+    //     USER_BRANCHES, BaseAPIObject.encode(res.userBranches));
   }
 
   Future<LoginResponse> retrieveUserInfo() async {
@@ -28,10 +28,11 @@ class UserInfoPreferences {
         token: preferences.getString(TOKEN_PREF) ?? '',
         expiration: DateTime.parse(preferences.getString(EXPIRATION_DATE) ??
             DateTime.now().toIso8601String()),
-        userRules: preferences.getStringList(USER_RULES) ?? [],
+        userRoles: preferences.getStringList(USER_RULES) ?? [],
         foundationId: preferences.getInt(FOUNDATION_ID_PREF) ?? -1,
         companyId: preferences.getInt(COMPANY_ID_PREF) ?? -1,
-        userBranches:
-            BaseAPIObject.decode(preferences.getString(USER_BRANCHES) ?? ''));
+        // userBranches:
+        //     BaseAPIObject.decode(preferences.getString(USER_BRANCHES) ?? '')
+         );
   }
 }

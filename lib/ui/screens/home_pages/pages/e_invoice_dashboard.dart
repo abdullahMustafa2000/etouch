@@ -29,7 +29,7 @@ class EInvoiceDashboardFragment extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: _getDashboardFuture(loginResponse.token),
+        future: _getDashboardFuture(loginResponse.token!),
         builder: (context, AsyncSnapshot<APIResponse<DashboardResponse>> snap) {
           bool hasData = true;
           bool waiting = false;
@@ -54,7 +54,7 @@ class EInvoiceDashboardFragment extends StatelessWidget {
                             ? const CircularProgressIndicator()
                             : Cards(
                                 dashboardResponse: response,
-                                token: loginResponse.token,
+                                token: loginResponse.token!,
                               ),
                         const SizedBox(
                           height: 10,

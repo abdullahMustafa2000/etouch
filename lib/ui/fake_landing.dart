@@ -32,17 +32,7 @@ class _FakeLandingState extends State<FakeLanding>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: HomePageScreen(
-          loginResponse: LoginResponse(
-              token: 'token',
-              expiration: DateTime.now(),
-              userRules: [],
-              foundationId: 1,
-              companyId: 1,
-              userBranches: []),
-        ),
-      ),
+      body: Container()
     );
   }
 }

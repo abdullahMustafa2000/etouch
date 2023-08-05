@@ -14,7 +14,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'businessLogic/providers/create_doc_manager.dart';
 
-
+//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
 void setupServiceLocator() {
   GetIt.instance.registerLazySingleton(() => MyApiServices());
 }
@@ -64,7 +64,7 @@ class _MyAppState extends State<MyApp> {
             themeMode: _themeManager.themeMode,
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
-            home: SplashScreen(),
+            home: const SplashScreen(),
           );
         },
       ),

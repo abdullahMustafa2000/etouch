@@ -78,8 +78,8 @@ class _ProductsSelectionWidgetState extends State<ProductsSelectionWidget> {
     _warehouseId = widget.warehouseId;
     _userInfo = widget.loginResponse;
     _controller = PageController(viewportFraction: .8);
-    _unitsFuture = _getUnits(_branchId, _userInfo.token);
-    _groupsFuture = _getGroupsIfExist(_branchId, _warehouseId, _userInfo.token);
+    _unitsFuture = _getUnits(_branchId, _userInfo.token!);
+    _groupsFuture = _getGroupsIfExist(_branchId, _warehouseId, _userInfo.token!);
     super.initState();
   }
 
@@ -115,7 +115,7 @@ class _ProductsSelectionWidgetState extends State<ProductsSelectionWidget> {
           child: FutureBuilder(
             future: Future.wait([_unitsFuture, _groupsFuture]),
             builder: (context, AsyncSnapshot<List<List<BaseAPIObject>>> snap) {
-              initData(snap, _userInfo.token);
+              initData(snap, _userInfo.token!);
               return ListView.builder(
                 controller: _controller,
                 scrollDirection: Axis.horizontal,
@@ -128,55 +128,55 @@ class _ProductsSelectionWidgetState extends State<ProductsSelectionWidget> {
                       groupsList: groupsList,
                       productsList: productsList,
                       unitsList: unitsList,
-                      balance: productsList?[index].balance ?? 0,
-                      productPrice: productsList?[index].productPrice ?? 0.0,
-                      isPriceEditable: productsList?[index].isPriceEditable ?? false,
+                      balance: productsList[index].balance ?? 0,
+                      productPrice: productsList[index].productPrice ?? 0.0,
+                      isPriceEditable: productsList[index].isPriceEditable ?? false,
                       selectedGroupFun: (BaseAPIObject? val) {
                         setState(() {
-                          productsList?[index].group = val;
-                          _whenGroupSelected(val?.getId ?? -1, _userInfo.token);
+                          productsList[index].group = val;
+                          _whenGroupSelected(val?.getId ?? -1, _userInfo.token!);
                           documentProvider.listUpdated(productsList??[]);
                         });
                       },
                       selectedProductFun: (BaseAPIObject? val) {
                         setState(() {
                           _selectedProduct = val;
-                          productsList?[index].name = val?.getName ?? '';
-                          productsList?[index].id = val?.getId ?? -1;
-                          documentProvider.listUpdated(productsList??[]);
+                          productsList[index].name = val?.getName ?? '';
+                          productsList[index].id = val?.getId ?? -1;
+                          documentProvider.listUpdated(productsList);
                         });
                       },
                       selectedUnitFun: (BaseAPIObject? val) {
                         setState(() {
-                          productsList?[index].unit = val;
-                          documentProvider.listUpdated(productsList??[]);
+                          productsList[index].unit = val;
+                          documentProvider.listUpdated(productsList);
                         });
                       },
                       selectedQuantityFun: (String? val) {
                         setState(() {
-                          productsList?[index].quantity = int.parse(val!);
-                          documentProvider.listUpdated(productsList??[]);
+                          productsList[index].quantity = int.parse(val!);
+                          documentProvider.listUpdated(productsList);
                         });
                       },
                       selectedPriceFun: (String? val) {
                         setState(() {
-                          productsList?[index].productPrice = double.parse(val!);
-                          documentProvider.listUpdated(productsList??[]);
+                          productsList[index].productPrice = double.parse(val!);
+                          documentProvider.listUpdated(productsList);
                         });
                       },
-                      moreThanOneItem: (productsList?.length ?? 1) > 1,
+                      moreThanOneItem: (productsList.length ?? 1) > 1,
                       onDeleteItemClickedFun: () {
                         setState(() {
-                          productsList!.removeAt(index);
-                          documentProvider.listUpdated(productsList??[]);
+                          productsList.removeAt(index);
+                          documentProvider.listUpdated(productsList);
                         });
                       },
-                      selectedGroupVal: productsList?[index].group,
+                      selectedGroupVal: productsList[index].group,
                       selectedProductVal: _selectedProduct,
-                      selectedUnitVal: productsList?[index].unit,
-                      selectedQuantityVal: productsList?[index].quantity ?? 0,
+                      selectedUnitVal: productsList[index].unit,
+                      selectedQuantityVal: productsList[index].quantity ?? 0,
                       totalProductPrice: (double? price) {
-                        productsList?[index].totalPrice = price ?? 0.0;
+                        productsList[index].totalPrice = price ?? 0.0;
                         documentProvider.priceUpdated(productsList??[]);
                       },
                     ),

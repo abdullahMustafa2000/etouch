@@ -101,37 +101,23 @@ class LoginInputsWidget extends StatelessWidget {
                       .copyWith(color: Theme.of(context).primaryColorDark),
                 ),
               ),
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => HomePageScreen(
-                      loginResponse: LoginResponse(
-                          token: 'token',
-                          expiration: DateTime.now(),
-                          userRules: [],
-                          foundationId: 1,
-                          companyId: 1,
-                          userBranches: []),
-                    ),
-                  ),
-                );
-                // if (_emailTxt != null && _passwordTxt != null) {
-                //   APIResponse<LoginResponse> res =
-                //       await _loginSucceed(_emailTxt!, _passwordTxt!);
-                //   if (res.data != null && !res.hasError) {
-                //     if (context.mounted) {
-                //       UserInfoPreferences().saveUserInfo(res.data!);
-                //       // Navigator.pushReplacement(
-                //       //   context,
-                //       //   MaterialPageRoute(
-                //       //     builder: (context) =>
-                //       //         HomePageScreen(loginResponse: res.data!),
-                //       //   ),
-                //       // );
-                //     }
-                //   }
-                // } else {}
+              onPressed: () async {
+                if (_emailTxt != null && _passwordTxt != null) {
+                  APIResponse<LoginResponse> res =
+                      await _loginSucceed(_emailTxt!, _passwordTxt!);
+                  if (res.data != null && !res.hasError) {
+                    if (context.mounted) {
+                      UserInfoPreferences().saveUserInfo(res.data!);
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              HomePageScreen(loginResponse: res.data!),
+                        ),
+                      );
+                    }
+                  }
+                } else {}
               })
         ],
       ),

@@ -70,7 +70,7 @@ class _SplashScreenState extends State<SplashScreen>
           } else {
             preferences.setBool('FirstOpen', false);
             if (userInfo.token == '' ||
-                userInfo.expiration.isBefore(DateTime.now())) {
+                userInfo.expiration!.isBefore(DateTime.now())) {
               return LoginScreen();
             } else {
               return HomePageScreen(loginResponse: userInfo);

@@ -56,7 +56,8 @@ class _CreateEInvoiceDocumentFragmentState
   @override
   void initState() {
     _userInfo = widget.loginResponse;
-    _currenciesFuture = _getCurrencies(_userInfo.companyId, _userInfo.token);
+    _currenciesFuture =
+        _getCurrencies(_userInfo.companyId ?? -1, _userInfo.token!);
     branchesList = _userInfo.userBranches;
     orderId = 1000;
     super.initState();
@@ -76,7 +77,7 @@ class _CreateEInvoiceDocumentFragmentState
             future: _currenciesFuture,
             builder: (context, AsyncSnapshot<List<BaseAPIObject>> snap) {
               if (true) {
-                initData(snap, _userInfo.token);
+                initData(snap, _userInfo.token!);
                 return Column(
                   children: [
                     // customers, treasury, inventory, etc...
@@ -104,7 +105,7 @@ class _CreateEInvoiceDocumentFragmentState
                       selectedBranchFun: (BaseAPIObject? val) {
                         setState(() {
                           selectedBranch = val;
-                          _whenBranchSelected(val!.getId, _userInfo.token);
+                          _whenBranchSelected(val!.getId, _userInfo.token!);
                         });
                       },
                       selectedCustomerFun: (BaseAPIObject? val) {
@@ -184,7 +185,7 @@ class _CreateEInvoiceDocumentFragmentState
                                   productsList:
                                       documentProvider.getProductsList(),
                                   orderDate: ''),
-                              _userInfo.token);
+                              _userInfo.token!);
                         },
                         width: double.infinity,
                       ),

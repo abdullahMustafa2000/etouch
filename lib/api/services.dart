@@ -11,11 +11,12 @@ import 'api_models/sales_order.dart';
 
 class MyApiServices {
   MyApiServices();
-  static const base_url = '/api/';
+  static const baseUrl = 'aaabdelsabour-001-site1.atempurl.com';
+  static Map<int, String> currenciesMap = {};
 
   Future<APIResponse<List<BaseAPIObject>>> baseObjectRequest(
       String endpoint, String token) async {
-    return await http.get(Uri.http(base_url, endpoint), headers: {
+    return await http.get(Uri.parse(baseUrl + endpoint), headers: {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token'
     }).then((data) {
@@ -35,7 +36,7 @@ class MyApiServices {
         return APIResponse(
           data: null,
           hasError: true,
-          errorMessage: 'put your finger in your ass',
+          errorMessage: '',
         );
       }
     });
@@ -48,9 +49,36 @@ class MyApiServices {
   }
 
   Future<APIResponse<List<BaseAPIObject>>> getCurrenciesList(
-      int companyId, String token) {
-    return baseObjectRequest(
-        'etax/ETax/GetCurrenciesByCompanyId?{$companyId}', token);
+      int companyId, String token) async {
+    return await http.get(
+        Uri.parse('${baseUrl}etax/ETax/GetCurrenciesByCompanyId?$companyId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        }).then((data) {
+      if (data.statusCode == 200) {
+        final jsonData = json.decode(data.body);
+        final dataSet = <BaseAPIObject>[];
+        int i = 0;
+        for (var jsonElement in jsonData) {
+          currenciesMap[i] = jsonElement['code'];
+          i++;
+          final element =
+              BaseAPIObject(id: i, name: jsonElement['description']);
+          dataSet.add(element);
+        }
+        return APIResponse<List<BaseAPIObject>>(
+          data: dataSet,
+          hasError: false,
+        );
+      } else {
+        return APIResponse(
+          data: null,
+          hasError: true,
+          errorMessage: '',
+        );
+      }
+    });
   }
 
   Future<APIResponse<List<BaseAPIObject>>> getWarehousesList(
@@ -75,7 +103,7 @@ class MyApiServices {
 
   Future<APIResponse<List<ProductModel>>> getProductsByGroupId(
       int groupId, String token) async {
-    return await http.get(Uri.http(base_url, ''), headers: {
+    return await http.get(Uri.parse('$baseUrl'), headers: {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token'
     }).then((data) {
@@ -127,7 +155,7 @@ class MyApiServices {
   Future<APIResponse<bool>> postEInvoiceDocument(
       SalesOrder order, String token) async {
     return await http
-        .post(Uri.http(base_url, 'inventory/Inventory/SubmitDocument'),
+        .post(Uri.parse('${baseUrl}inventory/Inventory/SubmitDocument'),
             headers: {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
@@ -143,11 +171,12 @@ class MyApiServices {
 
   Future<APIResponse<DashboardResponse>> getDashboard(String token,
       {int branchId = 0, int s = 10}) async {
-    return await http
-        .get(Uri.http(base_url, 'etax/ETax/EInvoiceDashboard?{$branchId}&$s'), headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token'
-    }).then((value) {
+    return await http.get(
+        Uri.http(baseUrl, 'etax/ETax/EInvoiceDashboard?{$branchId}&$s'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        }).then((value) {
       if (value.statusCode == 200) {
         var jsonBody = json.decode(value.body);
         final List<APIMapResponse> sales =
@@ -178,26 +207,19 @@ class MyApiServices {
 
   Future<APIResponse<LoginResponse>> postLoginInfo(
       String username, String password) async {
+    var header = {
+      "Accept": "application/json",
+      "content-type": "application/json"
+    };
+    var body = jsonEncode({"UserName": username, "Password": password});
     return await http
-        .post(Uri.http(base_url, 'Account/Login'),
-            body: json.encode({'UserName': username, "Password": password}))
+        .post(Uri.http(baseUrl, "/api/Account/Login"),
+            body: body, headers: header)
         .then((value) {
-      if (value.statusCode >= 200) {
+      if (value.statusCode == 200) {
         var response = json.decode(value.body);
-        final List<BaseAPIObject> userBranches =
-            (response['userBranches'] as List<BaseAPIObject>)
-                .map((branch) => BaseAPIObject(
-                    id: response['id'], name: response['description']))
-                .toList();
-        LoginResponse loginResponse = LoginResponse(
-          token: response['token'],
-          expiration: response['expiration'],
-          userRules: response['userRoles'],
-          foundationId: response['foundationId'],
-          companyId: response['companyId'],
-          userBranches: userBranches,
-        );
-        return APIResponse(data: loginResponse);
+        LoginResponse loginResponse = LoginResponse.fromJson(response);
+        return APIResponse<LoginResponse>(hasError: false, data: loginResponse);
       }
       return APIResponse<LoginResponse>(data: null, hasError: true);
     }).catchError(
