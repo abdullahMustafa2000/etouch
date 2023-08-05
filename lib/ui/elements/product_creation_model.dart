@@ -18,7 +18,6 @@ class ProductCreationModel extends StatefulWidget {
       required this.balance,
       required this.productPrice,
       required this.isPriceEditable,
-      required this.hasGroups,
       required this.selectedGroupFun,
       required this.selectedProductFun,
       required this.selectedUnitFun,
@@ -33,7 +32,7 @@ class ProductCreationModel extends StatefulWidget {
       required this.totalProductPrice})
       : super(key: key);
   int balance, selectedQuantityVal;
-  bool isPriceEditable, hasGroups, moreThanOneItem;
+  bool isPriceEditable, moreThanOneItem;
   double productPrice;
   List<BaseAPIObject>? groupsList, unitsList;
   List<ProductModel>? productsList;
@@ -95,17 +94,14 @@ class _ProductCreationModelState extends State<ProductCreationModel> {
           child: ListView(
             controller: _controller,
             children: [
-              Visibility(
-                visible: widget.hasGroups,
-                child: InputTypeRow(
-                  label: appTxt(context).groupOfInventory,
-                  child: SearchDropdownMenuModel(
-                    dataList: widget.groupsList,
-                    onItemSelected: (BaseAPIObject? val) {
-                      widget.selectedGroupFun(val);
-                    },
-                    selectedItem: _selectedGroupVal,
-                  ),
+              InputTypeRow(
+                label: appTxt(context).groupOfInventory,
+                child: SearchDropdownMenuModel(
+                  dataList: widget.groupsList,
+                  onItemSelected: (BaseAPIObject? val) {
+                    widget.selectedGroupFun(val);
+                  },
+                  selectedItem: _selectedGroupVal,
                 ),
               ),
               InputTypeRow(

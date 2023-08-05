@@ -31,12 +31,10 @@ class EInvoiceDashboardFragment extends StatelessWidget {
     return FutureBuilder(
         future: _getDashboardFuture(loginResponse.token!),
         builder: (context, AsyncSnapshot<APIResponse<DashboardResponse>> snap) {
-          bool hasData = true;
-          bool waiting = false;
           DashboardResponse? response = snap.data?.data;
           return ListView(
             children: [
-              !waiting && !hasData
+              snap.hasData
                   ? Center(
                       child: Text(
                       appTxt(context).checkInternetMessage,
@@ -50,7 +48,7 @@ class EInvoiceDashboardFragment extends StatelessWidget {
                         const SizedBox(
                           height: 42,
                         ),
-                        waiting
+                        snap.hasData
                             ? const CircularProgressIndicator()
                             : Cards(
                                 dashboardResponse: response,
@@ -59,7 +57,7 @@ class EInvoiceDashboardFragment extends StatelessWidget {
                         const SizedBox(
                           height: 10,
                         ),
-                        waiting
+                        snap.hasData
                             ? const CircularProgressIndicator()
                             : TopCustomers(
                                 dashboardResponse: response,
@@ -67,7 +65,7 @@ class EInvoiceDashboardFragment extends StatelessWidget {
                         const SizedBox(
                           height: 10,
                         ),
-                        waiting
+                        snap.hasData
                             ? const CircularProgressIndicator()
                             : Documents(dashboardResponse: response),
                         const SizedBox(

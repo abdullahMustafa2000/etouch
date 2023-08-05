@@ -15,11 +15,13 @@ class MyApiServices {
   static Map<int, String> currenciesMap = {};
 
   Future<APIResponse<List<BaseAPIObject>>> baseObjectRequest(
-      String endpoint, String token) async {
-    return await http.get(Uri.parse(baseUrl + endpoint), headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token'
-    }).then((data) {
+      String endpoint, String token,
+      {Map<String, dynamic>? parameters}) async {
+    return await http.get(Uri.http(baseUrl, '/api/$endpoint', parameters),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        }).then((data) {
       if (data.statusCode == 200) {
         final jsonData = json.decode(data.body);
         final dataSet = <BaseAPIObject>[];
@@ -44,14 +46,15 @@ class MyApiServices {
 
   Future<APIResponse<List<BaseAPIObject>>> getCustomersList(
       int branchId, String token) {
-    return baseObjectRequest(
-        'accounting/Account/GetCustomersByBranchId?{$branchId}', token);
+    return baseObjectRequest('accounting/Account/GetCustomersByBranchId', token,
+        parameters: {'branchId': branchId.toString()});
   }
 
   Future<APIResponse<List<BaseAPIObject>>> getCurrenciesList(
       int companyId, String token) async {
     return await http.get(
-        Uri.parse('${baseUrl}etax/ETax/GetCurrenciesByCompanyId?$companyId'),
+        Uri.http(baseUrl, '/api/etax/ETax/GetCurrenciesByCompanyId',
+            {'companyId': companyId.toString()}),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token'
@@ -84,21 +87,25 @@ class MyApiServices {
   Future<APIResponse<List<BaseAPIObject>>> getWarehousesList(
       int branchId, String token) {
     return baseObjectRequest(
-        'inventory/Inventory/GetWarehousesByBranchId?{$branchId}', token);
+        'inventory/Inventory/GetWarehousesByBranchId', token,
+        parameters: {'branchId': branchId.toString()});
   }
 
   Future<APIResponse<List<BaseAPIObject>>> getTreasuriesList(
       int branchId, String token) {
     return baseObjectRequest(
-        'accounting/Account/GetTreasuriesByBranchId?{branchId=$branchId}',
-        token);
+        'accounting/Account/GetTreasuriesByBranchId', token,
+        parameters: {'branchId': branchId.toString()});
   }
 
   Future<APIResponse<List<BaseAPIObject>>> getGroupsList(
       int branchId, int warehouseId, String token) {
     return baseObjectRequest(
-        'inventory/Inventory/GetGroupsByWarehouseId?{$branchId}&$warehouseId',
-        token);
+        'inventory/Inventory/GetGroupsByWarehouseId', token,
+        parameters: {
+          'branchId': branchId.toString(),
+          'warehouseId': warehouseId.toString(),
+        });
   }
 
   Future<APIResponse<List<ProductModel>>> getProductsByGroupId(
@@ -130,7 +137,7 @@ class MyApiServices {
         return APIResponse(
           data: null,
           hasError: true,
-          errorMessage: 'put your finger in your ass',
+          errorMessage: '',
         );
       }
     });
@@ -144,7 +151,8 @@ class MyApiServices {
   Future<APIResponse<List<BaseAPIObject>>> getPaymentMethodsList(
       int companyId, String token) {
     return baseObjectRequest(
-        'accounting/Account/GetPaymentMethodsByCompanyId?{$companyId}', token);
+        'accounting/Account/GetPaymentMethodsByCompanyId', token,
+        parameters: {'companyId': companyId.toString()});
   }
 
   Future<APIResponse<List<BaseAPIObject>>> getTaxesList(
@@ -170,9 +178,10 @@ class MyApiServices {
   }
 
   Future<APIResponse<DashboardResponse>> getDashboard(String token,
-      {int branchId = 0, int s = 10}) async {
+      {int branchId = 94, int s = 10}) async {
     return await http.get(
-        Uri.http(baseUrl, 'etax/ETax/EInvoiceDashboard?{$branchId}&$s'),
+        Uri.http(baseUrl, 'etax/ETax/EInvoiceDashboard',
+            {'branchId': branchId.toString(), 's': s.toString()}),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token'

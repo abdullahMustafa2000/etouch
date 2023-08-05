@@ -14,9 +14,9 @@ class UserInfoPreferences {
   void saveUserInfo(LoginResponse res) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences.setString(TOKEN_PREF, res.token!);
-    preferences.setInt(COMPANY_ID_PREF, res.companyId!);
+    preferences.setInt(COMPANY_ID_PREF, res.companyId??-1);
     preferences.setInt(FOUNDATION_ID_PREF, res.foundationId!);
-    preferences.setStringList(TOKEN_PREF, res.userRoles!);
+    preferences.setStringList(USER_RULES, res.userRoles!);
     preferences.setString(EXPIRATION_DATE, res.expiration!.toIso8601String());
     // preferences.setString(
     //     USER_BRANCHES, BaseAPIObject.encode(res.userBranches));

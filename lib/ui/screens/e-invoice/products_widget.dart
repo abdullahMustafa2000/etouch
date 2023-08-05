@@ -33,7 +33,7 @@ class _ProductsSelectionWidgetState extends State<ProductsSelectionWidget> {
   late LoginResponse _userInfo;
   MyApiServices get service => GetIt.I<MyApiServices>();
   late APIResponse<List<BaseAPIObject>> _apiResponse;
-  Future<List<BaseAPIObject>> _getGroupsIfExist(
+  Future<List<BaseAPIObject>> _getGroupsByBranchWarehouseId(
       int branchId, int warehouseId, String token) async {
     if (branchId < 0 || warehouseId < 0) return [];
     _apiResponse = await service.getGroupsList(branchId, warehouseId, token);
@@ -51,10 +51,6 @@ class _ProductsSelectionWidgetState extends State<ProductsSelectionWidget> {
     if (branchId < 0) return [];
     _apiResponse = await service.getUnitsList(branchId, token);
     return _apiResponse.data ?? [];
-  }
-
-  bool checkGroupExistence(List<BaseAPIObject>? list) {
-    return list != null && list.isNotEmpty;
   }
 
   ProductModel emptyProduct = ProductModel(
@@ -79,7 +75,7 @@ class _ProductsSelectionWidgetState extends State<ProductsSelectionWidget> {
     _userInfo = widget.loginResponse;
     _controller = PageController(viewportFraction: .8);
     _unitsFuture = _getUnits(_branchId, _userInfo.token!);
-    _groupsFuture = _getGroupsIfExist(_branchId, _warehouseId, _userInfo.token!);
+    _groupsFuture = _getGroupsByBranchWarehouseId(94, 81, _userInfo.token!);
     super.initState();
   }
 
@@ -124,7 +120,6 @@ class _ProductsSelectionWidgetState extends State<ProductsSelectionWidget> {
                   return SizedBox(
                     width: MediaQuery.of(context).size.width / 1.2,
                     child: ProductCreationModel(
-                      hasGroups: checkGroupExistence(groupsList),
                       groupsList: groupsList,
                       productsList: productsList,
                       unitsList: unitsList,

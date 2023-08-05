@@ -19,112 +19,70 @@ class DropDownMenuModel extends StatefulWidget {
 
 class _DropDownMenuModelState extends State<DropDownMenuModel> {
   BaseAPIObject? curValue;
+  late List<BaseAPIObject>? mList;
   _DropDownMenuModelState(this.curValue);
   @override
   void initState() {
+    mList = widget.dataList;
+    curValue = widget.defValue;
     super.initState();
   }
 
-  @override
-  void didUpdateWidget(covariant DropDownMenuModel oldWidget) {
-    setState(() {
-      curValue = curValue ??
-          (widget.dataList != null && widget.dataList!.isNotEmpty
-              ? widget.dataList!.first
-              : null);
-    });
-    super.didUpdateWidget(oldWidget);
-  }
+  // @override
+  // void didUpdateWidget(covariant DropDownMenuModel oldWidget) {
+  //   setState(() {
+  //     curValue = curValue ??
+  //         (widget.dataList != null && widget.dataList!.isNotEmpty
+  //             ? widget.dataList!.first
+  //             : null);
+  //   });
+  //   super.didUpdateWidget(oldWidget);
+  // }
 
   @override
   Widget build(BuildContext context) {
-    try {
-      return DecorateDropDown(
-        dropDown: DropdownButtonHideUnderline(
-          child: DropdownButton<BaseAPIObject>(
-            value: curValue,
-            onChanged: (BaseAPIObject? value) {
-              setState(
-                () {
-                  curValue = value!;
-                  widget.selectedVal(value);
-                },
+    return DecorateDropDown(
+      dropDown: DropdownButtonHideUnderline(
+        child: DropdownButton<BaseAPIObject>(
+          value: curValue,
+          onChanged: (BaseAPIObject? value) {
+            setState(
+              () {
+                curValue = value ?? mList?.first;
+                widget.selectedVal(value);
+              },
+            );
+          },
+          style: Theme.of(context)
+              .textTheme
+              .labelMedium!
+              .copyWith(color: Colors.black),
+          items: (mList ?? []).map<DropdownMenuItem<BaseAPIObject>>(
+            (BaseAPIObject item) {
+              return DropdownMenuItem<BaseAPIObject>(
+                value: item,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: Text(
+                    item.getName,
+                    style: Theme.of(context)
+                        .textTheme
+                        .labelMedium!
+                        .copyWith(color: switchThumbColor),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
               );
             },
-            style: Theme.of(context)
-                .textTheme
-                .labelMedium!
-                .copyWith(color: Colors.black),
-            items: (widget.dataList ?? []).map<DropdownMenuItem<BaseAPIObject>>(
-              (BaseAPIObject item) {
-                return DropdownMenuItem<BaseAPIObject>(
-                  value: item,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: Text(
-                      item.getName,
-                      style: Theme.of(context)
-                          .textTheme
-                          .labelMedium!
-                          .copyWith(color: switchThumbColor),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                );
-              },
-            ).toList(),
-            icon: Icon(
-              Icons.keyboard_arrow_down_sharp,
-              color: darkGrayColor,
-            ),
-            isExpanded: true,
+          ).toList(),
+          icon: Icon(
+            Icons.keyboard_arrow_down_sharp,
+            color: darkGrayColor,
           ),
+          isExpanded: true,
         ),
-      );
-    } catch (id) {
-      return DecorateDropDown(
-        dropDown: DropdownButtonHideUnderline(
-          child: DropdownButton<BaseAPIObject>(
-            value: widget.dataList?.first,
-            onChanged: (BaseAPIObject? value) {
-              setState(
-                () {
-                  curValue = value!;
-                  widget.selectedVal(value);
-                },
-              );
-            },
-            style: Theme.of(context)
-                .textTheme
-                .labelMedium!
-                .copyWith(color: Colors.black),
-            items: (widget.dataList ?? []).map<DropdownMenuItem<BaseAPIObject>>(
-              (BaseAPIObject item) {
-                return DropdownMenuItem<BaseAPIObject>(
-                  value: item,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: Text(
-                      item.getName,
-                      style: Theme.of(context)
-                          .textTheme
-                          .labelMedium!
-                          .copyWith(color: switchThumbColor),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                );
-              },
-            ).toList(),
-            icon: Icon(
-              Icons.keyboard_arrow_down_sharp,
-              color: darkGrayColor,
-            ),
-            isExpanded: true,
-          ),
-        ),
-      );
-    }
+      ),
+    );
   }
 }
 

@@ -7,10 +7,7 @@ import 'package:etouch/main.dart';
 import 'package:etouch/ui/elements/purple_btn.dart';
 import 'package:etouch/ui/screens/after_submission_screen.dart';
 import 'package:etouch/ui/screens/e-invoice/e_invoice_doc_taxes.dart';
-import 'package:etouch/ui/elements/primary_btn_model.dart';
-import 'package:etouch/ui/themes/themes.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import '../../../../api/api_models/product_content.dart';
@@ -21,7 +18,8 @@ import '../../e-invoice/e_invoice_document_pre_requairments_model.dart';
 import '../../e-invoice/products_widget.dart';
 
 class CreateEInvoiceDocumentFragment extends StatefulWidget {
-  CreateEInvoiceDocumentFragment({required this.loginResponse});
+  CreateEInvoiceDocumentFragment({Key? key, required this.loginResponse})
+      : super(key: key);
   LoginResponse loginResponse;
   @override
   State<CreateEInvoiceDocumentFragment> createState() =>
@@ -46,18 +44,16 @@ class _CreateEInvoiceDocumentFragmentState
       paymentMethodsList;
   List<DocumentTaxesModel>? taxesList;
   List<ProductModel>? productsList;
-  late Future<List<BaseAPIObject>> _currenciesFuture;
+  late Future<bool> _topData;
   double _totalAmountAfterTaxes = 0, _paidAmount = 0;
   late LoginResponse _userInfo;
-
   MyApiServices get service => GetIt.I<MyApiServices>();
   late APIResponse<List<BaseAPIObject>> _apiResponse;
 
   @override
   void initState() {
     _userInfo = widget.loginResponse;
-    _currenciesFuture =
-        _getCurrencies(_userInfo.companyId ?? -1, _userInfo.token!);
+    _topData = _whenBranchSelected(94, _userInfo.token!);
     branchesList = _userInfo.userBranches;
     orderId = 1000;
     super.initState();
@@ -73,14 +69,14 @@ class _CreateEInvoiceDocumentFragmentState
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
-          child: FutureBuilder(
-            future: _currenciesFuture,
-            builder: (context, AsyncSnapshot<List<BaseAPIObject>> snap) {
-              if (true) {
-                initData(snap, _userInfo.token!);
+          child: FutureBuilder<bool>(
+            future: _topData,
+            builder: (context, AsyncSnapshot<bool> snap) {
+              if (snap.connectionState == ConnectionState.done &&
+                  snap.hasData) {
+                initData(_userInfo.token!);
                 return Column(
                   children: [
-                    // customers, treasury, inventory, etc...
                     OrderPreRequirementsWidget(
                       inventoriesList: warehousesList,
                       currenciesList: currenciesList,
@@ -216,30 +212,32 @@ class _CreateEInvoiceDocumentFragmentState
     );
   }
 
-  void initData(AsyncSnapshot<List<BaseAPIObject>> snap, String token) {
-    currenciesList = snap.data;
+  void initData(String token) {
     var first = branchesList!.isEmpty ? null : branchesList!.first;
     selectedCustomer = customersList?.first;
     selectedWarehouse = warehousesList?.first;
     selectedCurrency = currenciesList?.first;
     selectedPaymentMethod = paymentMethodsList?.first;
     selectedBranch = first;
-    _whenBranchSelected(first?.id ?? -1, token);
+    _whenBranchSelected(94, token);
   }
 
-  void updateCustomers(int branchId, String token) async {
+  Future<bool> updateCustomers(int branchId, String token) async {
     _apiResponse = await service.getCustomersList(branchId, token);
     customersList = _apiResponse.data;
+    return customersList != null;
   }
 
-  void updateWarehouses(int branchId, String token) async {
+  Future<bool> updateWarehouses(int branchId, String token) async {
     _apiResponse = await service.getWarehousesList(branchId, token);
     warehousesList = _apiResponse.data;
+    return warehousesList != null;
   }
 
-  void updateTreasuries(int branchId, String token) async {
+  Future<bool> updateTreasuries(int branchId, String token) async {
     _apiResponse = await service.getTreasuriesList(branchId, token);
     treasuriesList = _apiResponse.data;
+    return treasuriesList != null;
   }
 
   void _submitDocument(SalesOrder order, String token) async {
@@ -260,39 +258,30 @@ class _CreateEInvoiceDocumentFragmentState
         ),
       ),
     );
-    // if (order.branchId < 0 ||
-    //     order.warehouseId < 0 ||
-    //     order.currencyId < 0 ||
-    //     order.treasuryId < 0 ||
-    //     order.customerId < 0) {
-    //   Fluttertoast.showToast(
-    //       msg: appTxt(context).missingDataWarning,
-    //       toastLength: Toast.LENGTH_SHORT,
-    //       gravity: ToastGravity.CENTER,
-    //       timeInSecForIosWeb: 1,
-    //       backgroundColor: closeColor,
-    //       textColor: Colors.white,
-    //       fontSize: 16.0);
-    // } else {
-    //   order.orderDate = getFormattedDate(DateTime.now());
-    //   APIResponse response = await service.postEInvoiceDocument(order, token);
-    //   if (response.data) {
-    //     _startAnim();
-    //   }
-    // }
   }
 
-  void _whenBranchSelected(int branchId, String token) {
-    if (branchId < 0 || branchId == selectedBranch?.getId) return;
-    updateCustomers(branchId, token);
-    updateWarehouses(branchId, token);
-    updateTreasuries(branchId, token);
-    setState(() {});
+  Future<bool> _whenBranchSelected(int branchId, String token) async {
+    bool customers = await updateCustomers(branchId, token);
+    bool warehouses = await updateWarehouses(branchId, token);
+    bool treasuries = await updateTreasuries(branchId, token);
+    bool currencies = await _getCurrencies(103, token);
+    bool paymentMethods = await _getPaymentMethods(103, token);
+    return customers &&
+        warehouses &&
+        treasuries &&
+        currencies &&
+        paymentMethods;
   }
 
-  Future<List<BaseAPIObject>> _getCurrencies(
-      int companyId, String token) async {
+  Future<bool> _getCurrencies(int companyId, String token) async {
     _apiResponse = await service.getCurrenciesList(companyId, token);
-    return _apiResponse.data ?? [];
+    currenciesList = _apiResponse.data;
+    return currenciesList != null;
+  }
+
+  Future<bool> _getPaymentMethods(int companyId, String token) async {
+    _apiResponse = await service.getPaymentMethodsList(companyId, token);
+    paymentMethodsList = _apiResponse.data;
+    return paymentMethodsList != null;
   }
 }
