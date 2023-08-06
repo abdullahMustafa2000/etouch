@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:etouch/api/api_response.dart';
 import 'package:etouch/businessLogic/shared_preferences/user_info_saver.dart';
 import 'package:etouch/main.dart';
@@ -7,7 +8,9 @@ import 'package:etouch/ui/elements/login_txt_input_model.dart';
 import 'package:etouch/ui/elements/primary_btn_model.dart';
 import 'package:etouch/ui/screens/home_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get_it/get_it.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../api/api_models/login_response.dart';
 import '../../api/services.dart';
@@ -91,34 +94,35 @@ class LoginInputsWidget extends StatelessWidget {
             height: 24,
           ),
           PrimaryClrBtnModel(
-              color: Theme.of(context).primaryColor,
-              content: Center(
-                child: Text(
-                  appTxt(context).loginTxt,
-                  style: Theme.of(context)
-                      .textTheme
-                      .headlineMedium!
-                      .copyWith(color: Theme.of(context).primaryColorDark),
-                ),
+            color: Theme.of(context).primaryColor,
+            content: Center(
+              child: Text(
+                appTxt(context).loginTxt,
+                style: Theme.of(context)
+                    .textTheme
+                    .headlineMedium!
+                    .copyWith(color: Theme.of(context).primaryColorDark),
               ),
-              onPressed: () async {
-                if (_emailTxt != null && _passwordTxt != null) {
-                  APIResponse<LoginResponse> res =
-                      await _loginSucceed(_emailTxt!, _passwordTxt!);
-                  if (res.data != null && !res.hasError) {
-                    if (context.mounted) {
-                      UserInfoPreferences().saveUserInfo(res.data!);
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              HomePageScreen(loginResponse: res.data!),
-                        ),
-                      );
-                    }
+            ),
+            onPressed: () async {
+              if (_emailTxt != null && _passwordTxt != null) {
+                APIResponse<LoginResponse> res =
+                    await _loginSucceed(_emailTxt!, _passwordTxt!);
+                if (res.data != null && !res.hasError) {
+                  if (context.mounted) {
+                    UserInfoPreferences().saveUserInfo(res.data!);
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            HomePageScreen(loginResponse: res.data!),
+                      ),
+                    );
                   }
-                } else {}
-              })
+                }
+              } else {}
+            },
+          )
         ],
       ),
     );
@@ -182,20 +186,66 @@ class LoginContactUsWidget extends StatelessWidget {
             children: [
               ContactUsIconModel(
                 icon: logo,
-                onIconClicked: () {},
+                onIconClicked: () async {
+                  await goToWebPage('http://toucherp.ris-me.com/Account/Login');
+                },
               ),
               ContactUsIconModel(
                 icon: whatsappIcon,
-                onIconClicked: () {},
+                onIconClicked: () {
+                  openWhatsapp();
+                },
               ),
               ContactUsIconModel(
                 icon: gmailIcon,
-                onIconClicked: () {},
+                onIconClicked: () {
+                  openGmail();
+                },
               ),
             ],
           )
         ],
       ),
     );
+  }
+
+  void openWhatsapp() async {
+    var whatsapp = "+201152137488";
+    var whatsappUrlAndroid = "whatsapp://send?phone=$whatsapp&text=hello";
+    var whatsappURLIos = "https://wa.me/$whatsapp?text=${Uri.parse("hello")}";
+    if (Platform.isIOS) {
+      // for iOS phone only
+      if (await canLaunchUrl(Uri.parse(whatsappURLIos))) {
+        await launchUrl(
+          Uri.parse(whatsappURLIos),
+        );
+      } else {
+        Fluttertoast.showToast(msg: 'Install WhatsApp first');
+      }
+    } else {
+      // android , web
+      if (await canLaunchUrl(Uri.parse(whatsappUrlAndroid))) {
+        await launchUrl(Uri.parse(whatsappUrlAndroid));
+      } else {
+        Fluttertoast.showToast(msg: 'Install WhatsApp first');
+      }
+    }
+  }
+
+  Future<void> goToWebPage(String urlString) async {
+    final Uri url = Uri.parse(urlString);
+    if (!await launchUrl(url)) {
+      Fluttertoast.showToast(msg: 'Could not launch ERP Sing up');
+    }
+  }
+
+  void openGmail() async {
+    String email = Uri.encodeComponent("ryada2006.2020@gmail.com");
+    String subject = Uri.encodeComponent("Hello, I need help");
+    String body = Uri.encodeComponent("My problem is...");
+    Uri mail = Uri.parse("mailto:$email?subject=$subject&body=$body");
+    if (!await launchUrl(mail)) {
+      Fluttertoast.showToast(msg: 'Cannot open gmail, Unknown problem');
+    }
   }
 }

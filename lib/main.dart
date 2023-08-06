@@ -87,3 +87,9 @@ TextTheme txtTheme(BuildContext context) {
 String getFormattedDate(DateTime when) {
   return DateFormat("yyyy-MM-ddTHH:mm:ss'Z'").format(when);
 }
+
+void logoutUser(BuildContext context) {
+  Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (ctx) => LoginScreen()),
+          (route) => false);
+}

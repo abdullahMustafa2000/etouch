@@ -1,8 +1,7 @@
 import 'dart:async';
 import 'dart:math';
-import 'package:etouch/api/api_models/dashboard/submitted_doc_statuses.dart';
+import 'package:etouch/api/api_models/dashboard_response.dart';
 import 'package:etouch/api/api_models/login_response.dart';
-import 'package:etouch/api/api_models/map_response.dart';
 import 'package:etouch/api/api_response.dart';
 import 'package:etouch/api/services.dart';
 import 'package:etouch/businessLogic/providers/dashboard_manager.dart';
@@ -14,50 +13,64 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:pie_chart/pie_chart.dart';
 import 'package:provider/provider.dart';
-import '../../../../api/api_models/dashboard/dashboard_response.dart';
 
-class EInvoiceDashboardFragment extends StatelessWidget {
+class EInvoiceDashboardFragment extends StatefulWidget {
   EInvoiceDashboardFragment({Key? key, required this.loginResponse})
       : super(key: key);
   LoginResponse loginResponse;
+
+  @override
+  State<EInvoiceDashboardFragment> createState() =>
+      _EInvoiceDashboardFragmentState();
+}
+
+class _EInvoiceDashboardFragmentState extends State<EInvoiceDashboardFragment> {
+  late Future<APIResponse<DashboardResponse>> _dashboardResponse;
+
   MyApiServices get services => GetIt.I<MyApiServices>();
+
   Future<APIResponse<DashboardResponse>> _getDashboardFuture(
-      String token) async {
-    return await services.getDashboard(token);
+      String token) async => await services.getDashboard(token);
+
+  @override
+  void initState() {
+    _dashboardResponse = _getDashboardFuture(widget.loginResponse.token!);
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: _getDashboardFuture(loginResponse.token!),
+    return FutureBuilder<APIResponse<DashboardResponse>>(
+        future: _dashboardResponse,
         builder: (context, AsyncSnapshot<APIResponse<DashboardResponse>> snap) {
           DashboardResponse? response = snap.data?.data;
           return ListView(
             children: [
-              snap.hasData
+              !snap.hasData && snap.connectionState == ConnectionState.done
                   ? Center(
                       child: Text(
-                      appTxt(context).checkInternetMessage,
-                      style: txtTheme(context)
-                          .displayLarge!
-                          .copyWith(color: appTheme(context).primaryColor),
-                    ))
+                        appTxt(context).checkInternetMessage,
+                        style: txtTheme(context)
+                            .displayLarge!
+                            .copyWith(color: appTheme(context).primaryColor),
+                      ),
+                    )
                   : Column(
                       children: [
                         TopRow(),
                         const SizedBox(
                           height: 42,
                         ),
-                        snap.hasData
+                        !snap.hasData
                             ? const CircularProgressIndicator()
                             : Cards(
                                 dashboardResponse: response,
-                                token: loginResponse.token!,
+                                token: widget.loginResponse.token!,
                               ),
                         const SizedBox(
                           height: 10,
                         ),
-                        snap.hasData
+                        !snap.hasData
                             ? const CircularProgressIndicator()
                             : TopCustomers(
                                 dashboardResponse: response,
@@ -65,7 +78,7 @@ class EInvoiceDashboardFragment extends StatelessWidget {
                         const SizedBox(
                           height: 10,
                         ),
-                        snap.hasData
+                        !snap.hasData
                             ? const CircularProgressIndicator()
                             : Documents(dashboardResponse: response),
                         const SizedBox(
@@ -80,15 +93,15 @@ class EInvoiceDashboardFragment extends StatelessWidget {
 }
 
 class Documents extends StatelessWidget {
-  final Map<String, double> _list = {
+  Map<String, double> _list = {
     '': 0,
   };
   DashboardResponse? dashboardResponse;
   Documents({Key? key, required this.dashboardResponse}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    for (APIMapResponse customer in dashboardResponse?.invoiceTypes ?? []) {
-      _list[customer.key!] = customer.value!;
+    for (Statistics item in dashboardResponse?.invoiceTypes ?? []) {
+      _list[item.key ?? ''] = item.value ?? 0;
     }
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -136,7 +149,7 @@ class Documents extends StatelessWidget {
               ),
               const Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
               Text(
-                '${appTxt(context).eInvoiceTxt} (${_list['']}%)',
+                '${appTxt(context).eInvoiceTxt} (${_list['فاتورة']}%)',
                 style: Theme.of(context)
                     .textTheme
                     .labelSmall!
@@ -164,8 +177,8 @@ class TopCustomers extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    for (APIMapResponse customer in dashboardResponse?.topReceivers ?? []) {
-      data[customer.key!] = customer.value!;
+    for (Statistics item in dashboardResponse?.topReceivers ?? []) {
+      data[item.key ?? 'no name'] = item.value ?? 0;
     }
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -195,6 +208,7 @@ class TopCustomers extends StatelessWidget {
           // pieChart
           PieChart(
             dataMap: data,
+            colorList: colorList,
             chartRadius: MediaQuery.of(context).size.width / 2,
             legendOptions: LegendOptions(
               legendPosition: LegendPosition.bottom,
@@ -211,8 +225,8 @@ class TopCustomers extends StatelessWidget {
                   .titleSmall!
                   .copyWith(color: Colors.black),
             ),
-              //emptyColor: loginPlaceholderLightClr,
-          )
+            //emptyColor: loginPlaceholderLightClr,
+          ),
         ],
       ),
     );
@@ -236,13 +250,16 @@ class _CardsState extends State<Cards> {
     purpleCardBGClr,
     lightRedCardBGClr
   ];
-  SubmissionsStatuses? _valid, _invalid, _rejected, _cancelled;
+  SubmitTypes? _valid;
+  SubmitTypes? _inValid;
+  SubmitTypes? _cancelled;
+  SubmitTypes? _rejected;
   DashboardResponse? _response;
   @override
   void initState() {
     _response = widget.dashboardResponse;
     _valid = _response?.valid;
-    _invalid = _response?.invalid;
+    _inValid = _response?.invalid;
     _rejected = _response?.rejected;
     _cancelled = _response?.cancelled;
     super.initState();
@@ -266,165 +283,141 @@ class _CardsState extends State<Cards> {
 
   @override
   Widget build(BuildContext context) {
-    var dashboardProvider = context.watch<DashboardProvider>();
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: FutureBuilder<APIResponse<DashboardResponse>>(
-        future:
-            getDashboardInfo(widget.token, dashboardProvider.numOfDocuments),
-        builder: (context, AsyncSnapshot<APIResponse<DashboardResponse>> snap) {
-          if (true/*snap.hasData*/) {
-            DashboardResponse? response = snap.data?.data;
-            _valid = response?.valid;
-            _invalid = response?.invalid;
-            _rejected = response?.rejected;
-            _cancelled = response?.cancelled;
-            return Column(
+      child: Column(
+        children: [
+          SizedBox(
+            height: MediaQuery.of(context).size.height / 4,
+            child: PageView(
+              onPageChanged: (index) {
+                setState(() {
+                  _activeCard = index;
+                });
+              },
+              controller: _pageController,
               children: [
-                SizedBox(
-                  height: MediaQuery.of(context).size.height / 4,
-                  child: PageView(
-                    onPageChanged: (index) {
+                AnimatedBuilder(
+                  animation: _pageController,
+                  builder: (context, child) {
+                    double value = calcAngle(0, _pageController, context);
+                    return Transform.rotate(
+                      angle: pi * value,
+                      child: DashboardCardModel(
+                          cardTitle:
+                              appTxt(context).eInvoiceDashboardCardValidTitle,
+                          cardColor: greenCardBGClr,
+                          titleColor: greenCardTitleClr,
+                          dataColor: greenCardDataClr,
+                          progressColor: greenCardProgressClr,
+                          numOfDocuments: _valid?.count ?? 0,
+                          total: _valid?.total ?? 0,
+                          taxes: _valid?.tax ?? 0,
+                          progressWidth: 100,
+                          cardIcon: greenDBCardIcon),
+                    );
+                  },
+                ),
+                AnimatedBuilder(
+                  animation: _pageController,
+                  builder: (context, child) {
+                    double value = calcAngle(1, _pageController, context);
+                    return Transform.rotate(
+                      angle: pi * value,
+                      child: DashboardCardModel(
+                          cardTitle:
+                              appTxt(context).eInvoiceDashboardCardInvalidTitle,
+                          cardColor: darkRedCardBGClr,
+                          titleColor: pureWhite,
+                          dataColor: pureWhite,
+                          progressColor: darkRedCardProgressClr,
+                          numOfDocuments: _inValid?.count ?? 0,
+                          total: _inValid?.total ?? 0,
+                          taxes: _inValid?.tax ?? 0,
+                          progressWidth: 100,
+                          cardIcon: darkRedDBCardIcon),
+                    );
+                  },
+                ),
+                AnimatedBuilder(
+                  animation: _pageController,
+                  builder: (context, child) {
+                    double value = calcAngle(2, _pageController, context);
+                    return Transform.rotate(
+                      angle: pi * value,
+                      child: DashboardCardModel(
+                          cardTitle: appTxt(context)
+                              .eInvoiceDashboardCardCancelledTitle,
+                          cardColor: purpleCardBGClr,
+                          titleColor: pureWhite,
+                          dataColor: pureWhite,
+                          progressColor: purpleCardProgressClr,
+                          numOfDocuments: _cancelled?.count ?? 0,
+                          total: _cancelled?.total ?? 0,
+                          taxes: _cancelled?.tax ?? 0,
+                          progressWidth: 100,
+                          cardIcon: purpleDBCardIcon),
+                    );
+                  },
+                ),
+                AnimatedBuilder(
+                  animation: _pageController,
+                  builder: (context, child) {
+                    double value = calcAngle(3, _pageController, context);
+                    return Transform.rotate(
+                      angle: pi * value,
+                      child: DashboardCardModel(
+                          cardTitle: appTxt(context)
+                              .eInvoiceDashboardCardRejectedTitle,
+                          cardColor: lightRedCardBGClr,
+                          titleColor: lightRedCardTitleClr,
+                          dataColor: lightRedCardTitleClr,
+                          progressColor: lightRedCardProgressClr,
+                          numOfDocuments: _rejected?.count ?? 0,
+                          total: _rejected?.total ?? 0,
+                          taxes: _rejected?.tax ?? 0,
+                          progressWidth: 100,
+                          cardIcon: lightRedDBCardIcon),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(
+            height: 24,
+          ),
+          SizedBox(
+            height: 24,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List<Widget>.generate(
+                4,
+                (index) => Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: InkWell(
+                    onTap: () {
                       setState(() {
-                        _activeCard = index;
+                        _pageController.animateToPage(index,
+                            duration: const Duration(milliseconds: 500),
+                            curve: Curves.easeIn);
                       });
                     },
-                    controller: _pageController,
-                    children: [
-                      AnimatedBuilder(
-                        animation: _pageController,
-                        builder: (context, child) {
-                          double value = calcAngle(0, _pageController, context);
-                          return Transform.rotate(
-                            angle: pi * value,
-                            child: DashboardCardModel(
-                                cardTitle: appTxt(context)
-                                    .eInvoiceDashboardCardValidTitle,
-                                cardColor: greenCardBGClr,
-                                titleColor: greenCardTitleClr,
-                                dataColor: greenCardDataClr,
-                                progressColor: greenCardProgressClr,
-                                numOfDocuments: _valid?.count ?? 0,
-                                total: _valid?.total ?? 0,
-                                taxes: _valid?.tax ?? 0,
-                                progressWidth: 100,
-                                cardIcon: greenDBCardIcon),
-                          );
-                        },
-                      ),
-                      AnimatedBuilder(
-                        animation: _pageController,
-                        builder: (context, child) {
-                          double value = calcAngle(1, _pageController, context);
-                          return Transform.rotate(
-                            angle: pi * value,
-                            child: DashboardCardModel(
-                                cardTitle: appTxt(context)
-                                    .eInvoiceDashboardCardInvalidTitle,
-                                cardColor: darkRedCardBGClr,
-                                titleColor: pureWhite,
-                                dataColor: pureWhite,
-                                progressColor: darkRedCardProgressClr,
-                                numOfDocuments: _invalid?.count ?? 0,
-                                total: _invalid?.total ?? 0,
-                                taxes: _invalid?.tax ?? 0,
-                                progressWidth: 100,
-                                cardIcon: darkRedDBCardIcon),
-                          );
-                        },
-                      ),
-                      AnimatedBuilder(
-                        animation: _pageController,
-                        builder: (context, child) {
-                          double value = calcAngle(2, _pageController, context);
-                          return Transform.rotate(
-                            angle: pi * value,
-                            child: DashboardCardModel(
-                                cardTitle: appTxt(context)
-                                    .eInvoiceDashboardCardCancelledTitle,
-                                cardColor: purpleCardBGClr,
-                                titleColor: pureWhite,
-                                dataColor: pureWhite,
-                                progressColor: purpleCardProgressClr,
-                                numOfDocuments: _cancelled?.count ?? 0,
-                                total: _cancelled?.total ?? 0,
-                                taxes: _cancelled?.tax ?? 0,
-                                progressWidth: 100,
-                                cardIcon: purpleDBCardIcon),
-                          );
-                        },
-                      ),
-                      AnimatedBuilder(
-                        animation: _pageController,
-                        builder: (context, child) {
-                          double value = calcAngle(3, _pageController, context);
-                          return Transform.rotate(
-                            angle: pi * value,
-                            child: DashboardCardModel(
-                                cardTitle: appTxt(context)
-                                    .eInvoiceDashboardCardRejectedTitle,
-                                cardColor: lightRedCardBGClr,
-                                titleColor: lightRedCardTitleClr,
-                                dataColor: lightRedCardTitleClr,
-                                progressColor: lightRedCardProgressClr,
-                                numOfDocuments: _rejected?.count ?? 0,
-                                total: _rejected?.total ?? 0,
-                                taxes: _rejected?.tax ?? 0,
-                                progressWidth: 100,
-                                cardIcon: lightRedDBCardIcon),
-                          );
-                        },
-                      ),
-                    ],
+                    child: CircleAvatar(
+                      radius: _activeCard == index ? 12 : 5,
+                      backgroundColor: cardsBG[index],
+                    ),
                   ),
                 ),
-                const SizedBox(
-                  height: 24,
-                ),
-                SizedBox(
-                  height: 24,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List<Widget>.generate(
-                        4,
-                        (index) => Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 4),
-                              child: InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    _pageController.animateToPage(index,
-                                        duration:
-                                            const Duration(milliseconds: 500),
-                                        curve: Curves.easeIn);
-                                  });
-                                },
-                                child: CircleAvatar(
-                                  radius: _activeCard == index ? 12 : 5,
-                                  backgroundColor: cardsBG[index],
-                                ),
-                              ),
-                            )),
-                  ),
-                )
-              ],
-            );
-          } else {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        },
+              ),
+            ),
+          )
+        ],
       ),
     );
   }
 
   MyApiServices get services => GetIt.I<MyApiServices>();
-
-  Future<APIResponse<DashboardResponse>> getDashboardInfo(
-      token, int numOfDocuments) async {
-    return await services.getDashboard(token, s: numOfDocuments);
-  }
 }
 
 class TopRow extends StatefulWidget {

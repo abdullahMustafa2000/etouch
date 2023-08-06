@@ -9,6 +9,7 @@ import 'package:etouch/ui/themes/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
+import '../../main.dart';
 import 'home_pages/home_fragments.dart';
 
 int animDuration = 600;
@@ -47,21 +48,20 @@ class _HomePageScreenState extends State<HomePageScreen>
       key: _key,
       backgroundColor: Theme.of(context).primaryColorDark,
       drawer: SideMenuModel(
-          taxPayerName: 'Abdullah',
-          isDarkMood: isDark,
-          taxPayerImg: '',
-          onChangeMood: (isDark) {
-            themeManager.toggleTheme(isDark);
-          },
-          onContactClkd: () {},
-          onBackClkd: () {
-            _key.currentState?.closeDrawer();
-          },
-          onLogoutClkd: () {
-            Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (ctx) => LoginScreen()),
-                (route) => false);
-          }),
+        taxPayerName: 'Abdullah',
+        isDarkMood: isDark,
+        taxPayerImg: '',
+        onChangeMood: (isDark) {
+          themeManager.toggleTheme(isDark);
+        },
+        onContactClkd: () {},
+        onBackClkd: () {
+          _key.currentState?.closeDrawer();
+        },
+        onLogoutClkd: () {
+          logoutUser(context);
+        },
+      ),
       body: SafeArea(
         child: Column(
           children: [
@@ -164,20 +164,3 @@ class _HomePageScreenState extends State<HomePageScreen>
     );
   }
 }
-
-/*
-CurvedNavigationBar(
-        index: 0,
-        color: Theme.of(context).primaryColor,
-        backgroundColor: Colors.transparent,
-        buttonBackgroundColor: Colors.transparent,
-        items: [
-          Image.asset(eInvoiceNavIcon),
-          const Icon(Icons.add),
-          Image.asset(eReceiptNavIcon),
-        ],
-        onTap: (index) {
-          bottomNavigator.updatePageIndex(index);
-        },
-      ),
- */

@@ -2,6 +2,7 @@ class APIResponse<T> {
   T? data;
   bool hasError;
   String? errorMessage;
+  int statusCode;
 
-  APIResponse({this.data, this.hasError = false, this.errorMessage});
+  APIResponse({required this.statusCode, this.data, this.hasError = false, this.errorMessage,});
 }
