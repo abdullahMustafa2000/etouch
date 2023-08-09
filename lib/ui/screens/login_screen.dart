@@ -105,22 +105,10 @@ class LoginInputsWidget extends StatelessWidget {
               ),
             ),
             onPressed: () async {
-              if (_emailTxt != null && _passwordTxt != null) {
-                APIResponse<LoginResponse> res =
-                    await _loginSucceed(_emailTxt!, _passwordTxt!);
-                if (res.data != null && !res.hasError) {
-                  if (context.mounted) {
-                    UserInfoPreferences().saveUserInfo(res.data!);
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            HomePageScreen(loginResponse: res.data!),
-                      ),
-                    );
-                  }
-                }
-              } else {}
+              //1. validate null input
+              //2. request api
+              //3. take action on api response
+              _tryLogin(_emailTxt, _passwordTxt, context);
             },
           )
         ],
@@ -128,12 +116,40 @@ class LoginInputsWidget extends StatelessWidget {
     );
   }
 
-  Future<APIResponse<LoginResponse>> _loginSucceed(
+  void _tryLogin(
+      String? emailTxt, String? passwordTxt, BuildContext context) async {
+    APIResponse<LoginResponse>? res;
+    if (_emailTxt != null && _passwordTxt != null) {
+      res = await _callLoginApi(_emailTxt!, _passwordTxt!);
+      if (context.mounted) {
+        _loginResponse(res, context);
+      }
+    }
+  }
+
+  Future<APIResponse<LoginResponse>> _callLoginApi(
       String emailTxt, String passwordTxt) async {
     APIResponse<LoginResponse> response =
-        await service.postLoginInfo(emailTxt, passwordTxt);
+    await service.postLoginInfo(emailTxt, passwordTxt);
     return response;
   }
+
+  void _loginResponse(APIResponse<LoginResponse>? res, BuildContext context) {
+    if (res?.statusCode == 200) {
+      if (context.mounted) {
+        UserInfoPreferences().saveUserInfo(res!.data!);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HomePageScreen(loginResponse: res.data!),
+          ),
+        );
+      }
+    } else {
+      Fluttertoast.showToast(msg: appTxt(context).loginRequestFailed);
+    }
+  }
+
 }
 
 class LoginContactUsWidget extends StatelessWidget {
@@ -187,7 +203,7 @@ class LoginContactUsWidget extends StatelessWidget {
               ContactUsIconModel(
                 icon: logo,
                 onIconClicked: () async {
-                  await goToWebPage('http://toucherp.ris-me.com/Account/Login');
+                  await goToWebPage();
                 },
               ),
               ContactUsIconModel(
@@ -210,7 +226,7 @@ class LoginContactUsWidget extends StatelessWidget {
   }
 
   void openWhatsapp() async {
-    var whatsapp = "+201152137488";
+    var whatsapp = "+201140999955";
     var whatsappUrlAndroid = "whatsapp://send?phone=$whatsapp&text=hello";
     var whatsappURLIos = "https://wa.me/$whatsapp?text=${Uri.parse("hello")}";
     if (Platform.isIOS) {
@@ -232,8 +248,8 @@ class LoginContactUsWidget extends StatelessWidget {
     }
   }
 
-  Future<void> goToWebPage(String urlString) async {
-    final Uri url = Uri.parse(urlString);
+  Future<void> goToWebPage() async {
+    final Uri url = Uri.http('toucherp.ris-me.com', '/Account/Login');
     if (!await launchUrl(url)) {
       Fluttertoast.showToast(msg: 'Could not launch ERP Sing up');
     }

@@ -64,12 +64,12 @@ class _SplashScreenState extends State<SplashScreen>
       () => Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) {
-          // value added and = false
-          if (!(preferences.getBool('FirstOpen') != null && !preferences.getBool('FirstOpen')!)) {
+          if ((preferences.getBool('FirstOpen') == null ||
+              preferences.getBool('FirstOpen')!)) {
+            preferences.setBool('FirstOpen', false);
             return OrientaionScreen();
           } else {
-            preferences.setBool('FirstOpen', false);
-            if (userInfo.token == '' ||
+            if (userInfo.token == null || userInfo.token!.isEmpty ||
                 userInfo.expiration!.isBefore(DateTime.now())) {
               return LoginScreen();
             } else {

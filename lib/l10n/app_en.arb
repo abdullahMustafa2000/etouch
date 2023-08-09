@@ -78,5 +78,6 @@
   "downloadDocument": "download PDF",
   "closeCurrent": "close",
   "showDoc": "Show document",
-  "docSent": "Document sent!"
+  "docSent": "Document sent!",
+  "loginRequestFailed": "Verify the validity of the data or contact us"
 }
