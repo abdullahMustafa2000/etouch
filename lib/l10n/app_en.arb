@@ -79,5 +79,6 @@
   "closeCurrent": "close",
   "showDoc": "Show document",
   "docSent": "Document sent!",
-  "loginRequestFailed": "Verify the validity of the data or contact us"
+  "loginRequestFailed": "Verify the validity of the data or contact us",
+  "pleaseWait": "Please wait."
 }

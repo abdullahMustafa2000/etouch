@@ -80,5 +80,6 @@
   "closeCurrent": "إغلاق",
   "showDoc": "عرض الفاتورة",
   "docSent": "تم الإرسال !",
-  "loginRequestFailed": "تحقق من صحه البيانات او تواصل معنا"
+  "loginRequestFailed": "تحقق من صحه البيانات او تواصل معنا",
+  "pleaseWait": "يرجى الانتظار"
 }

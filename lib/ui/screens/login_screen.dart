@@ -108,6 +108,7 @@ class LoginInputsWidget extends StatelessWidget {
               //1. validate null input
               //2. request api
               //3. take action on api response
+              Fluttertoast.showToast(msg: appTxt(context).pleaseWait);
               _tryLogin(_emailTxt, _passwordTxt, context);
             },
           )
@@ -130,7 +131,7 @@ class LoginInputsWidget extends StatelessWidget {
   Future<APIResponse<LoginResponse>> _callLoginApi(
       String emailTxt, String passwordTxt) async {
     APIResponse<LoginResponse> response =
-    await service.postLoginInfo(emailTxt, passwordTxt);
+        await service.postLoginInfo(emailTxt, passwordTxt);
     return response;
   }
 
@@ -149,7 +150,6 @@ class LoginInputsWidget extends StatelessWidget {
       Fluttertoast.showToast(msg: appTxt(context).loginRequestFailed);
     }
   }
-
 }
 
 class LoginContactUsWidget extends StatelessWidget {
