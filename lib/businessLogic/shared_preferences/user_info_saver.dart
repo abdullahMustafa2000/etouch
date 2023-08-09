@@ -1,5 +1,4 @@
 import 'package:etouch/api/api_models/login_response.dart';
-import 'package:etouch/businessLogic/classes/e_invoice_item_selection_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserInfoPreferences {

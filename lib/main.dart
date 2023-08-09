@@ -1,8 +1,6 @@
 import 'package:etouch/api/services.dart';
 import 'package:etouch/businessLogic/providers/dashboard_manager.dart';
 import 'package:etouch/businessLogic/providers/navigation_bottom_manager.dart';
-import 'package:etouch/ui/fake_landing.dart';
-import 'package:etouch/ui/screens/home_screen.dart';
 import 'package:etouch/ui/screens/login_screen.dart';
 import 'package:etouch/ui/screens/splash_screen.dart';
 import 'package:etouch/ui/themes/theme_manager.dart';
@@ -88,8 +86,10 @@ String getFormattedDate(DateTime when) {
   return DateFormat("yyyy-MM-ddTHH:mm:ss'Z'").format(when);
 }
 
-void logoutUser(BuildContext context) {
-  Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (ctx) => LoginScreen()),
-          (route) => false);
+void logoutUser(BuildContext context, {bool why = true}) {
+  if (why) {
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (ctx) => LoginScreen()),
+            (route) => false);
+  }
 }

@@ -79,5 +79,6 @@
   "downloadDocument": "تحميل PDF",
   "closeCurrent": "إغلاق",
   "showDoc": "عرض الفاتورة",
-  "docSent": "تم الإرسال !"
+  "docSent": "تم الإرسال !",
+  "loginRequestFailed": "تحقق من صحه البيانات او تواصل معنا"
 }
