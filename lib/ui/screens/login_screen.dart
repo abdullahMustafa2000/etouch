@@ -249,9 +249,9 @@ class LoginContactUsWidget extends StatelessWidget {
   }
 
   Future<void> goToWebPage() async {
-    final Uri url = Uri.http('toucherp.ris-me.com', '/Account/Login');
+    final Uri url = Uri.parse('http://toucherp.ris-me.com/Account/Login');
     if (!await launchUrl(url)) {
-      Fluttertoast.showToast(msg: 'Could not launch ERP Sing up');
+      Fluttertoast.showToast(msg: 'Could not launch Touch ERP Sing up');
     }
   }
 

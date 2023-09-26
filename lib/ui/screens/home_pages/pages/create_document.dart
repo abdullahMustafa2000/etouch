@@ -123,7 +123,7 @@ class _CreateEInvoiceDocumentFragmentState
 
                     // add product details object
                     ProductsSelectionWidget(
-                      branchId: selectedBranch?.getId ?? -1,
+                      branchId: selectedBranch?.getId ?? 94,
                       warehouseId: selectedWarehouse?.getId ?? -1,
                       loginResponse: widget.loginResponse,
                     ),
@@ -169,7 +169,7 @@ class _CreateEInvoiceDocumentFragmentState
                         onTap: () {
                           _submitDocument(
                               SalesOrder(
-                                  branchId: selectedBranch?.getId ?? -1,
+                                  branchId: selectedBranch?.getId ?? 94,
                                   treasuryId: selectedTreasury?.getId ?? -1,
                                   warehouseId: selectedWarehouse?.getId ?? -1,
                                   totalOrderAmount:

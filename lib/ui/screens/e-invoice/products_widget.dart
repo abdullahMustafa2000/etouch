@@ -40,10 +40,10 @@ class _ProductsSelectionWidgetState extends State<ProductsSelectionWidget> {
     return _apiResponse.data ?? [];
   }
 
-  Future<List<ProductModel>> _getGroupProducts(int groupId, String token) async {
+  Future<List<ProductModel>> _getGroupProducts(int branchId, int groupId, String token) async {
     if (groupId < 0) return [];
     APIResponse<List<ProductModel>> apiResponse =
-        await service.getProductsByGroupId(groupId, token);
+        await service.getProductsByGroupId(branchId, groupId, token);
     return apiResponse.data ?? [];
   }
 
@@ -54,24 +54,21 @@ class _ProductsSelectionWidgetState extends State<ProductsSelectionWidget> {
   }
 
   ProductModel emptyProduct = ProductModel(
-      group: null,
-      unit: null,
-      balance: 0,
-      productPrice: 0,
-      quantity: 0,
-      isDeleted: false,
-      isPriceEditable: false,
-      id: 0,
-      name: '');
+    productId: 0,
+    productName: '',
+    productCount: 0,
+    price: 0,
+    warehouseProductGroupsId: 0,
+    measurementUnitsId: 0,
+  );
 
   late Future<List<BaseAPIObject>> _unitsFuture, _groupsFuture;
-  int _branchId = -1, _warehouseId = -1;
+  int _branchId = -1;
   late EInvoiceDocProvider documentProvider;
   @override
   void initState() {
     productsList = [emptyProduct];
     _branchId = widget.branchId;
-    _warehouseId = widget.warehouseId;
     _userInfo = widget.loginResponse;
     _controller = PageController(viewportFraction: .8);
     _unitsFuture = _getUnits(_branchId, _userInfo.token!);
@@ -98,7 +95,7 @@ class _ProductsSelectionWidgetState extends State<ProductsSelectionWidget> {
         AddProductWidget(
           onAddClk: () {
             setState(() {
-              productsList?.add(emptyProduct);
+              productsList.add(emptyProduct);
               animateTo(productsList.length - 1, _controller);
             });
           },
@@ -123,39 +120,40 @@ class _ProductsSelectionWidgetState extends State<ProductsSelectionWidget> {
                       groupsList: groupsList,
                       productsList: productsList,
                       unitsList: unitsList,
-                      balance: productsList[index].balance ?? 0,
-                      productPrice: productsList[index].productPrice ?? 0.0,
-                      isPriceEditable: productsList[index].isPriceEditable ?? false,
+                      balance: productsList[index].productCount ?? 0,
+                      productPrice: productsList[index].price ?? 0.0,
+                      isPriceEditable: true,
+                      // isPriceEditable: productsList[index].isPriceEditable ?? false,
                       selectedGroupFun: (BaseAPIObject? val) {
                         setState(() {
                           productsList[index].group = val;
-                          _whenGroupSelected(val?.getId ?? -1, _userInfo.token!);
-                          documentProvider.listUpdated(productsList??[]);
+                          _whenGroupSelected(_branchId, val?.getId ?? -1, _userInfo.token!);
+                          documentProvider.listUpdated(productsList);
                         });
                       },
                       selectedProductFun: (BaseAPIObject? val) {
                         setState(() {
                           _selectedProduct = val;
-                          productsList[index].name = val?.getName ?? '';
-                          productsList[index].id = val?.getId ?? -1;
+                          productsList[index].productName = val?.getName ?? '';
+                          productsList[index].productId = val?.getId ?? -1;
                           documentProvider.listUpdated(productsList);
                         });
                       },
                       selectedUnitFun: (BaseAPIObject? val) {
                         setState(() {
-                          productsList[index].unit = val;
+                          productsList[index].measurementUnitsId = val?.id;
                           documentProvider.listUpdated(productsList);
                         });
                       },
                       selectedQuantityFun: (String? val) {
                         setState(() {
-                          productsList[index].quantity = int.parse(val!);
+                          productsList[index].productCount = int.parse(val!);
                           documentProvider.listUpdated(productsList);
                         });
                       },
                       selectedPriceFun: (String? val) {
                         setState(() {
-                          productsList[index].productPrice = double.parse(val!);
+                          productsList[index].price = double.parse(val!);
                           documentProvider.listUpdated(productsList);
                         });
                       },
@@ -169,9 +167,9 @@ class _ProductsSelectionWidgetState extends State<ProductsSelectionWidget> {
                       selectedGroupVal: productsList[index].group,
                       selectedProductVal: _selectedProduct,
                       selectedUnitVal: productsList[index].unit,
-                      selectedQuantityVal: productsList[index].quantity ?? 0,
+                      selectedQuantityVal: productsList[index].productCount ?? 0,
                       totalProductPrice: (double? price) {
-                        productsList[index].totalPrice = price ?? 0.0;
+                        productsList[index].price = price ?? 0.0;
                         documentProvider.priceUpdated(productsList??[]);
                       },
                     ),
@@ -190,10 +188,12 @@ class _ProductsSelectionWidgetState extends State<ProductsSelectionWidget> {
     groupsList = snap.data?[1];
   }
 
-  void _whenGroupSelected(int groupId, String token) async {
+  void _whenGroupSelected(int branchId, int groupId, String token) async {
     if (groupId < 0) return;
-    productsList = await _getGroupProducts(groupId, token);
-    setState(() {});
+    productsList = await _getGroupProducts(branchId, groupId, token);
+    setState(() {
+
+    });
   }
 }
 

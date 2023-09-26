@@ -43,9 +43,7 @@ class ProductCreationModel extends StatefulWidget {
       selectedPriceFun,
       onDeleteItemClickedFun,
       totalProductPrice;
-  BaseAPIObject? selectedGroupVal,
-      selectedProductVal,
-      selectedUnitVal;
+  BaseAPIObject? selectedGroupVal, selectedProductVal, selectedUnitVal;
   @override
   State<ProductCreationModel> createState() => _ProductCreationModelState();
 }
@@ -53,9 +51,7 @@ class ProductCreationModel extends StatefulWidget {
 class _ProductCreationModelState extends State<ProductCreationModel> {
   double _totalPrice = 0.0, _prodPrice = 0.0;
   int _quantity = 0;
-  BaseAPIObject? _selectedGroupVal,
-      _selectedProductVal,
-      _selectedUnitVal;
+  BaseAPIObject? _selectedGroupVal, _selectedProductVal, _selectedUnitVal;
   final ScrollController _controller = ScrollController();
   @override
   void initState() {
@@ -107,7 +103,10 @@ class _ProductCreationModelState extends State<ProductCreationModel> {
               InputTypeRow(
                 label: appTxt(context).productsOfInventory,
                 child: SearchDropdownMenuModel(
-                  dataList: widget.productsList,
+                  dataList: widget.productsList
+                      ?.map((e) => BaseAPIObject(
+                          id: e.productId ?? 0, name: e.productName ?? ''))
+                      .toList(),
                   onItemSelected: (BaseAPIObject? val) {
                     widget.selectedProductFun(val);
                   },

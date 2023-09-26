@@ -1,24 +1,39 @@
-import 'package:etouch/businessLogic/classes/e_invoice_item_selection_model.dart';
+import '../../businessLogic/classes/e_invoice_item_selection_model.dart';
 
-class ProductModel extends BaseAPIObject {
-  BaseAPIObject? group;
-  BaseAPIObject? unit;
-  int? balance, quantity;
-  double? productPrice, totalPrice;
-  bool isDeleted, isPriceEditable;
+class ProductModel {
+  int? productId;
+  String? productName;
+  int? warehouseProductGroupsId;
+  int? productCount;
+  int? measurementUnitsId;
+  double? price;
+
+  BaseAPIObject? group, unit;
+
   ProductModel(
-      {required this.group,
-      required this.unit,
-      required this.balance,
-      this.quantity,
-      required this.productPrice,
-      required this.isDeleted,
-      required this.isPriceEditable,
-      required int id,
-      required String name}) : super(id: id, name: name);
+      {this.productId,
+        this.productName,
+        this.warehouseProductGroupsId,
+        this.productCount,
+        this.measurementUnitsId,
+        this.price});
 
-  @override
-  String toString() {
-    return 'group = $group, unit = $unit, balance = $balance, quantity = $quantity, price = $productPrice, isDeleted = $isDeleted';
+  ProductModel.fromJson(Map<String, dynamic> json) {
+    productId = json['productId'];
+    productName = json['productName'];
+    warehouseProductGroupsId = json['warehouseProductGroupsId'];
+    productCount = double.parse(json['productCount'].toString()).toInt();
+    measurementUnitsId = json['measurementUnitsId'];
+    price = json['price'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['productId'] = productId;
+    data['productName'] = productName;
+    data['warehouseProductGroupsId'] = warehouseProductGroupsId;
+    data['productCount'] = productCount;
+    data['measurementUnitsId'] = measurementUnitsId;
+    return data;
   }
 }

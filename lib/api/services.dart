@@ -111,9 +111,15 @@ class MyApiServices {
         });
   }
 
-  Future<APIResponse<List<ProductModel>>> getProductsByGroupId(
+  Future<APIResponse<List<ProductModel>>> getProductsByGroupId(int branchId,
       int groupId, String token) async {
-    return await http.get(Uri.parse('$baseUrl'), headers: {
+    return await http.get(Uri
+        .http(baseUrl, '/api/inventory/Inventory/GetProductsByProductGroupsId'
+        , {
+          'branchId': branchId.toString(),
+          'groupId': groupId.toString(),
+        }),
+        headers: {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token'
     }).then((data) {
@@ -121,15 +127,7 @@ class MyApiServices {
         final jsonData = json.decode(data.body);
         final dataSet = <ProductModel>[];
         for (var product in jsonData) {
-          final element = ProductModel(
-              group: product['group'],
-              unit: product['unit'],
-              balance: product['balance'],
-              productPrice: product['price'],
-              isDeleted: false,
-              id: product['id'],
-              name: product['name'],
-              isPriceEditable: product['editable']);
+          final element = ProductModel.fromJson(product);
           dataSet.add(element);
         }
         return APIResponse<List<ProductModel>>(

@@ -11,7 +11,7 @@ class EInvoiceDocProvider with ChangeNotifier {
   void priceUpdated(List<ProductModel> list) {
     _totalPrice = 0;
     for (var element in list) {
-      _totalPrice += element.totalPrice ?? 0;
+      _totalPrice += element.price ?? 0;
     }
     listUpdated(list);
     notifyListeners();
