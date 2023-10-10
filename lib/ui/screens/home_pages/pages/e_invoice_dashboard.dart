@@ -15,9 +15,9 @@ import 'package:pie_chart/pie_chart.dart';
 import 'package:provider/provider.dart';
 
 class EInvoiceDashboardFragment extends StatefulWidget {
-  EInvoiceDashboardFragment({Key? key, required this.loginResponse})
+  const EInvoiceDashboardFragment({Key? key, required this.loginResponse})
       : super(key: key);
-  LoginResponse loginResponse;
+  final LoginResponse loginResponse;
 
   @override
   State<EInvoiceDashboardFragment> createState() =>
@@ -30,7 +30,8 @@ class _EInvoiceDashboardFragmentState extends State<EInvoiceDashboardFragment> {
   MyApiServices get services => GetIt.I<MyApiServices>();
 
   Future<APIResponse<DashboardResponse>> _getDashboardFuture(
-      String token) async => await services.getDashboard(token);
+          String token) async =>
+      await services.getDashboard(token);
 
   @override
   void initState() {
@@ -57,7 +58,7 @@ class _EInvoiceDashboardFragmentState extends State<EInvoiceDashboardFragment> {
                     )
                   : Column(
                       children: [
-                        TopRow(),
+                        const TopRow(),
                         const SizedBox(
                           height: 42,
                         ),
@@ -65,7 +66,6 @@ class _EInvoiceDashboardFragmentState extends State<EInvoiceDashboardFragment> {
                             ? const CircularProgressIndicator()
                             : Cards(
                                 dashboardResponse: response,
-                                token: widget.loginResponse.token!,
                               ),
                         const SizedBox(
                           height: 10,
@@ -93,10 +93,10 @@ class _EInvoiceDashboardFragmentState extends State<EInvoiceDashboardFragment> {
 }
 
 class Documents extends StatelessWidget {
-  Map<String, double> _list = {
+  final Map<String, double> _list = {
     '': 0,
   };
-  DashboardResponse? dashboardResponse;
+  final DashboardResponse? dashboardResponse;
   Documents({Key? key, required this.dashboardResponse}) : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -164,9 +164,9 @@ class Documents extends StatelessWidget {
 }
 
 class TopCustomers extends StatelessWidget {
-  Map<String, double> data = {'': 0};
-  DashboardResponse? dashboardResponse;
-  TopCustomers({required this.dashboardResponse});
+  final Map<String, double> data = {'': 0};
+  final DashboardResponse? dashboardResponse;
+  TopCustomers({Key? key, required this.dashboardResponse}) : super(key: key);
   final colorList = <Color>[
     const Color(0xfffdcb6e),
     const Color(0xff0984e3),
@@ -234,9 +234,9 @@ class TopCustomers extends StatelessWidget {
 }
 
 class Cards extends StatefulWidget {
-  Cards({required this.dashboardResponse, required this.token});
-  DashboardResponse? dashboardResponse;
-  String token;
+  const Cards({Key? key, required this.dashboardResponse})
+      : super(key: key);
+  final DashboardResponse? dashboardResponse;
   @override
   State<Cards> createState() => _CardsState();
 }
@@ -416,11 +416,11 @@ class _CardsState extends State<Cards> {
       ),
     );
   }
-
-  MyApiServices get services => GetIt.I<MyApiServices>();
 }
 
 class TopRow extends StatefulWidget {
+  const TopRow({Key? key}) : super(key: key);
+
   @override
   State<TopRow> createState() => _TopRowState();
 }

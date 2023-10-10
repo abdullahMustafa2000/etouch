@@ -36,7 +36,7 @@ class OrderPreRequirementsWidget extends StatelessWidget {
       selectedCurrencyFun,
       selectedTreasuryFun,
       selectedCustomerFun;
-  int orderNumber;
+  int? orderNumber;
   BaseAPIObject? selectedCustomer,
       selectedBranch,
       selectedCurrency,

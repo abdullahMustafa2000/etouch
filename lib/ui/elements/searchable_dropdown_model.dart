@@ -12,8 +12,8 @@ class SearchDropdownMenuModel extends StatefulWidget {
       required this.onItemSelected,
       required this.selectedItem})
       : super(key: key);
-  List<BaseAPIObject>? dataList;
-  Function onItemSelected;
+  final List<BaseAPIObject>? dataList;
+  final Function onItemSelected;
   BaseAPIObject? selectedItem;
   @override
   State<SearchDropdownMenuModel> createState() =>

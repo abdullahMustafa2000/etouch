@@ -18,9 +18,9 @@ import '../../e-invoice/e_invoice_document_pre_requairments_model.dart';
 import '../../e-invoice/products_widget.dart';
 
 class CreateEInvoiceDocumentFragment extends StatefulWidget {
-  CreateEInvoiceDocumentFragment({Key? key, required this.loginResponse})
+  const CreateEInvoiceDocumentFragment({Key? key, required this.loginResponse})
       : super(key: key);
-  LoginResponse loginResponse;
+  final LoginResponse loginResponse;
   @override
   State<CreateEInvoiceDocumentFragment> createState() =>
       _CreateEInvoiceDocumentFragmentState();
@@ -35,7 +35,7 @@ class _CreateEInvoiceDocumentFragmentState
       selectedCustomer,
       selectedPaymentMethod;
   DocumentTaxesModel? selectedTax;
-  late int orderId;
+  int? orderId;
   List<BaseAPIObject>? branchesList,
       warehousesList,
       currenciesList,
@@ -44,7 +44,7 @@ class _CreateEInvoiceDocumentFragmentState
       paymentMethodsList;
   List<DocumentTaxesModel>? taxesList;
   List<ProductModel>? productsList;
-  late Future<bool> _topData;
+  late Future<bool> _branchData;
   double _totalAmountAfterTaxes = 0, _paidAmount = 0;
   late LoginResponse _userInfo;
   MyApiServices get service => GetIt.I<MyApiServices>();
@@ -53,9 +53,9 @@ class _CreateEInvoiceDocumentFragmentState
   @override
   void initState() {
     _userInfo = widget.loginResponse;
-    _topData = _whenBranchSelected(94, _userInfo.token!);
     branchesList = _userInfo.userBranches;
-    orderId = 1000;
+    _branchData = _whenBranchSelected(
+        branchesList?[0].id ?? 0, _userInfo.companyId ?? -1, _userInfo.token!);
     super.initState();
   }
 
@@ -70,7 +70,7 @@ class _CreateEInvoiceDocumentFragmentState
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: FutureBuilder<bool>(
-            future: _topData,
+            future: _branchData,
             builder: (context, AsyncSnapshot<bool> snap) {
               if (snap.connectionState == ConnectionState.done &&
                   snap.hasData) {
@@ -101,7 +101,8 @@ class _CreateEInvoiceDocumentFragmentState
                       selectedBranchFun: (BaseAPIObject? val) {
                         setState(() {
                           selectedBranch = val;
-                          _whenBranchSelected(val!.getId, _userInfo.token!);
+                          _whenBranchSelected(val!.getId,
+                              _userInfo.companyId ?? 0, _userInfo.token!);
                         });
                       },
                       selectedCustomerFun: (BaseAPIObject? val) {
@@ -169,18 +170,19 @@ class _CreateEInvoiceDocumentFragmentState
                         onTap: () {
                           _submitDocument(
                               SalesOrder(
-                                  branchId: selectedBranch?.getId ?? 94,
-                                  treasuryId: selectedTreasury?.getId ?? -1,
-                                  warehouseId: selectedWarehouse?.getId ?? -1,
-                                  totalOrderAmount:
-                                      documentProvider.getTotalPrice(),
-                                  orderAmountAfterTaxes: _totalAmountAfterTaxes,
-                                  customerId: selectedCustomer?.getId ?? -1,
-                                  paid: _paidAmount,
-                                  currencyId: selectedCurrency?.getId ?? -1,
-                                  productsList:
-                                      documentProvider.getProductsList(),
-                                  orderDate: ''),
+                                branchId: selectedBranch?.getId ?? -1,
+                                treasuryId: selectedTreasury?.getId ?? -1,
+                                warehouseId: selectedWarehouse?.getId ?? -1,
+                                totalOrderAmount:
+                                    documentProvider.getTotalPrice(),
+                                orderAmountAfterTaxes: _totalAmountAfterTaxes,
+                                customerId: selectedCustomer?.getId ?? -1,
+                                paid: _paidAmount,
+                                currencyId: selectedCurrency?.getId ?? -1,
+                                productsList:
+                                    documentProvider.getProductsList(),
+                                orderDate: getFormattedDate(DateTime.now()),
+                              ),
                               _userInfo.token!);
                         },
                         width: double.infinity,
@@ -219,7 +221,8 @@ class _CreateEInvoiceDocumentFragmentState
     selectedCurrency = currenciesList?.first;
     selectedPaymentMethod = paymentMethodsList?.first;
     selectedBranch = first;
-    _whenBranchSelected(94, token);
+    _whenBranchSelected(
+        _userInfo.userBranches?.first.id ?? -1, _userInfo.companyId ?? 0, token);
   }
 
   Future<bool> updateCustomers(int branchId, String token) async {
@@ -260,12 +263,13 @@ class _CreateEInvoiceDocumentFragmentState
     );
   }
 
-  Future<bool> _whenBranchSelected(int branchId, String token) async {
+  Future<bool> _whenBranchSelected(
+      int branchId, int companyId, String token) async {
     bool customers = await updateCustomers(branchId, token);
     bool warehouses = await updateWarehouses(branchId, token);
     bool treasuries = await updateTreasuries(branchId, token);
-    bool currencies = await _getCurrencies(103, token);
-    bool paymentMethods = await _getPaymentMethods(103, token);
+    bool currencies = await _getCurrencies(companyId, token);
+    bool paymentMethods = await _getPaymentMethods(companyId, token);
     return customers &&
         warehouses &&
         treasuries &&

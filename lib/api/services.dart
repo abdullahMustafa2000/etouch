@@ -10,7 +10,7 @@ import 'api_models/sales_order.dart';
 
 class MyApiServices {
   MyApiServices();
-  static const baseUrl = 'aaabdelsabour-001-site1.atempurl.com';
+  static const baseUrl = 'http://rognecumlo-001-site1.itempurl.com';
   static Map<int, String> currenciesMap = {};
 
   Future<APIResponse<List<BaseAPIObject>>> baseObjectRequest(

@@ -15,8 +15,9 @@ import 'home_pages/home_fragments.dart';
 int animDuration = 600;
 
 class HomePageScreen extends StatefulWidget {
-  HomePageScreen({required this.loginResponse});
-  LoginResponse loginResponse;
+  const HomePageScreen({Key? key, required this.loginResponse})
+      : super(key: key);
+  final LoginResponse loginResponse;
   @override
   State<HomePageScreen> createState() => _HomePageScreenState();
 }
