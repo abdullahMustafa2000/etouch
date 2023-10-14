@@ -4,8 +4,8 @@ import '../constants.dart';
 import '../themes/themes.dart';
 
 class UnEditableData extends StatelessWidget {
-  UnEditableData({Key? key, required this.data}) : super(key: key);
-  String data;
+  const UnEditableData({Key? key, required this.data}) : super(key: key);
+  final String data;
   @override
   Widget build(BuildContext context) {
     return Container(

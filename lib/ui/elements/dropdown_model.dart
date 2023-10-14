@@ -28,17 +28,6 @@ class _DropDownMenuModelState extends State<DropDownMenuModel> {
     super.initState();
   }
 
-  // @override
-  // void didUpdateWidget(covariant DropDownMenuModel oldWidget) {
-  //   setState(() {
-  //     curValue = curValue ??
-  //         (widget.dataList != null && widget.dataList!.isNotEmpty
-  //             ? widget.dataList!.first
-  //             : null);
-  //   });
-  //   super.didUpdateWidget(oldWidget);
-  // }
-
   @override
   Widget build(BuildContext context) {
     return DecorateDropDown(

@@ -2,21 +2,19 @@ import 'dart:convert';
 
 class BaseAPIObject {
   BaseAPIObject({required this.id, required this.name});
-  String name;
-  int id;
+  String? name;
+  int? id;
   set setId(int comingId) {
     id = comingId;
   }
-  int get getId => id;
 
-  set setName(String comingName) {
-    name = comingName;
-  }
-  String get getName => name;
+  String get getName => name ?? '';
+
+  int get getId => id ?? -1;
 
   @override
   String toString() {
-    return '{name: $getName, id: $getId}';
+    return '{name: $name, id: $id}';
   }
 
   factory BaseAPIObject.fromJson(Map<String, dynamic> jsonData) {

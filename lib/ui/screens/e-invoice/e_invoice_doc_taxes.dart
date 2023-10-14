@@ -1,28 +1,20 @@
+import 'package:dropdown_search/dropdown_search.dart';
+import 'package:etouch/api/services.dart';
+import 'package:etouch/businessLogic/providers/create_doc_manager.dart';
 import 'package:etouch/main.dart';
 import 'package:etouch/ui/elements/editable_data.dart';
 import 'package:etouch/ui/elements/searchable_dropdown_model.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../api/api_models/tax_of_document_model.dart';
 import '../../../businessLogic/classes/e_invoice_item_selection_model.dart';
 import '../../elements/uneditable_data.dart';
 
 class DocumentNumbers extends StatefulWidget {
-  DocumentNumbers({
-    required this.taxesList,
-    required this.selectedTaxFun,
-    required this.totalDocPrice,
-    required this.paymentMethods,
-    required this.selectedPaymentMethodFun,
-    required this.selectedTaxVal,
-    required this.selectedPaymentMethodVal,
-    required this.paidAmountFun,
-  });
-  List<BaseAPIObject>? paymentMethods;
-  List<DocumentTaxesModel>? taxesList;
-  Function selectedTaxFun, selectedPaymentMethodFun, paidAmountFun;
-  DocumentTaxesModel? selectedTaxVal;
-  BaseAPIObject? selectedPaymentMethodVal;
-  double totalDocPrice;
+  final String token;
+  final MyApiServices services;
+  const DocumentNumbers({Key? key, required this.services, required this.token})
+      : super(key: key);
   @override
   State<DocumentNumbers> createState() => _DocumentNumbersState();
 }
@@ -30,24 +22,26 @@ class DocumentNumbers extends StatefulWidget {
 class _DocumentNumbersState extends State<DocumentNumbers> {
   double _amount = 0.0;
   DocumentTaxesModel? _selectedTax;
+  late EInvoiceDocProvider _docProvider;
   @override
   void initState() {
-    _selectedTax = widget.selectedTaxVal;
     super.initState();
   }
 
   double calcTotalAfter(double amount) {
     if (_selectedTax == null) return 0.0;
     if (_selectedTax!.addToPrice) {
-      return widget.totalDocPrice + calcDiscountOrTax(amount);
+      return _docProvider.salesOrder.totalOrderAmount +
+          calcDiscountOrTax(amount);
     } else {
-      return widget.totalDocPrice - calcDiscountOrTax(amount);
+      return _docProvider.salesOrder.totalOrderAmount -
+          calcDiscountOrTax(amount);
     }
   }
 
   double calcDiscountOrTax(double amount) {
     if (!_selectedTax!.fixedValue) {
-      return widget.totalDocPrice / amount;
+      return _docProvider.salesOrder.totalOrderAmount / amount;
     } else {
       return amount;
     }
@@ -55,6 +49,7 @@ class _DocumentNumbersState extends State<DocumentNumbers> {
 
   @override
   Widget build(BuildContext context) {
+    _docProvider = Provider.of<EInvoiceDocProvider>(context);
     return Column(
       children: [
         Row(
@@ -62,27 +57,17 @@ class _DocumentNumbersState extends State<DocumentNumbers> {
           children: [
             Expanded(
               child: DiscountsAndTaxes(
-                taxesTypesList: widget.taxesList,
-                selectedTax: (BaseAPIObject? val) {
-                  setState(() {
-                    for (DocumentTaxesModel tax in widget.taxesList ?? []) {
-                      if (tax.getId == (val?.getId ?? 0)) {
-                        _amount = tax.valueOfTax;
-                        break;
-                      }
-                    }
-                  });
-                  widget.selectedTaxFun(val, calcTotalAfter(_amount));
-                },
-                taxVal: _selectedTax,
+                services: widget.services,
+                branchId: _docProvider.salesOrder.branchId,
+                token: widget.token,
               ),
             ),
             Expanded(
               child: PricesAndTotals(
-                totalBefore: widget.totalDocPrice,
+                totalBefore: _docProvider.salesOrder.totalOrderAmount,
                 totalAfter: _amount > 0
                     ? calcTotalAfter(_amount)
-                    : widget.totalDocPrice,
+                    : _docProvider.salesOrder.totalOrderAmount,
                 discountOrTax: _amount > 0 ? calcDiscountOrTax(_amount) : 0.0,
               ),
             ),
@@ -92,14 +77,9 @@ class _DocumentNumbersState extends State<DocumentNumbers> {
           height: 24,
         ),
         CashesWidget(
-          paymentMethods: widget.paymentMethods,
-          selectedMethod: (BaseAPIObject? val) {
-            widget.selectedPaymentMethodFun(val);
-          },
-          paidAmountFun: (double amount) {
-            widget.paidAmountFun(amount);
-          },
-          totalOrderPrice: widget.totalDocPrice,
+          services: widget.services,
+          branchId: _docProvider.salesOrder.branchId,
+          token: widget.token,
         ),
       ],
     );
@@ -107,35 +87,27 @@ class _DocumentNumbersState extends State<DocumentNumbers> {
 }
 
 class CashesWidget extends StatefulWidget {
-  CashesWidget(
-      {required this.paymentMethods,
-      required this.selectedMethod,
-      required this.totalOrderPrice,
-      required this.paidAmountFun});
-  List<BaseAPIObject>? paymentMethods;
-  Function selectedMethod, paidAmountFun;
-  double totalOrderPrice;
+  const CashesWidget(
+      {Key? key, required this.services, this.branchId, this.token})
+      : super(key: key);
+  final MyApiServices services;
+  final int? branchId;
+  final String? token;
 
   @override
   State<CashesWidget> createState() => _CashesWidgetState();
 }
 
 class _CashesWidgetState extends State<CashesWidget> {
-  late double _restMoney;
+  late EInvoiceDocProvider _docProvider;
   @override
   void initState() {
     super.initState();
   }
 
-  void calcRestMoney(String typedAmount) {
-    setState(() {
-      _restMoney = widget.totalOrderPrice - double.parse(typedAmount);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    _restMoney = widget.totalOrderPrice;
+    _docProvider = Provider.of<EInvoiceDocProvider>(context);
     return Column(
       children: [
         Row(
@@ -143,11 +115,16 @@ class _CashesWidgetState extends State<CashesWidget> {
             PaidCashesWidget(
               data: appTxt(context).paymentMethods,
               content: SearchDropdownMenuModel(
-                dataList: widget.paymentMethods,
+                dataList: _docProvider.companyPaymentMethods,
                 onItemSelected: (BaseAPIObject? val) {
-                  widget.selectedMethod(val);
+                  if (val != null) {
+                    _docProvider.salesOrder.paymentMethods[0] = val;
+                  }
                 },
-                selectedItem: null,
+                selectedItem: firstOrNull(
+                    _docProvider.salesOrder.paymentMethods.isNotEmpty
+                        ? _docProvider.salesOrder.paymentMethods.first.getId
+                        : null),
               ),
             ),
             PaidCashesWidget(
@@ -155,8 +132,8 @@ class _CashesWidgetState extends State<CashesWidget> {
               content: EditableInputData(
                   data: '0.0',
                   onChange: (String? val, bool isEmpty) {
-                    calcRestMoney(isEmpty ? '0.0' : val!);
-                    widget.paidAmountFun(double.parse(val ?? '0'));
+                    _docProvider
+                        .updatePaidAmount(isEmpty ? 0 : double.parse(val!));
                   },
                   hasInitValue: true),
             ),
@@ -175,7 +152,9 @@ class _CashesWidgetState extends State<CashesWidget> {
                   .copyWith(color: appTheme(context).primaryColor),
             ),
             Text(
-              _restMoney.toString(),
+              (_docProvider.salesOrder.totalOrderAmount -
+                      _docProvider.salesOrder.paid)
+                  .toString(),
               style: txtTheme(context)
                   .headlineLarge!
                   .copyWith(color: appTheme(context).primaryColor),
@@ -184,6 +163,12 @@ class _CashesWidgetState extends State<CashesWidget> {
         ),
       ],
     );
+  }
+
+  BaseAPIObject? firstOrNull(int? id) {
+    if (id == null) return null;
+    _docProvider.companyPaymentMethods
+        ?.firstWhere((element) => (element.getId) == id);
   }
 }
 
@@ -211,12 +196,38 @@ class PaidCashesWidget extends StatelessWidget {
   }
 }
 
-class DiscountsAndTaxes extends StatelessWidget {
-  List<BaseAPIObject>? taxesTypesList;
-  Function selectedTax;
-  DocumentTaxesModel? taxVal;
+class DiscountsAndTaxes extends StatefulWidget {
+  final MyApiServices services;
+  final int? branchId;
+  final String token;
+  const DiscountsAndTaxes(
+      {Key? key,
+      required this.services,
+      required this.branchId,
+      required this.token})
+      : super(key: key);
+  @override
+  State<DiscountsAndTaxes> createState() => _DiscountsAndTaxesState();
+}
+
+class _DiscountsAndTaxesState extends State<DiscountsAndTaxes> {
+  late Future<List<BaseAPIObject>?> _disAndTax;
+  late EInvoiceDocProvider _docProvider;
+  Future<List<BaseAPIObject>?> getTaxesDisList() async {
+    return (await widget.services
+            .getTaxesList(widget.branchId ?? -1, widget.token))
+        .data;
+  }
+
+  @override
+  void initState() {
+    _disAndTax = getTaxesDisList();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    _docProvider = Provider.of<EInvoiceDocProvider>(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
@@ -226,29 +237,41 @@ class DiscountsAndTaxes extends StatelessWidget {
           UnEditableData(data: appTxt(context).discountsAndTaxes),
           Container(
             margin: const EdgeInsets.symmetric(vertical: 8),
-            child: SearchDropdownMenuModel(
-              dataList: taxesTypesList,
-              onItemSelected: (BaseAPIObject? val) {
-                selectedTax(val);
+            child: FutureBuilder<List<BaseAPIObject>?>(
+              future: _disAndTax,
+              builder: (context, AsyncSnapshot<List<BaseAPIObject>?> snap) {
+                if (snap.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else {
+                  if (snap.hasData) {
+                    return DropdownSearch<BaseAPIObject>.multiSelection(
+                      clearButtonProps: const ClearButtonProps(isVisible: true),
+                      onChanged: (List<BaseAPIObject> selected) {
+                        _docProvider.salesOrder.taxesAndDiscounts = selected;
+                      },
+                      items: snap.data ?? [],
+                    );
+                  } else {
+                    return Center(
+                      child: Text(appTxt(context).emptyDataError),
+                    );
+                  }
+                }
               },
-              selectedItem: taxVal,
             ),
           ),
-          Text(
-            taxVal?.name ?? '',
-            style: txtTheme(context)
-                .labelSmall!
-                .copyWith(color: appTheme(context).primaryColor),
-          ),
+          // Text(
+          //   taxVal?.name ?? '',
+          //   style: txtTheme(context)
+          //       .labelSmall!
+          //       .copyWith(color: appTheme(context).primaryColor),
+          // ),
         ],
       ),
     );
   }
-
-  DiscountsAndTaxes(
-      {required this.taxesTypesList,
-      required this.selectedTax,
-      required this.taxVal});
 }
 
 class PricesAndTotals extends StatelessWidget {

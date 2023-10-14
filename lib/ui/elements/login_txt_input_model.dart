@@ -5,8 +5,9 @@ class LoginTextFieldModel extends StatefulWidget {
   LoginTextFieldModel(
       {required this.hint,
       required this.isPassword,
-      required this.onTxtChanged});
+      required this.onTxtChanged, this.defVal});
   String hint;
+  String? defVal;
   bool isPassword;
   Function onTxtChanged;
   @override
@@ -21,6 +22,7 @@ class _LoginTextFieldModelState extends State<LoginTextFieldModel> {
       onChanged: (txt) {
         widget.onTxtChanged(txt);
       },
+      controller: TextEditingController()..text = widget.defVal ?? '',
       style: Theme.of(context).textTheme.headlineSmall,
       obscureText: widget.isPassword && passwordInvisible,
       decoration: InputDecoration(

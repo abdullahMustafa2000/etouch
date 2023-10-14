@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -7,9 +6,9 @@ import '../constants.dart';
 class EditableInputData extends StatefulWidget {
   EditableInputData(
       {Key? key,
-        required this.data,
-        required this.onChange,
-        required this.hasInitValue})
+      required this.data,
+      required this.onChange,
+      required this.hasInitValue})
       : super(key: key);
   String data;
   Function onChange;
@@ -38,22 +37,39 @@ class _EditableInputDataState extends State<EditableInputData> {
         widget.onChange(txt, _controller.text.isEmpty);
       },
       textAlign: TextAlign.center,
-      keyboardType: TextInputType.number,
-      inputFormatters: <TextInputFormatter>[
-        FilteringTextInputFormatter.digitsOnly
-      ],
+      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      inputFormatters: _formatter(),
       style: Theme.of(context).textTheme.headlineSmall,
-      decoration: InputDecoration(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-        border: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(cornersRadiusConst)),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Theme.of(context).primaryColor),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Theme.of(context).primaryColor),
-        ),
+      decoration: _decoration(),
+    );
+  }
+
+  List<TextInputFormatter> _formatter() {
+    return <TextInputFormatter>[
+      //FilteringTextInputFormatter.digitsOnly,
+      FilteringTextInputFormatter.allow(RegExp(r"[0-9.]")),
+      TextInputFormatter.withFunction((oldValue, newValue) {
+        final text = newValue.text;
+        return text.isEmpty
+            ? newValue
+            : double.tryParse(text) == null
+                ? oldValue
+                : newValue;
+      })
+    ];
+  }
+
+  InputDecoration _decoration() {
+    return InputDecoration(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+      border: const OutlineInputBorder(
+        borderRadius: BorderRadius.all(Radius.circular(cornersRadiusConst)),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Theme.of(context).primaryColor),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Theme.of(context).primaryColor),
       ),
     );
   }

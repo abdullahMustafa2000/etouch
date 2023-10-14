@@ -1,10 +1,9 @@
 import 'package:etouch/api/api_models/login_response.dart';
+import 'package:etouch/api/api_models/view_product.dart';
 import 'package:etouch/businessLogic/providers/create_doc_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
-import '../../../api/api_models/product_content.dart';
-import '../../../api/api_response.dart';
 import '../../../api/services.dart';
 import '../../../businessLogic/classes/e_invoice_item_selection_model.dart';
 import '../../../main.dart';
@@ -12,14 +11,11 @@ import '../../elements/product_creation_model.dart';
 import '../../themes/themes.dart';
 
 class ProductsSelectionWidget extends StatefulWidget {
-  ProductsSelectionWidget({
+  const ProductsSelectionWidget({
     Key? key,
-    required this.branchId,
-    required this.warehouseId,
     required this.loginResponse,
   }) : super(key: key);
-  int branchId, warehouseId;
-  LoginResponse loginResponse;
+  final LoginResponse loginResponse;
   @override
   State<ProductsSelectionWidget> createState() =>
       _ProductsSelectionWidgetState();
@@ -27,52 +23,12 @@ class ProductsSelectionWidget extends StatefulWidget {
 
 class _ProductsSelectionWidgetState extends State<ProductsSelectionWidget> {
   late PageController _controller;
-  late List<ProductModel> productsList;
-  late List<BaseAPIObject>? groupsList, unitsList;
-  BaseAPIObject? _selectedProduct;
-  late LoginResponse _userInfo;
   MyApiServices get service => GetIt.I<MyApiServices>();
-  late APIResponse<List<BaseAPIObject>> _apiResponse;
-  Future<List<BaseAPIObject>> _getGroupsByBranchWarehouseId(
-      int branchId, int warehouseId, String token) async {
-    if (branchId < 0 || warehouseId < 0) return [];
-    _apiResponse = await service.getGroupsList(branchId, warehouseId, token);
-    return _apiResponse.data ?? [];
-  }
+  late EInvoiceDocProvider _docProvider;
 
-  Future<List<ProductModel>> _getGroupProducts(int branchId, int groupId, String token) async {
-    if (groupId < 0) return [];
-    APIResponse<List<ProductModel>> apiResponse =
-        await service.getProductsByGroupId(branchId, groupId, token);
-    return apiResponse.data ?? [];
-  }
-
-  Future<List<BaseAPIObject>> _getUnits(int branchId, String token) async {
-    if (branchId < 0) return [];
-    _apiResponse = await service.getUnitsList(branchId, token);
-    return _apiResponse.data ?? [];
-  }
-
-  ProductModel emptyProduct = ProductModel(
-    productId: 0,
-    productName: '',
-    productCount: 0,
-    price: 0,
-    warehouseProductGroupsId: 0,
-    measurementUnitsId: 0,
-  );
-
-  late Future<List<BaseAPIObject>> _unitsFuture, _groupsFuture;
-  int _branchId = -1;
-  late EInvoiceDocProvider documentProvider;
   @override
   void initState() {
-    productsList = [emptyProduct];
-    _branchId = widget.branchId;
-    _userInfo = widget.loginResponse;
     _controller = PageController(viewportFraction: .8);
-    _unitsFuture = _getUnits(_branchId, _userInfo.token!);
-    _groupsFuture = _getGroupsByBranchWarehouseId(94, 81, _userInfo.token!);
     super.initState();
   }
 
@@ -89,15 +45,15 @@ class _ProductsSelectionWidgetState extends State<ProductsSelectionWidget> {
 
   @override
   Widget build(BuildContext context) {
-    documentProvider = context.watch<EInvoiceDocProvider>();
+    _docProvider = context.read<EInvoiceDocProvider>();
     return Column(
       children: [
         AddProductWidget(
           onAddClk: () {
-            setState(() {
-              productsList.add(emptyProduct);
-              animateTo(productsList.length - 1, _controller);
-            });
+            _docProvider.salesOrder.productsList.add(ViewProduct.empty());
+            animateTo(
+                _docProvider.salesOrder.productsList.length - 1, _controller);
+            setState(() {});
           },
         ),
         const SizedBox(
@@ -106,100 +62,64 @@ class _ProductsSelectionWidgetState extends State<ProductsSelectionWidget> {
         SizedBox(
           height: MediaQuery.of(context).size.height / 2,
           child: FutureBuilder(
-            future: Future.wait([_unitsFuture, _groupsFuture]),
-            builder: (context, AsyncSnapshot<List<List<BaseAPIObject>>> snap) {
-              initData(snap, _userInfo.token!);
-              return ListView.builder(
-                controller: _controller,
-                scrollDirection: Axis.horizontal,
-                itemCount: productsList.length,
-                itemBuilder: (context, index) {
-                  return SizedBox(
-                    width: MediaQuery.of(context).size.width / 1.2,
-                    child: ProductCreationModel(
-                      groupsList: groupsList,
-                      productsList: productsList,
-                      unitsList: unitsList,
-                      balance: productsList[index].productCount ?? 0,
-                      productPrice: productsList[index].price ?? 0.0,
-                      isPriceEditable: true,
-                      // isPriceEditable: productsList[index].isPriceEditable ?? false,
-                      selectedGroupFun: (BaseAPIObject? val) {
-                        setState(() {
-                          productsList[index].group = val;
-                          _whenGroupSelected(_branchId, val?.getId ?? -1, _userInfo.token!);
-                          documentProvider.listUpdated(productsList);
-                        });
-                      },
-                      selectedProductFun: (BaseAPIObject? val) {
-                        setState(() {
-                          _selectedProduct = val;
-                          productsList[index].productName = val?.getName ?? '';
-                          productsList[index].productId = val?.getId ?? -1;
-                          documentProvider.listUpdated(productsList);
-                        });
-                      },
-                      selectedUnitFun: (BaseAPIObject? val) {
-                        setState(() {
-                          productsList[index].measurementUnitsId = val?.id;
-                          documentProvider.listUpdated(productsList);
-                        });
-                      },
-                      selectedQuantityFun: (String? val) {
-                        setState(() {
-                          productsList[index].productCount = int.parse(val!);
-                          documentProvider.listUpdated(productsList);
-                        });
-                      },
-                      selectedPriceFun: (String? val) {
-                        setState(() {
-                          productsList[index].price = double.parse(val!);
-                          documentProvider.listUpdated(productsList);
-                        });
-                      },
-                      moreThanOneItem: (productsList.length ?? 1) > 1,
-                      onDeleteItemClickedFun: () {
-                        setState(() {
-                          productsList.removeAt(index);
-                          documentProvider.listUpdated(productsList);
-                        });
-                      },
-                      selectedGroupVal: productsList[index].group,
-                      selectedProductVal: _selectedProduct,
-                      selectedUnitVal: productsList[index].unit,
-                      selectedQuantityVal: productsList[index].productCount ?? 0,
-                      totalProductPrice: (double? price) {
-                        productsList[index].price = price ?? 0.0;
-                        documentProvider.priceUpdated(productsList??[]);
-                      },
-                    ),
+              future: _getGroups(
+                  _docProvider.salesOrder.branchId,
+                  _docProvider.salesOrder.warehouseId,
+                  widget.loginResponse.token),
+              builder: (context, AsyncSnapshot<List<BaseAPIObject>?> snap) {
+                if (snap.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
                   );
-                },
-              );
-            },
-          ),
+                } else {
+                  if (snap.connectionState == ConnectionState.done &&
+                      snap.hasData) {
+                    return ListView.builder(
+                      controller: _controller,
+                      scrollDirection: Axis.horizontal,
+                      itemCount: _docProvider.salesOrder.productsList.length,
+                      itemBuilder: (context, index) {
+                        return SizedBox(
+                          width: MediaQuery.of(context).size.width / 1.2,
+                          child: ProductCreationModel(
+                            index: index,
+                            services: service,
+                            warehouseGroups: snap.data,
+                            branchId: _docProvider.salesOrder.branchId ?? -1,
+                            token: widget.loginResponse.token ?? '',
+                            widgetProduct:
+                                _docProvider.salesOrder.productsList[index],
+                            onDelete: (int index) {
+                              _docProvider.salesOrder.productsList
+                                  .removeAt(index);
+                              _docProvider.calcDocTotalPrice();
+                            },
+                          ),
+                        );
+                      },
+                    );
+                  } else {
+                    return Center(
+                      child: Text(appTxt(context).loginContactUsTxt),
+                    );
+                  }
+                }
+              }),
         ),
       ],
     );
   }
 
-  void initData(AsyncSnapshot<List<List<BaseAPIObject>>> snap, String token) async {
-    unitsList = snap.data?.first;
-    groupsList = snap.data?[1];
-  }
-
-  void _whenGroupSelected(int branchId, int groupId, String token) async {
-    if (groupId < 0) return;
-    productsList = await _getGroupProducts(branchId, groupId, token);
-    setState(() {
-
-    });
+  Future<List<BaseAPIObject>?> _getGroups(
+      int? branchId, int? warehouseId, String? token) async {
+    if (branchId == null || warehouseId == null || token == null) return [];
+    return (await service.getGroupsList(branchId, warehouseId, token)).data;
   }
 }
 
 class AddProductWidget extends StatelessWidget {
-  AddProductWidget({Key? key, required this.onAddClk}) : super(key: key);
-  Function onAddClk;
+  const AddProductWidget({Key? key, required this.onAddClk}) : super(key: key);
+  final Function onAddClk;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(

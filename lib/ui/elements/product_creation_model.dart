@@ -1,8 +1,12 @@
+import 'package:etouch/api/api_models/view_product.dart';
+import 'package:etouch/api/services.dart';
+import 'package:etouch/businessLogic/providers/create_doc_manager.dart';
 import 'package:etouch/main.dart';
 import 'package:etouch/ui/constants.dart';
 import 'package:etouch/ui/elements/searchable_dropdown_model.dart';
 import 'package:etouch/ui/themes/themes.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../api/api_models/product_content.dart';
 import '../../businessLogic/classes/e_invoice_item_selection_model.dart';
 import 'editable_data.dart';
@@ -12,66 +16,41 @@ import 'uneditable_data.dart';
 class ProductCreationModel extends StatefulWidget {
   ProductCreationModel(
       {Key? key,
-      required this.groupsList,
-      required this.productsList,
-      required this.unitsList,
-      required this.balance,
-      required this.productPrice,
-      required this.isPriceEditable,
-      required this.selectedGroupFun,
-      required this.selectedProductFun,
-      required this.selectedUnitFun,
-      required this.selectedQuantityFun,
-      required this.selectedPriceFun,
-      required this.onDeleteItemClickedFun,
-      required this.moreThanOneItem,
-      required this.selectedGroupVal,
-      required this.selectedProductVal,
-      required this.selectedUnitVal,
-      required this.selectedQuantityVal,
-      required this.totalProductPrice})
+      required this.services,
+      required this.index,
+      required this.warehouseGroups,
+      required this.branchId,
+      required this.token,
+      required this.widgetProduct,
+      required this.onDelete})
       : super(key: key);
-  int balance, selectedQuantityVal;
-  bool isPriceEditable, moreThanOneItem;
-  double productPrice;
-  List<BaseAPIObject>? groupsList, unitsList;
-  List<ProductModel>? productsList;
-  Function selectedGroupFun,
-      selectedProductFun,
-      selectedUnitFun,
-      selectedQuantityFun,
-      selectedPriceFun,
-      onDeleteItemClickedFun,
-      totalProductPrice;
-  BaseAPIObject? selectedGroupVal, selectedProductVal, selectedUnitVal;
+  final int index, branchId;
+  final List<BaseAPIObject>? warehouseGroups;
+  final MyApiServices services;
+  final String token;
+  final Function(int) onDelete;
+  ViewProduct widgetProduct;
   @override
   State<ProductCreationModel> createState() => _ProductCreationModelState();
 }
 
 class _ProductCreationModelState extends State<ProductCreationModel> {
-  double _totalPrice = 0.0, _prodPrice = 0.0;
-  int _quantity = 0;
-  BaseAPIObject? _selectedGroupVal, _selectedProductVal, _selectedUnitVal;
-  final ScrollController _controller = ScrollController();
+  late int index;
+  late ScrollController _controller;
+  late EInvoiceDocProvider _docProvider;
+  List<BaseAPIObject>? _groups, _units;
+  List<ProductModel>? _productsFromApi;
   @override
   void initState() {
+    _groups = widget.warehouseGroups;
+    _controller = ScrollController();
+    index = widget.index;
     super.initState();
-    _prodPrice = widget.productPrice;
-    _selectedGroupVal = widget.selectedGroupVal;
-    _selectedProductVal = widget.selectedProductVal;
-    _selectedUnitVal = widget.selectedUnitVal;
-    _quantity = widget.selectedQuantityVal;
-  }
-
-  void updateTotalPrice(int quantity, double price) {
-    setState(() {
-      _totalPrice = quantity * price;
-    });
-    widget.totalProductPrice(_totalPrice);
   }
 
   @override
   Widget build(BuildContext context) {
+    _docProvider = Provider.of<EInvoiceDocProvider>(context);
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 24),
       margin: const EdgeInsets.only(right: 20),
@@ -90,69 +69,87 @@ class _ProductCreationModelState extends State<ProductCreationModel> {
           child: ListView(
             controller: _controller,
             children: [
+              ///groups
               InputTypeRow(
                 label: appTxt(context).groupOfInventory,
                 child: SearchDropdownMenuModel(
-                  dataList: widget.groupsList,
+                  dataList: _groups,
                   onItemSelected: (BaseAPIObject? val) {
-                    widget.selectedGroupFun(val);
+                    _updateProducts(val, widget.branchId, widget.token);
                   },
-                  selectedItem: _selectedGroupVal,
+                  selectedItem: widget.widgetProduct.groupSelected,
                 ),
               ),
+
+              ///products
               InputTypeRow(
                 label: appTxt(context).productsOfInventory,
                 child: SearchDropdownMenuModel(
-                  dataList: widget.productsList
-                      ?.map((e) => BaseAPIObject(
-                          id: e.productId ?? 0, name: e.productName ?? ''))
+                  dataList: _productsFromApi
+                      ?.map((e) =>
+                          BaseAPIObject(id: e.productId, name: e.productName))
                       .toList(),
                   onItemSelected: (BaseAPIObject? val) {
-                    widget.selectedProductFun(val);
+                    if (val != null) {
+                      _updateSelectedProduct(val);
+                      setState(() {});
+                    }
                   },
-                  selectedItem: _selectedProductVal,
+                  selectedItem: BaseAPIObject(
+                      id: widget.widgetProduct.productId,
+                      name: widget.widgetProduct.productName),
                 ),
               ),
+
+              ///productCountInInventory
               InputTypeRow(
                 label: appTxt(context).balanceOfInventory,
                 child: UnEditableData(
-                  data: widget.balance.toDouble().toString(),
+                  data: widget.widgetProduct.productCount.toString(),
                 ),
               ),
+
+              ///sellingProductCount
               InputTypeRow(
                 label: appTxt(context).quantityOfInventory,
                 child: EditableInputData(
-                    data: _quantity.toString(),
+                    data: (widget.widgetProduct.quantity ?? 0).toString(),
                     hasInitValue: true,
                     onChange: (String? val, bool isEmpty) {
-                      widget.selectedQuantityFun(isEmpty ? '0' : val);
-                      _quantity = !isEmpty ? int.parse(val!) : 0;
-                      updateTotalPrice(_quantity, _prodPrice);
+                      widget.widgetProduct.quantity =
+                          double.parse(isEmpty ? "0" : val!);
+                      _docProvider.calcDocTotalPrice();
+                      //setState(() {});
                     }),
               ),
+
+              ///productUnit
               InputTypeRow(
                 label: appTxt(context).unitOfInventory,
                 child: SearchDropdownMenuModel(
-                  dataList: widget.unitsList,
+                  dataList: _units,
                   onItemSelected: (BaseAPIObject? val) {
-                    widget.selectedUnitFun(val);
+                    widget.widgetProduct.unitSelected = val;
                   },
-                  selectedItem: _selectedUnitVal,
+                  selectedItem: widget.widgetProduct.unitSelected,
                 ),
               ),
+
+              ///productPrice
               InputTypeRow(
                 label: appTxt(context).priceOfInventory,
-                child: widget.isPriceEditable
+                child: widget.widgetProduct.isChangeable
                     ? EditableInputData(
-                        data: widget.productPrice.toString(),
+                        data: widget.widgetProduct.pieceSalePrice.toString(),
                         hasInitValue: true,
                         onChange: (String? val, bool isEmpty) {
-                          _prodPrice = double.parse(isEmpty ? '0.0' : val!);
-                          widget.selectedPriceFun(isEmpty ? '0' : val);
-                          updateTotalPrice(
-                              _quantity, !isEmpty ? _prodPrice : 0.0);
+                          widget.widgetProduct.pieceSalePrice =
+                              isEmpty ? 0 : double.parse(val!);
+                          _docProvider.calcDocTotalPrice();
+                          //setState(() {});
                         })
-                    : UnEditableData(data: widget.productPrice.toString()),
+                    : UnEditableData(
+                        data: widget.widgetProduct.pieceSalePrice.toString()),
               ),
               Column(
                 children: [
@@ -163,7 +160,9 @@ class _ProductCreationModelState extends State<ProductCreationModel> {
                         .copyWith(color: appTheme(context).primaryColor),
                   ),
                   Text(
-                    _totalPrice.toString(),
+                    ((widget.widgetProduct.pieceSalePrice ?? 0) *
+                            (widget.widgetProduct.quantity ?? 0))
+                        .toString(),
                     style: txtTheme(context)
                         .displayLarge!
                         .copyWith(color: appTheme(context).primaryColor),
@@ -172,7 +171,7 @@ class _ProductCreationModelState extends State<ProductCreationModel> {
                     height: 18,
                   ),
                   Visibility(
-                    visible: widget.moreThanOneItem,
+                    visible: _docProvider.salesOrder.productsList.length > 1,
                     child: PrimaryClrBtnModel(
                       content: Text(
                         appTxt(context).removeProductFromDocument,
@@ -182,7 +181,7 @@ class _ProductCreationModelState extends State<ProductCreationModel> {
                       ),
                       color: closeColor,
                       onPressed: () {
-                        widget.onDeleteItemClickedFun();
+                        widget.onDelete(index);
                       },
                     ),
                   ),
@@ -194,13 +193,42 @@ class _ProductCreationModelState extends State<ProductCreationModel> {
       ),
     );
   }
+
+  void _updateProducts(BaseAPIObject? groupSel, int branchId, String token) {
+    if (groupSel == null) return;
+    _productsFromApi = [];
+    _getGroupProducts(branchId, groupSel.id!, token).then((proRes) => {
+          _productsFromApi = proRes,
+          widget.widgetProduct.groupSelected = groupSel,
+          setState(() {})
+        });
+  }
+
+  Future<List<ProductModel>> _getGroupProducts(
+      int branchId, int groupId, String token) async {
+    if (groupId < 0) return [];
+    return (await widget.services
+                .getProductsByGroupId(branchId, groupId, token))
+            .data ??
+        [];
+  }
+
+  void _updateSelectedProduct(BaseAPIObject val) {
+    var cur = _productsFromApi!.firstWhere((pro) => pro.productId == val.getId);
+    widget.widgetProduct.productId = cur.productId;
+    widget.widgetProduct.productName = cur.productName;
+    widget.widgetProduct.pieceSalePrice = cur.pieceSalePrice;
+    widget.widgetProduct.maxSalePrice = cur.maxSalePrice;
+    widget.widgetProduct.minSalePrice = cur.minSalePrice;
+    widget.widgetProduct.productCount = cur.productCount;
+  }
 }
 
 class InputTypeRow extends StatelessWidget {
-  InputTypeRow({Key? key, required this.child, required this.label})
+  const InputTypeRow({Key? key, required this.child, required this.label})
       : super(key: key);
-  Widget child;
-  String label;
+  final Widget child;
+  final String label;
   @override
   Widget build(BuildContext context) {
     return Container(

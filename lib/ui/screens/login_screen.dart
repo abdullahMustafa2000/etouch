@@ -54,7 +54,7 @@ class LoginScreen extends StatelessWidget {
 }
 
 class LoginInputsWidget extends StatelessWidget {
-  String? _emailTxt, _passwordTxt;
+  String? _emailTxt = 'suarv_hesham', _passwordTxt = '01042010';
   MyApiServices get service => GetIt.I<MyApiServices>();
   @override
   Widget build(BuildContext context) {
@@ -79,16 +79,19 @@ class LoginInputsWidget extends StatelessWidget {
             onTxtChanged: (txt) {
               _emailTxt = txt;
             },
+            defVal: 'suarv_hesham',
           ),
           const SizedBox(
             height: 24,
           ),
+
           LoginTextFieldModel(
             hint: appTxt(context).loginPasswordTxt,
             isPassword: true,
             onTxtChanged: (txt) {
               _passwordTxt = txt;
             },
+            defVal: '01042010',
           ),
           const SizedBox(
             height: 24,

@@ -81,5 +81,6 @@
   "showDoc": "عرض الفاتورة",
   "docSent": "تم الإرسال !",
   "loginRequestFailed": "تحقق من صحه البيانات او تواصل معنا",
-  "pleaseWait": "يرجى الانتظار"
+  "pleaseWait": "يرجى الانتظار",
+  "emptyDataError": "لا توجد بيانات"
 }

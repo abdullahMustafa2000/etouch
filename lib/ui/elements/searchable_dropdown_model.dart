@@ -27,26 +27,25 @@ class _SearchDropdownMenuModelState extends State<SearchDropdownMenuModel> {
       dropDown: DropdownSearch<BaseAPIObject>(
         selectedItem: widget.selectedItem,
         itemAsString: (BaseAPIObject? item) => item!.getName,
-        mode: Mode.MENU,
-        showSelectedItems: true,
-        compareFn: (BaseAPIObject? item,
-            BaseAPIObject? selected) {
+        compareFn: (BaseAPIObject? item, BaseAPIObject? selected) {
           return item?.getName == selected?.getName;
         },
-        items: widget.dataList,
-        dropdownSearchDecoration: InputDecoration(
-          filled: true,
-          fillColor: appTheme(context).primaryColorDark,
-          hintText: appTxt(context).searchHint,
-          suffixIcon: const Icon(Icons.keyboard_arrow_down_sharp),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(cornersRadiusConst),
-            borderSide:
-                BorderSide(color: appTheme(context).primaryColor, width: 1),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide:
-                BorderSide(color: Theme.of(context).primaryColor, width: 1),
+        items: widget.dataList ?? [],
+        dropdownDecoratorProps: DropDownDecoratorProps(
+          dropdownSearchDecoration: InputDecoration(
+            filled: true,
+            fillColor: appTheme(context).primaryColorDark,
+            hintText: appTxt(context).searchHint,
+            suffixIcon: const Icon(Icons.keyboard_arrow_down_sharp),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(cornersRadiusConst),
+              borderSide:
+                  BorderSide(color: appTheme(context).primaryColor, width: 1),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide:
+                  BorderSide(color: Theme.of(context).primaryColor, width: 1),
+            ),
           ),
         ),
         onChanged: (BaseAPIObject? val) {
@@ -55,12 +54,15 @@ class _SearchDropdownMenuModelState extends State<SearchDropdownMenuModel> {
             widget.selectedItem = val;
           });
         },
-        showSearchBox: true,
-        searchFieldProps: TextFieldProps(
-          cursorColor: Theme.of(context).primaryColor,
-          decoration: InputDecoration(
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(cornersRadiusConst),
+        popupProps: PopupProps.menu(
+          searchDelay: const Duration(microseconds: 500),
+          showSearchBox: true,
+          searchFieldProps: TextFieldProps(
+            cursorColor: Theme.of(context).primaryColor,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(cornersRadiusConst),
+              ),
             ),
           ),
         ),

@@ -2,7 +2,7 @@ import 'package:etouch/api/api_models/login_response.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserInfoPreferences {
-  static const TOKEN_PREF = "USER_TOKEN";
+  static const tokenPef = "USER_TOKEN";
   static const COMPANY_ID_PREF = "COMPANY_ID";
   static const FOUNDATION_ID_PREF = "FOUNDATION_ID";
   static const USER_BRANCHES = "BRANCHES_LIST";
@@ -12,10 +12,10 @@ class UserInfoPreferences {
 
   void saveUserInfo(LoginResponse res) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    preferences.setString(TOKEN_PREF, res.token!);
+    preferences.setString(tokenPef, res.token!);
     preferences.setInt(COMPANY_ID_PREF, res.companyId??-1);
     preferences.setInt(FOUNDATION_ID_PREF, res.foundationId!);
-    preferences.setStringList(USER_RULES, res.userRoles!);
+    preferences.setStringList(USER_RULES, res.userRoles ?? []);
     preferences.setString(EXPIRATION_DATE, res.expiration!.toIso8601String());
     // preferences.setString(
     //     USER_BRANCHES, BaseAPIObject.encode(res.userBranches));
@@ -24,7 +24,7 @@ class UserInfoPreferences {
   Future<LoginResponse> retrieveUserInfo() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     return LoginResponse(
-        token: preferences.getString(TOKEN_PREF) ?? '',
+        token: preferences.getString(tokenPef) ?? '',
         expiration: DateTime.parse(preferences.getString(EXPIRATION_DATE) ??
             DateTime.now().toIso8601String()),
         userRoles: preferences.getStringList(USER_RULES) ?? [],

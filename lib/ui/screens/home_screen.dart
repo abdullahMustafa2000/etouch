@@ -28,10 +28,10 @@ class _HomePageScreenState extends State<HomePageScreen>
   MyApiServices get services => GetIt.I<MyApiServices>();
   late ThemeManager themeManager = ThemeManager();
   bool isDark = false;
-  TabController? con;
+  TabController? _tabsController;
   @override
   void initState() {
-    con = TabController(length: 3, vsync: this);
+    _tabsController = TabController(length: 3, vsync: this);
     super.initState();
     getCurrentThemeMode();
   }
@@ -54,6 +54,7 @@ class _HomePageScreenState extends State<HomePageScreen>
         taxPayerImg: '',
         onChangeMood: (isDark) {
           themeManager.toggleTheme(isDark);
+          setState(() {});
         },
         onContactClkd: () {},
         onBackClkd: () {
@@ -108,7 +109,11 @@ class _HomePageScreenState extends State<HomePageScreen>
             const SizedBox(
               height: 42,
             ),
-            Expanded(child: Fragments(loginResponse: widget.loginResponse))
+            Expanded(
+                child: Fragments(
+              loginResponse: widget.loginResponse,
+              services: services,
+            ))
           ],
         ),
       ),
@@ -118,7 +123,7 @@ class _HomePageScreenState extends State<HomePageScreen>
           color: pureWhite,
         ),
         child: TabBar(
-          controller: con,
+          controller: _tabsController,
           indicatorColor: primaryColor,
           indicatorSize: TabBarIndicatorSize.tab,
           indicatorWeight: 2.5,

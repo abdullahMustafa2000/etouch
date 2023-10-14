@@ -44,7 +44,7 @@ class LoginResponse {
       userBranches = <BaseAPIObject>[];
       json['userBranches'].forEach((v) {
         userBranches!.add(BaseAPIObject(
-            id: int.parse(json['id']), name: json['description']));
+            id: v, name: 'Main Branch'));
       });
     }
     expiration = DateTime.parse(json['expiration']);
