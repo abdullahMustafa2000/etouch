@@ -45,6 +45,7 @@ dependencies:
   dropdown_button2: ^2.0.0
   fluttertoast: ^8.2.1
   modal_bottom_sheet: ^3.0.0-pre
+  connectivity_plus: ^4.0.0
   #https://www.youtube.com/watch?v=pR1SEGLSyxg
   pie_chart: ^5.3.2
   provider: ^6.0.5
