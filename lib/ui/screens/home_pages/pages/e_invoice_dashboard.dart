@@ -8,6 +8,7 @@ import 'package:etouch/businessLogic/providers/dashboard_manager.dart';
 import 'package:etouch/main.dart';
 import 'package:etouch/ui/constants.dart';
 import 'package:etouch/ui/elements/dashboard_cards_model.dart';
+import 'package:etouch/ui/elements/request_api_widget.dart';
 import 'package:etouch/ui/themes/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -41,54 +42,44 @@ class _EInvoiceDashboardFragmentState extends State<EInvoiceDashboardFragment> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<APIResponse<DashboardResponse>>(
-        future: _dashboardResponse,
-        builder: (context, AsyncSnapshot<APIResponse<DashboardResponse>> snap) {
-          DashboardResponse? response = snap.data?.data;
-          return ListView(
+    return RequestAPIWidget<APIResponse<DashboardResponse>>(
+      request: _dashboardResponse,
+      onSuccessfulResponse: (snap) {
+        DashboardResponse? response = snap.data?.data;
+        return SingleChildScrollView(
+          child: Column(
             children: [
-              !snap.hasData && snap.connectionState == ConnectionState.done
-                  ? Center(
-                      child: Text(
-                        appTxt(context).checkInternetMessage,
-                        style: txtTheme(context)
-                            .displayLarge!
-                            .copyWith(color: appTheme(context).primaryColor),
-                      ),
-                    )
-                  : Column(
-                      children: [
-                        const TopRow(),
-                        const SizedBox(
-                          height: 42,
-                        ),
-                        !snap.hasData
-                            ? const CircularProgressIndicator()
-                            : Cards(
-                                dashboardResponse: response,
-                              ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        !snap.hasData
-                            ? const CircularProgressIndicator()
-                            : TopCustomers(
-                                dashboardResponse: response,
-                              ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        !snap.hasData
-                            ? const CircularProgressIndicator()
-                            : Documents(dashboardResponse: response),
-                        const SizedBox(
-                          height: 42,
-                        ),
-                      ],
+              const TopRow(),
+              const SizedBox(
+                height: 42,
+              ),
+              !snap.hasData
+                  ? const CircularProgressIndicator()
+                  : Cards(
+                      dashboardResponse: response,
                     ),
+              const SizedBox(
+                height: 10,
+              ),
+              !snap.hasData
+                  ? const CircularProgressIndicator()
+                  : TopCustomers(
+                      dashboardResponse: response,
+                    ),
+              const SizedBox(
+                height: 10,
+              ),
+              !snap.hasData
+                  ? const CircularProgressIndicator()
+                  : Documents(dashboardResponse: response),
+              const SizedBox(
+                height: 42,
+              ),
             ],
-          );
-        });
+          ),
+        );
+      },
+    );
   }
 }
 
@@ -234,8 +225,7 @@ class TopCustomers extends StatelessWidget {
 }
 
 class Cards extends StatefulWidget {
-  const Cards({Key? key, required this.dashboardResponse})
-      : super(key: key);
+  const Cards({Key? key, required this.dashboardResponse}) : super(key: key);
   final DashboardResponse? dashboardResponse;
   @override
   State<Cards> createState() => _CardsState();

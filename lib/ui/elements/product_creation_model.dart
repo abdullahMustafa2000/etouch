@@ -39,7 +39,7 @@ class _ProductCreationModelState extends State<ProductCreationModel> {
   late int index;
   int _selectedWHId = 0;
   late ScrollController _controller;
-  List<BaseAPIObject>? _units, _groups;
+  List<BaseAPIObject>? _units = [], _groups;
   List<ProductModel>? _productsFromApi;
   @override
   void initState() {
@@ -215,8 +215,7 @@ class _ProductCreationModelState extends State<ProductCreationModel> {
     return SearchDropdownMenuModel(
       dataList: lst,
       onItemSelected: (BaseAPIObject? val) {
-        _updateProducts(
-            val, widget.branchId, widget.token);
+        _updateProducts(val, widget.branchId, widget.token);
         widget.widgetProduct.productId = null;
         widget.widgetProduct.productName = null;
       },
@@ -251,6 +250,8 @@ class _ProductCreationModelState extends State<ProductCreationModel> {
     widget.widgetProduct.maxSalePrice = cur.maxSalePrice;
     widget.widgetProduct.minSalePrice = cur.minSalePrice;
     widget.widgetProduct.productCount = cur.productCount;
+    _units?.add(BaseAPIObject(
+        id: cur.measurementUnitsId, name: cur.measurementUnitsName));
   }
 
   Future<List<BaseAPIObject>?> _getGroupsList(
