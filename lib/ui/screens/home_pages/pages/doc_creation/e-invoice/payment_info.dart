@@ -34,28 +34,26 @@ class _DocumentNumbersState extends State<DocumentNumbers> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: DiscountsAndTaxesWidget(
-                services: widget.services,
-                branchId: widget.salesOrder.branch?.getId,
-                token: widget.token,
-                salesOrder: widget.salesOrder,
-                onTaxesChange: (lst) {
-                  widget.salesOrder.taxesAndDiscounts = lst;
-                  setState(() {});
-                },
-              ),
-            ),
-            Expanded(
-              child: PricesAndTotals(
-                taxesAndDiscounts: widget.salesOrder.taxesAndDiscounts,
-              ),
-            ),
-          ],
-        ),
+        // Row(
+        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //   children: [
+        //     Expanded(
+        //       child: DiscountsAndTaxesWidget(
+        //         services: widget.services,
+        //         branchId: widget.salesOrder.branch?.getId,
+        //         token: widget.token,
+        //         salesOrder: widget.salesOrder,
+        //         onTaxesChange: (lst) {
+        //           widget.salesOrder.taxesAndDiscounts = lst;
+        //           setState(() {});
+        //         },
+        //       ),
+        //     ),
+        //     PricesAndTotals(
+        //       taxesAndDiscounts: widget.salesOrder.taxesAndDiscounts,
+        //     ),
+        //   ],
+        // ),
         const SizedBox(
           height: 24,
         ),
@@ -124,9 +122,11 @@ class _CashesWidgetState extends State<CashesWidget> {
               content: EditableInputData(
                   data: '',
                   onChange: (String? val, bool isEmpty) {
+                    double paidEntered = isEmpty ? 0 : double.parse(val!);
+                    widget.salesOrder.paid = paidEntered;
                     context
                         .read<EInvoiceDocProvider>()
-                        .updatePaid(isEmpty ? 0 : double.parse(val!));
+                        .updatePaid(paidEntered);
                   },
                   hasInitValue: true),
             ),
@@ -165,10 +165,10 @@ class _CashesWidgetState extends State<CashesWidget> {
 }
 
 class PaidCashesWidget extends StatelessWidget {
-  PaidCashesWidget({Key? key, required this.data, required this.content})
+  const PaidCashesWidget({Key? key, required this.data, required this.content})
       : super(key: key);
-  String data;
-  Widget content;
+  final String data;
+  final Widget content;
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -208,7 +208,6 @@ class DiscountsAndTaxesWidget extends StatefulWidget {
 }
 
 class _DiscountsAndTaxesWidgetState extends State<DiscountsAndTaxesWidget> {
-  late Future<List<BaseAPIObject>?> _disAndTax;
   Future<List<BaseAPIObject>?> getTaxesDisList() async {
     return (await widget.services
             .getTaxesList(widget.branchId ?? -1, widget.token))
@@ -217,7 +216,6 @@ class _DiscountsAndTaxesWidgetState extends State<DiscountsAndTaxesWidget> {
 
   @override
   void initState() {
-    _disAndTax = getTaxesDisList();
     super.initState();
   }
 
@@ -234,9 +232,11 @@ class _DiscountsAndTaxesWidgetState extends State<DiscountsAndTaxesWidget> {
             margin: const EdgeInsets.symmetric(vertical: 8),
             child: DropdownSearch<DocumentTaxesModel>.multiSelection(
               itemAsString: (DocumentTaxesModel model) => model.getName,
-              //clearButtonProps: const ClearButtonProps(isVisible: true),
               onChanged: (List<DocumentTaxesModel> selected) {
                 widget.onTaxesChange(selected);
+              },
+              compareFn: (selected, cur) {
+                return selected.id == cur.id;
               },
               items: [
                 DocumentTaxesModel(
@@ -284,8 +284,9 @@ class _PricesAndTotalsState extends State<PricesAndTotals> {
               _numbersDataRow(appTxt(context).totalDocPriceBefore, val),
               _numbersDataRow(appTxt(context).discountOrTax,
                   calcTaxesOnly(widget.taxesAndDiscounts, val)),
-              _numbersDataRow(appTxt(context).totalDocPriceAfter,
-                  calcTaxesOnly(widget.taxesAndDiscounts, val) + val),
+              _numbersDataRow(
+                appTxt(context).totalDocPriceAfter,
+                calcTotalAfter(calcTaxesOnly(widget.taxesAndDiscounts, val), val)),
             ],
           );
         },
@@ -293,52 +294,20 @@ class _PricesAndTotalsState extends State<PricesAndTotals> {
     );
   }
 
-  //900
   double calcTaxesOnly(List<DocumentTaxesModel> taxes, double totalAmount) {
     double val = 0;
     for (var x in taxes) {
       val += (x.addToPrice ? 1 : -1) *
-          (x.fixedValue ? x.valueOfTax :  (x.valueOfTax / 100) * totalAmount);
+          (x.fixedValue ? x.valueOfTax : (x.valueOfTax / 100) * totalAmount);
     }
     return val;
   }
 
-  // // totalOrder amount +/- taxes
-  // // add taxes that has value of addToDoc to true
-  // // sub taxes that has value of addToDoc to false
-  // double calcTotalAfter(//10%, addToDoc: false, fixedValue: false
-  //   List<DocumentTaxesModel> taxesAndDis, double totalAmount) {
-  //   double val = totalAmount;//100
-  //   for (var tax in taxesAndDis) {
-  //     val += calcTaxOrDis(tax, totalAmount);
-  //   }
-  //   return val;
-  // }
-  //
-  // double calcTaxesOnly(List<DocumentTaxesModel> txs, double totalAmount) {
-  //   double val = 0;
-  //   for (var tax in txs) {
-  //     val += calcTaxOrDis(tax, totalAmount);
-  //   }
-  //   return txs.isEmpty?0: val;
-  // }
-  //
-  // double calcTaxOrDis(DocumentTaxesModel tax, double totalAmount) {//10%, addToDoc: false, fixedValue: false
-  //   if (tax.addToPrice) {
-  //     return calcPercOrFixedVal(tax, totalAmount); // 14
-  //   } else {
-  //     return -calcPercOrFixedVal(tax, totalAmount);//-
-  //   }
-  // }
-  //
-  // double calcPercOrFixedVal(DocumentTaxesModel tax, double totalAmount) {
-  //   if (totalAmount == 0) return 0;
-  //   if (!tax.fixedValue) {
-  //     return tax.valueOfTax / 100 * 100;
-  //   } else {
-  //     return tax.valueOfTax;
-  //   }
-  // }
+  double calcTotalAfter(double taxes, double totalVal) {
+    if (totalVal == 0) return 0;
+    context.read<EInvoiceDocProvider>().updateTotalAfter(taxes + totalVal);
+    return taxes + totalVal;
+  }
 
   Widget _numbersDataRow(String label, double value) => Row(
         children: [

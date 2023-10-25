@@ -3,6 +3,7 @@ import 'package:etouch/api/api_models/sales_order.dart';
 import 'package:etouch/api/services.dart';
 import 'package:etouch/businessLogic/providers/create_doc_manager.dart';
 import 'package:etouch/ui/elements/dropdown_model.dart';
+import 'package:etouch/ui/elements/editable_data.dart';
 import 'package:etouch/ui/elements/request_api_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -173,11 +174,22 @@ class _OrderPreRequirementsWidgetState
                         const SizedBox(
                           height: 18,
                         ),
-                        Text(
-                          'null',
-                          style: txtTheme(context)
-                              .labelMedium!
-                              .copyWith(color: pureWhite),
+                        Container(
+                          width: MediaQuery.of(context).size.width / 3,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius:
+                                BorderRadius.circular(cornersRadiusConst),
+                          ),
+                          child: EditableInputData(
+                              data: '',
+                              inputHint: appTxt(context).optional,
+                              onChange: (txt, isEmpty) {
+                                if (!isEmpty) {
+                                  widget.salesOrder.orderId = int.parse(txt);
+                                }
+                              },
+                              hasInitValue: false),
                         ),
                       ],
                     ),
@@ -214,7 +226,9 @@ class _OrderPreRequirementsWidgetState
     widget.salesOrder.treasury = snap.data?[2]?.first;
     widget.salesOrder.customer = snap.data?[3]?.first;
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      context.read<EInvoiceDocProvider>().updateWarehouseId(widget.salesOrder.warehouse?.getId ?? 0);
+      context
+          .read<EInvoiceDocProvider>()
+          .updateWarehouseId(widget.salesOrder.warehouse?.getId ?? 0);
     });
   }
 }

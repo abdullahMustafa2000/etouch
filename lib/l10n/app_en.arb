@@ -46,7 +46,7 @@
   "balanceOfInventory": "Balance",
   "quantityOfInventory": "Quantity",
   "unitOfInventory": "Unit",
-  "priceOfInventory": "Price",
+  "priceOfInventory": "Price of unit",
   "addProductToDocument": "Add product",
   "removeProductFromDocument": "Delete product",
   "discountsAndTaxes": "Discounts and taxes",
@@ -81,5 +81,8 @@
   "docSent": "Document sent!",
   "loginRequestFailed": "Verify the validity of the data or contact us",
   "pleaseWait": "Please wait.",
-  "emptyDataError": "There is no data"
+  "emptyDataError": "There is no data",
+  "optional": "optional",
+  "unAcceptableCount": "Out of quantity range",
+  "unAcceptablePrice": "Out of price range"
 }

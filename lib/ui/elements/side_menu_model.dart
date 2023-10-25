@@ -4,18 +4,20 @@ import 'package:etouch/ui/themes/themes.dart';
 import 'package:flutter/material.dart';
 
 class SideMenuModel extends StatelessWidget {
-  SideMenuModel(
-      {required this.taxPayerName,
+  const SideMenuModel(
+      {Key? key,
+      required this.taxPayerName,
       required this.isDarkMood,
       required this.taxPayerImg,
       required this.onChangeMood,
       required this.onContactClkd,
       required this.onBackClkd,
-      required this.onLogoutClkd});
-  String taxPayerName;
-  String taxPayerImg;
-  bool isDarkMood;
-  Function onChangeMood, onContactClkd, onLogoutClkd, onBackClkd;
+      required this.onLogoutClkd})
+      : super(key: key);
+  final String taxPayerName;
+  final String? taxPayerImg;
+  final bool isDarkMood;
+  final Function onChangeMood, onContactClkd, onLogoutClkd, onBackClkd;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -32,7 +34,9 @@ class SideMenuModel extends StatelessWidget {
             const SizedBox(
               height: 60,
             ),
-            MenuTopView(onBackClkd: onBackClkd,),
+            MenuTopView(
+              onBackClkd: onBackClkd,
+            ),
             const SizedBox(
               height: 28,
             ),
@@ -43,7 +47,7 @@ class SideMenuModel extends StatelessWidget {
             ),
             MenuProfileWidget(
                 userName: taxPayerName,
-                userImg: taxPayerImg ?? 'assets/images/fakeImage.png'),
+                userImg: taxPayerImg ?? 'assets/images/logo.png'),
             SideMenuOptionsWidget(
               onChangeMood: onChangeMood,
               onContactClkd: onContactClkd,
@@ -58,8 +62,8 @@ class SideMenuModel extends StatelessWidget {
 }
 
 class MenuTopView extends StatelessWidget {
-  MenuTopView({required this.onBackClkd});
-  Function onBackClkd;
+  const MenuTopView({Key? key, required this.onBackClkd}) : super(key: key);
+  final Function onBackClkd;
   @override
   Widget build(BuildContext context) {
     return Directionality(
@@ -118,8 +122,10 @@ class MenuTopView extends StatelessWidget {
 }
 
 class MenuProfileWidget extends StatelessWidget {
-  MenuProfileWidget({required this.userName, required this.userImg});
-  String userName, userImg;
+  const MenuProfileWidget(
+      {Key? key, required this.userName, required this.userImg})
+      : super(key: key);
+  final String userName, userImg;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -127,8 +133,8 @@ class MenuProfileWidget extends StatelessWidget {
         margin: const EdgeInsets.only(top: 21),
         child: Row(
           children: [
-            const CircleAvatar(
-              backgroundImage: AssetImage('assets/images/fakeImage.png'),
+            CircleAvatar(
+              backgroundImage: AssetImage(userImg),
             ),
             const Padding(padding: EdgeInsets.symmetric(horizontal: 6)),
             Text(
@@ -143,14 +149,14 @@ class MenuProfileWidget extends StatelessWidget {
 }
 
 class SideMenuOptionsWidget extends StatelessWidget {
-  SideMenuOptionsWidget(
-      {required this.onChangeMood,
+  const SideMenuOptionsWidget(
+      {Key? key, required this.onChangeMood,
       required this.onContactClkd,
       required this.onLogoutClkd,
-      required this.isDark});
-  Function onChangeMood;
-  Function onContactClkd, onLogoutClkd;
-  bool isDark;
+      required this.isDark}) : super(key: key);
+  final Function onChangeMood;
+  final Function onContactClkd, onLogoutClkd;
+  final bool isDark;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -189,18 +195,18 @@ class SideMenuOptionsWidget extends StatelessWidget {
 }
 
 class MenuItemWidget extends StatefulWidget {
-  MenuItemWidget(
-      {required this.title,
+  const MenuItemWidget(
+      {Key? key, required this.title,
       required this.prefix,
       this.isNightMood,
       this.onChangeMood,
-      this.isDark});
-  IconData prefix;
-  String title;
+      this.isDark}) : super(key: key);
+  final IconData prefix;
+  final String title;
   //show/hide Switch  , setValue
-  bool? isNightMood;
-  bool? isDark;
-  Function? onChangeMood;
+  final bool? isNightMood;
+  final bool? isDark;
+  final Function? onChangeMood;
   @override
   State<MenuItemWidget> createState() => _MenuItemWidgetState();
 }
@@ -269,7 +275,7 @@ class _CustomSwitchState extends State<CustomSwitch>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 50));
+        vsync: this, duration: const Duration(milliseconds: 100));
   }
 
   @override

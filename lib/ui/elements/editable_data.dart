@@ -4,15 +4,17 @@ import 'package:flutter/services.dart';
 import '../constants.dart';
 
 class EditableInputData extends StatefulWidget {
-  EditableInputData(
+  const EditableInputData(
       {Key? key,
+        this.inputHint,
       required this.data,
       required this.onChange,
       required this.hasInitValue})
       : super(key: key);
-  String data;
-  Function onChange;
-  bool hasInitValue;
+  final String data;
+  final Function onChange;
+  final bool hasInitValue;
+  final String? inputHint;
   @override
   State<EditableInputData> createState() => _EditableInputDataState();
 }
@@ -40,7 +42,7 @@ class _EditableInputDataState extends State<EditableInputData> {
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
       inputFormatters: _formatter(),
       style: Theme.of(context).textTheme.headlineSmall,
-      decoration: _decoration(),
+      decoration: _decoration(hint: widget.inputHint),
     );
   }
 
@@ -59,7 +61,7 @@ class _EditableInputDataState extends State<EditableInputData> {
     ];
   }
 
-  InputDecoration _decoration() {
+  InputDecoration _decoration({String? hint}) {
     return InputDecoration(
       contentPadding: const EdgeInsets.symmetric(horizontal: 8),
       border: const OutlineInputBorder(
@@ -71,6 +73,7 @@ class _EditableInputDataState extends State<EditableInputData> {
       focusedBorder: OutlineInputBorder(
         borderSide: BorderSide(color: Theme.of(context).primaryColor),
       ),
+      hintText: hint,
     );
   }
 }

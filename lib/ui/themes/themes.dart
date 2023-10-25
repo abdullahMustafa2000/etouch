@@ -48,7 +48,7 @@ ThemeData lightTheme = ThemeData(
 ThemeData darkTheme = ThemeData(
   brightness: Brightness.dark,
   primaryColor: pureWhite,
-  primaryColorDark: primaryColor,
+  primaryColorDark: const Color.fromRGBO(47,49,54, 1),
   inputDecorationTheme: InputDecorationTheme(
     hintStyle: TextStyle(
       color: loginPlaceholderDarkClr,

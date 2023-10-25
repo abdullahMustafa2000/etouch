@@ -38,8 +38,8 @@
   "inventoryTxt": "المخزن",
   "currencyTxt": "العملة",
   "sendToETSTxt": "إرسال إلي مصلحة الضرائب؟",
-  "dateTxt": "التاريخ:",
-  "orderNumTxt": "رقم الطلب:",
+  "dateTxt": "التاريخ",
+  "orderNumTxt": "رقم الطلب",
   "groupInventoryTxt": "المجموعة",
   "chooseFromDropDownTxt": "اختر",
   "groupOfInventory": "المجموعة",
@@ -47,7 +47,7 @@
   "balanceOfInventory": "الرصيد",
   "quantityOfInventory": "الكمية",
   "unitOfInventory": "وحدة القياس",
-  "priceOfInventory": "السعر",
+  "priceOfInventory": "سعر الوحدة",
   "addProductToDocument": "إضافة أصناف",
   "removeProductFromDocument": "حذف الصنف",
   "discountsAndTaxes": "الخصومات والضرائب",
@@ -82,5 +82,8 @@
   "docSent": "تم الإرسال !",
   "loginRequestFailed": "تحقق من صحه البيانات او تواصل معنا",
   "pleaseWait": "يرجى الانتظار",
-  "emptyDataError": "لا توجد بيانات"
+  "emptyDataError": "لا توجد بيانات",
+  "optional": "اختياري",
+  "unAcceptableCount": "خارج نطاق الكمية",
+  "unAcceptablePrice": "خارج نطاق السعر"
 }

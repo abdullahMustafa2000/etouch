@@ -2,7 +2,7 @@ import 'package:etouch/api/api_models/view_product.dart';
 import 'package:flutter/material.dart';
 
 class EInvoiceDocProvider extends ChangeNotifier {
-  double docTotalAmount = 0, paid = 0;
+  double docTotalAmount = 0, docTotalAfter = 0, paid = 0;
   int branchId = -1, warehouseId = 0;
 
   void updateTotalAmount(List<ViewProduct> prods) {
@@ -16,7 +16,14 @@ class EInvoiceDocProvider extends ChangeNotifier {
 
   void updatePaid(double val) {
     paid = val;
+    updateTotalAfter(docTotalAmount - val);
     notifyListeners();
+  }
+
+  double updateTotalAfter(double val) {
+    docTotalAfter = val;
+    notifyListeners();
+    return docTotalAfter;
   }
 
   void updateBranchId(int id) {

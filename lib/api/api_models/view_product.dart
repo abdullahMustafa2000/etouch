@@ -38,4 +38,8 @@ class ViewProduct extends ProductModel {
     measurementUnitsName = product.measurementUnitsName;
   }
 
+  @override
+  String toString() {
+    return '${super.toString()} quantity: $quantity, group: ${groupSelected?.getName}, unit: ${unitSelected?.getName}, totalAmount: $totalProdAmount';
+  }
 }

@@ -51,7 +51,7 @@ class _HomePageScreenState extends State<HomePageScreen>
       drawer: SideMenuModel(
         taxPayerName: 'Abdullah',
         isDarkMood: isDark,
-        taxPayerImg: '',
+        taxPayerImg: null,
         onChangeMood: (isDark) {
           themeManager.toggleTheme(isDark);
           setState(() {});
@@ -110,10 +110,11 @@ class _HomePageScreenState extends State<HomePageScreen>
               height: 42,
             ),
             Expanded(
-                child: Fragments(
-              loginResponse: widget.loginResponse,
-              services: services,
-            ))
+              child: Fragments(
+                loginResponse: widget.loginResponse,
+                services: services,
+              ),
+            )
           ],
         ),
       ),

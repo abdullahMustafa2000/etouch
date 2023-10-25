@@ -1,11 +1,8 @@
 import 'package:etouch/api/api_models/login_response.dart';
 import 'package:etouch/api/api_models/sales_order.dart';
 import 'package:etouch/api/api_models/view_product.dart';
-import 'package:etouch/businessLogic/providers/create_doc_manager.dart';
-import 'package:etouch/ui/elements/request_api_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:provider/provider.dart';
 import '../../../../../../api/services.dart';
 import '../../../../../../businessLogic/classes/e_invoice_item_selection_model.dart';
 import '../../../../../../main.dart';

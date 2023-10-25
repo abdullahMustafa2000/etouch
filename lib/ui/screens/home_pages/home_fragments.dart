@@ -26,7 +26,7 @@ class _FragmentsState extends State<Fragments> {
 
   @override
   void initState() {
-    _controller = PageController(keepPage: true);
+    _controller = PageController(keepPage: false);
     super.initState();
   }
 

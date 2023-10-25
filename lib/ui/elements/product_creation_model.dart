@@ -3,6 +3,7 @@ import 'package:etouch/api/services.dart';
 import 'package:etouch/businessLogic/providers/create_doc_manager.dart';
 import 'package:etouch/main.dart';
 import 'package:etouch/ui/constants.dart';
+import 'package:etouch/ui/elements/popups.dart';
 import 'package:etouch/ui/elements/request_api_widget.dart';
 import 'package:etouch/ui/elements/searchable_dropdown_model.dart';
 import 'package:etouch/ui/themes/themes.dart';
@@ -15,7 +16,7 @@ import 'primary_btn_model.dart';
 import 'uneditable_data.dart';
 
 class ProductCreationModel extends StatefulWidget {
-  ProductCreationModel(
+  const ProductCreationModel(
       {Key? key,
       required this.services,
       required this.index,
@@ -30,7 +31,7 @@ class ProductCreationModel extends StatefulWidget {
   final MyApiServices services;
   final String token;
   final Function(int) onDelete;
-  ViewProduct widgetProduct;
+  final ViewProduct widgetProduct;
   @override
   State<ProductCreationModel> createState() => _ProductCreationModelState();
 }
@@ -39,12 +40,14 @@ class _ProductCreationModelState extends State<ProductCreationModel> {
   late int index;
   int _selectedWHId = 0;
   late ScrollController _controller;
-  List<BaseAPIObject>? _units = [], _groups;
+  List<BaseAPIObject>? _units, _groups;
   List<ProductModel>? _productsFromApi;
   @override
   void initState() {
     _controller = ScrollController();
     index = widget.index;
+    _units = [];
+    _groups = [];
     super.initState();
   }
 
@@ -127,12 +130,17 @@ class _ProductCreationModelState extends State<ProductCreationModel> {
                   data: (widget.widgetProduct.quantity ?? 0).toString(),
                   hasInitValue: true,
                   onChange: (String? val, bool isEmpty) {
-                    widget.widgetProduct.quantity =
-                        double.parse(isEmpty ? "0" : val!);
-                    setState(() {});
+                    double? enteredVal = double.parse(!isEmpty ? val! : '0');
+                    if (isEmpty &&
+                        enteredVal > (widget.widgetProduct.productCount ?? 0)) {
+                      Popups.flutterToast(
+                          appTxt(context).unAcceptableCount, ToastType.error);
+                    }
+                    widget.widgetProduct.quantity = enteredVal;
                     context
                         .read<EInvoiceDocProvider>()
                         .updateTotalAmount(widget.prods);
+                    setState(() {});
                   },
                 ),
               ),
@@ -157,12 +165,23 @@ class _ProductCreationModelState extends State<ProductCreationModel> {
                         data: widget.widgetProduct.pieceSalePrice.toString(),
                         hasInitValue: true,
                         onChange: (String? val, bool isEmpty) {
-                          widget.widgetProduct.pieceSalePrice =
-                              isEmpty ? 0 : double.parse(val!);
-                          setState(() {});
+                          double enteredPrice =
+                              double.parse(!isEmpty ? val! : '0');
+                          if (isEmpty ||
+                              enteredPrice < 0 ||
+                              enteredPrice >
+                                  (widget.widgetProduct.maxSalePrice ?? 0) ||
+                              enteredPrice <
+                                  (widget.widgetProduct.minSalePrice ?? 0)) {
+                            Popups.flutterToast(
+                                '${appTxt(context).unAcceptablePrice} ${widget.widgetProduct.maxSalePrice}',
+                                ToastType.error);
+                          }
+                          widget.widgetProduct.pieceSalePrice = enteredPrice;
                           context
                               .read<EInvoiceDocProvider>()
                               .updateTotalAmount(widget.prods);
+                          setState(() {});
                         },
                       )
                     : UnEditableData(
@@ -250,6 +269,7 @@ class _ProductCreationModelState extends State<ProductCreationModel> {
     widget.widgetProduct.maxSalePrice = cur.maxSalePrice;
     widget.widgetProduct.minSalePrice = cur.minSalePrice;
     widget.widgetProduct.productCount = cur.productCount;
+    _units = [];
     _units?.add(BaseAPIObject(
         id: cur.measurementUnitsId, name: cur.measurementUnitsName));
   }

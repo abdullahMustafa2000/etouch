@@ -7,12 +7,12 @@ import 'package:etouch/ui/elements/purple_btn.dart';
 import 'package:etouch/ui/elements/request_api_widget.dart';
 import 'package:etouch/ui/screens/after_submission_screen.dart';
 import 'package:provider/provider.dart';
-import 'e-invoice/e_invoice_doc_taxes.dart';
+import 'e-invoice/payment_info.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import '../../../../../api/api_models/sales_order.dart';
 import '../../../../../businessLogic/classes/e_invoice_item_selection_model.dart';
-import 'e-invoice/doc_pre_requirments.dart';
+import 'e-invoice/purple_top_widget.dart';
 import 'e-invoice/products_list_widget.dart';
 
 class CreateEInvoiceDocumentFragment
@@ -44,7 +44,6 @@ class CreateEInvoiceDocumentFragment
               const SizedBox(
                 height: 8,
               ),
-
               // add product details object
               ProductsSelectionWidget(
                 loginResponse: loginResponse,
@@ -62,7 +61,6 @@ class CreateEInvoiceDocumentFragment
               const SizedBox(
                 height: 24,
               ),
-
               //send document btn
               SizedBox(
                 width: double.infinity,
@@ -71,7 +69,7 @@ class CreateEInvoiceDocumentFragment
                     appTxt(context).sendDocument,
                     style: txtTheme(context)
                         .titleLarge!
-                        .copyWith(color: appTheme(context).primaryColorDark),
+                        .copyWith(color: Colors.white),
                   ),
                   onTap: () {
                     _submitDocument(
@@ -92,6 +90,7 @@ class CreateEInvoiceDocumentFragment
 
   void _submitDocument(
       SalesOrder order, String token, BuildContext context) async {
+    print(salesOrder.toString());
     Navigator.push(
       context,
       MaterialPageRoute(

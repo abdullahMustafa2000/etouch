@@ -95,6 +95,6 @@ class ProductModel {
 
   @override
   String toString() {
-    return 'id:$productId, name:$productName, count:$productCount';
+    return 'id:$productId, name:$productName, price:$pieceSalePrice,';
   }
 }

@@ -10,15 +10,26 @@ class SalesOrder {
   double orderAmountAfterTaxes = 0;
   double paid = 0;
   bool sendToTax = true;
-  int? uuid, submissionId, orderTypeId, orderCategoryId;
+  int? uuid, submissionId, orderTypeId, orderCategoryId, orderId;
   String orderDate = getFormattedDate(DateTime.now());
   List<ViewProduct> productsList = [];
   List<BaseAPIObject> paymentMethods = [BaseAPIObject(id: 0, name: '')];
   List<DocumentTaxesModel> taxesAndDiscounts = [];
 
+  @override
+  String toString() {
+    String purpleData = 'orderId: $orderId, branch: ${branch?.getName}, customer: ${customer?.getName}, treasury: ${treasury?.getName}, warehouse: ${warehouse?.getName}, currency: ${currency?.getName}';
+    var productsData = StringBuffer();
+    for (int i = 0; i < productsList.length; i++) {
+      productsData.write('product$i: ${productsList[i].toString()},\n');
+    }
+    String paymentsData = 'payment: ${paymentMethods[0].getName}, amount: $paid';
+    return '$purpleData\n$productsData$paymentsData';
+  }
+
   SalesOrder();
 
-  bool allDataIsFine(SalesOrder order) {
+  bool allDataIsFine() {
     if (branch == null ||
         customer == null ||
         treasury == null ||
