@@ -1,16 +1,31 @@
 import 'dart:convert';
 import 'package:etouch/api/api_response.dart';
 import 'package:etouch/businessLogic/classes/e_invoice_item_selection_model.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'api_models/dashboard_response.dart';
 import 'api_models/login_response.dart';
 import 'api_models/product_content.dart';
 import 'api_models/sales_order.dart';
+import 'api_models/submit_response.dart';
 
 class MyApiServices {
-  MyApiServices();
-  static const baseUrl = 'rognecumlo-001-site1.itempurl.com';
+  MyApiServices() {
+    DatabaseReference databaseReference =
+        FirebaseDatabase.instance.ref().child('base_url');
+    //getBaseUrl(databaseReference);
+    databaseReference.onValue.listen((event) {
+      baseUrl = event.snapshot.value as String;
+    });
+  }
+
+  // void getBaseUrl(DatabaseReference ref) async {
+  //   DataSnapshot snap = await ref.get();
+  //   baseUrl = snap.value as String;
+  // }
+
+  static String baseUrl = '';
   static Map<int, String> currenciesMap = {};
 
   Future<APIResponse<List<BaseAPIObject>>> baseObjectRequest(
@@ -111,18 +126,18 @@ class MyApiServices {
         });
   }
 
-  Future<APIResponse<List<ProductModel>>> getProductsByGroupId(int branchId,
-      int groupId, String token) async {
-    return await http.get(Uri
-        .http(baseUrl, '/api/inventory/Inventory/GetProductsByProductGroupsId'
-        , {
+  Future<APIResponse<List<ProductModel>>> getProductsByGroupId(
+      int branchId, int groupId, String token) async {
+    return await http.get(
+        Uri.http(
+            baseUrl, '/api/inventory/Inventory/GetProductsByProductGroupsId', {
           'branchId': branchId.toString(),
           'groupId': groupId.toString(),
         }),
         headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token'
-    }).then((data) {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        }).then((data) {
       if (data.statusCode == 200) {
         final jsonData = json.decode(data.body);
         final dataSet = <ProductModel>[];
@@ -185,21 +200,28 @@ class MyApiServices {
         (_) => APIResponse<DashboardResponse>(data: null, statusCode: -1));
   }
 
-  Future<APIResponse<bool>> postEInvoiceDocument(
+  Future<APIResponse<dynamic>> postDocument(
       SalesOrder order, String token) async {
     return await http
-        .post(Uri.parse('${baseUrl}inventory/Inventory/SubmitDocument'),
+        .post(Uri.http(baseUrl, 'inventory/Inventory/SubmitDocument'),
             headers: {
-              'Content-Type': 'application/json',
+              //'Content-Type': 'multipart/form-data',
               'Authorization': 'Bearer $token'
             },
             body: order.toJson(order))
         .then((value) {
       if (value.statusCode == 200) {
-        return APIResponse<bool>(data: true, statusCode: value.statusCode);
+        return APIResponse<SubmitDocumentResponse>(
+            data: SubmitDocumentResponse(),
+            statusCode: value.statusCode,
+            hasError: false);
       }
-      return APIResponse<bool>(data: false, statusCode: value.statusCode);
-    }).catchError((_) => APIResponse<bool>(data: false, statusCode: -1));
+      return APIResponse<bool>(
+          data: false,
+          statusCode: value.statusCode,
+          errorMessage: value.body,
+          hasError: true);
+    }).catchError((ex) => APIResponse<bool>(data: false, statusCode: -1));
   }
 
   Future<APIResponse<LoginResponse>> postLoginInfo(

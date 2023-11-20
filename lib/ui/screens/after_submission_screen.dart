@@ -9,7 +9,7 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import '../themes/themes.dart';
 
 class AfterSubmissionScreen extends StatelessWidget {
-  AfterSubmissionScreen(
+  const AfterSubmissionScreen(
       {Key? key, required this.hasError, this.errorMessage, this.document})
       : super(key: key);
   final bool hasError;
@@ -18,47 +18,42 @@ class AfterSubmissionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          Expanded(
-              child: hasError
-                  ? _errorWidget(errorMessage!, context)
-                  : _successfullySentWidget(document!, context))
-        ],
+      body: SizedBox(
+        child: hasError
+            ? _errorWidget(errorMessage!, context)
+            : _successfullySentWidget(document!, context),
       ),
     );
   }
 
-  Widget _errorWidget(String errorMessage, BuildContext context) => Expanded(
-        child: Column(
-          children: [
-            Lottie.asset(errorLottiePath),
-            const SizedBox(
-              height: 24,
-            ),
-            Text(
-              errorMessage,
-              style: txtTheme(context)
-                  .headlineSmall!
-                  .copyWith(color: darkRedCardBGClr),
-            ),
-            const SizedBox(
-              height: 24,
-            ),
-            PurpleButtonModel(
-                content: Text(
-                  appTxt(context).closeCurrent,
-                  style: txtTheme(context)
-                      .titleMedium!
-                      .copyWith(color: pureWhite, fontSize: 14),
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                width: MediaQuery.of(context).size.width / 3)
-          ],
-        ),
-      );
+  Widget _errorWidget(String errorMessage, BuildContext context) => Column(
+    children: [
+      Lottie.asset(errorLottiePath),
+      const SizedBox(
+        height: 24,
+      ),
+      Text(
+        errorMessage,
+        style: txtTheme(context)
+            .headlineSmall!
+            .copyWith(color: darkRedCardBGClr),
+      ),
+      const SizedBox(
+        height: 24,
+      ),
+      PurpleButtonModel(
+          content: Text(
+            appTxt(context).closeCurrent,
+            style: txtTheme(context)
+                .titleMedium!
+                .copyWith(color: pureWhite, fontSize: 14),
+          ),
+          onTap: () {
+            Navigator.pop(context);
+          },
+          width: MediaQuery.of(context).size.width / 3)
+    ],
+  );
 
   Widget _successfullySentWidget(
           DocumentForListing document, BuildContext context) =>
@@ -81,15 +76,16 @@ class AfterSubmissionScreen extends StatelessWidget {
           ),
           PurpleButtonModel(
               content: Text(
-                appTxt(context).showDoc,
+                appTxt(context).closeCurrent,
                 style:
                     txtTheme(context).titleMedium!.copyWith(color: pureWhite),
               ),
               onTap: () {
-                showMaterialModalBottomSheet(
-                    context: context,
-                    builder: (context) =>
-                        DocumentPreviewScreen(document: document));
+                // showMaterialModalBottomSheet(
+                //     context: context,
+                //     builder: (context) =>
+                //         DocumentPreviewScreen(document: document));
+                Navigator.pop(context);
               },
               width: MediaQuery.of(context).size.width / 3),
         ],

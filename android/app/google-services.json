@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "717183826641",
+    "project_id": "e-doc-touch",
+    "storage_bucket": "e-doc-touch.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:717183826641:android:675aea8ddcac995bc563f0",
+        "android_client_info": {
+          "package_name": "ryada.etouch.etouch"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyByJT8bQxShmSU5it6zO-S7Ls7qqC3C4bE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

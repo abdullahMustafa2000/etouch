@@ -1,11 +1,12 @@
 import 'package:etouch/api/services.dart';
 import 'package:etouch/businessLogic/providers/dashboard_manager.dart';
 import 'package:etouch/businessLogic/providers/navigation_bottom_manager.dart';
-import 'package:etouch/businessLogic/providers/provider_test.dart';
 import 'package:etouch/ui/screens/login_screen.dart';
 import 'package:etouch/ui/screens/splash_screen.dart';
 import 'package:etouch/ui/themes/theme_manager.dart';
 import 'package:etouch/ui/themes/themes.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get_it/get_it.dart';
@@ -17,8 +18,16 @@ import 'businessLogic/providers/create_doc_manager.dart';
 void setupServiceLocator() {
   GetIt.instance.registerLazySingleton(() => MyApiServices());
 }
-void main() {
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   setupServiceLocator();
+  await Firebase.initializeApp();
+  FirebaseDatabase.instance
+      .ref()
+      .child('base_url')
+      .get()
+      .then((data) => MyApiServices.baseUrl = data.value as String);
   runApp(const MyApp());
 }
 
@@ -50,7 +59,6 @@ class _MyAppState extends State<MyApp> {
       providers: [
         ChangeNotifierProvider(create: (_) => _themeManager),
         ChangeNotifierProvider(create: (_) => EInvoiceDocProvider()),
-        ChangeNotifierProvider(create: (_) => TestProvider()),
         ChangeNotifierProvider(create: (_) => DashboardProvider()),
         ChangeNotifierProvider(create: (_) => BottomNavigationProvider()),
       ],
@@ -84,14 +92,13 @@ TextTheme txtTheme(BuildContext context) {
   return Theme.of(context).textTheme;
 }
 
-String getFormattedDate(DateTime when) {
+String getZFormattedDate(DateTime when) {
   return DateFormat("yyyy-MM-ddTHH:mm:ss'Z'").format(when);
 }
 
 void logoutUser(BuildContext context, {bool why = true}) {
   if (why) {
     Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (ctx) => LoginScreen()),
-            (route) => false);
+        MaterialPageRoute(builder: (ctx) => LoginScreen()), (route) => false);
   }
 }

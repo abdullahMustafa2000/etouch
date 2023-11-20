@@ -101,7 +101,7 @@ class EInvoicesListFragment extends StatelessWidget {
                               documents[index].registrationId.toString(),
                           customerName: documents[index].ownerName,
                           submissionDate:
-                              getFormattedDate(documents[index].submissionDate),
+                              getZFormattedDate(documents[index].submissionDate),
                           totalAmount: documents[index].totalAmount.toString(),
                           status: documents[index].status),
                     ),

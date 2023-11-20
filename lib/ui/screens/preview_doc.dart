@@ -75,7 +75,7 @@ class InvoiceTopContainer extends StatelessWidget {
             ],
           ),
           _dataRow(appTxt(context).documentSubmissionDate,
-              getFormattedDate(documentInfo.submissionDate), context),
+              getZFormattedDate(documentInfo.submissionDate), context),
           Container(
             color: pureWhite,
             height: .3,

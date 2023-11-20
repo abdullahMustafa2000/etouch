@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:etouch/api/api_models/view_product.dart';
 import 'package:etouch/main.dart';
+import 'package:intl/intl.dart';
 
 import '../../businessLogic/classes/e_invoice_item_selection_model.dart';
 import 'tax_of_document_model.dart';
@@ -11,7 +14,7 @@ class SalesOrder {
   double paid = 0;
   bool sendToTax = true;
   int? uuid, submissionId, orderTypeId, orderCategoryId, orderId;
-  String orderDate = getFormattedDate(DateTime.now());
+  String orderDate = getZFormattedDate(DateTime.now());
   List<ViewProduct> productsList = [];
   List<BaseAPIObject> paymentMethods = [BaseAPIObject(id: 0, name: '')];
   List<DocumentTaxesModel> taxesAndDiscounts = [];
@@ -55,29 +58,29 @@ class SalesOrder {
 
   Map<String, dynamic> toJson(SalesOrder order) {
     return {
-      "branchId": order.branch!.getId,
-      "treasuryId": order.treasury!.getId,
-      "warehouseId": order.warehouse!.getId,
-      "orderTypeId": order.orderTypeId,
-      "orderCategoryId": order.orderCategoryId,
-      "totalOrderAmount": order.totalOrderAmount,
-      "totalOrderAmountAfterTaxes": order.orderAmountAfterTaxes,
-      "customerId": order.customer!.getId,
-      "Paid": order.paid,
-      "companyCurrencyId": order.currency!.getId,
-      "sendToTax": order.sendToTax,
-      "orderDate": order.orderDate,
-      "items": order.productsList.map((e) => productToJson(e)).toList(),
+      "branchId": order.branch!.getId.toString(),
+      "treasuryId": order.treasury!.getId.toString(),
+      "warehouseId": order.warehouse!.getId.toString(),
+      "orderTypeId": (order.orderTypeId ?? 3).toString(),
+      "orderCategoryId": (order.orderCategoryId ?? 5).toString(),
+      "totalOrderAmount": order.totalOrderAmount.toString(),
+      "totalOrderAmountAfterTaxes": order.orderAmountAfterTaxes.toString(),
+      "customerId": order.customer!.getId.toString(),
+      "Paid": order.paid.toString(),
+      "companyCurrencyId": order.currency!.getId.toString(),
+      "sendToTax": order.sendToTax.toString(),
+      "orderDate": DateFormat('yyyy-MM-dd – kk:mm').format(DateTime.now()),
+      "items": jsonEncode(order.productsList),
     };
   }
-
+//order.productsList.map((e) => productToJson(e)).toList()
   Map<String, dynamic> productToJson(ViewProduct mProduct) {
     return {
-      "productId": mProduct.productId,
-      "selectedBalanceMeasurementUnitId": mProduct.measurementUnitsId,
-      "selectedWarehouseProductGroupId": mProduct.warehouseProductGroupsId,
-      "requiredQuantity": mProduct.quantity,
-      "price": mProduct.pieceSalePrice,
+      "productId": mProduct.productId.toString(),
+      "selectedBalanceMeasurementUnitId": mProduct.measurementUnitsId.toString(),
+      "selectedWarehouseProductGroupId": mProduct.warehouseProductGroupsId.toString(),
+      "requiredQuantity": mProduct.quantity.toString(),
+      "price": mProduct.pieceSalePrice.toString(),
     };
   }
 }

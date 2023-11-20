@@ -6,6 +6,7 @@ import 'package:etouch/main.dart';
 import 'package:etouch/ui/elements/purple_btn.dart';
 import 'package:etouch/ui/elements/request_api_widget.dart';
 import 'package:etouch/ui/screens/after_submission_screen.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'e-invoice/payment_info.dart';
 import 'package:flutter/material.dart';
@@ -15,12 +16,11 @@ import '../../../../../businessLogic/classes/e_invoice_item_selection_model.dart
 import 'e-invoice/purple_top_widget.dart';
 import 'e-invoice/products_list_widget.dart';
 
-class CreateEInvoiceDocumentFragment
-    extends StatelessWidget {
-  CreateEInvoiceDocumentFragment(
-      {Key? key,
-        required this.loginResponse,})
-      : super(key: key);
+class CreateEInvoiceDocumentFragment extends StatelessWidget {
+  CreateEInvoiceDocumentFragment({
+    Key? key,
+    required this.loginResponse,
+  }) : super(key: key);
   final LoginResponse loginResponse;
 
   MyApiServices get service => GetIt.I<MyApiServices>();
@@ -90,23 +90,25 @@ class CreateEInvoiceDocumentFragment
 
   void _submitDocument(
       SalesOrder order, String token, BuildContext context) async {
-    print(salesOrder.toString());
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => AfterSubmissionScreen(
-          hasError: false,
-          document: DocumentForListing(
-              type: 'Purchases',
-              id: 1,
-              registrationId: 12,
-              ownerName: 'Hesham',
-              submissionDate: DateTime.now(),
-              totalAmount: 12000,
-              status: 'valid'),
-          errorMessage: 'not sending because...',
-        ),
-      ),
-    );
+    order.totalOrderAmount = context.read<EInvoiceDocProvider>().docTotalAmount;
+    service.postDocument(order, token).then((value) => {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AfterSubmissionScreen(
+                hasError: value.hasError,
+                document: DocumentForListing(
+                    type: 'Purchases',
+                    id: 1,
+                    registrationId: 12,
+                    ownerName: 'Hesham',
+                    submissionDate: DateTime.now(),
+                    totalAmount: 12000,
+                    status: 'valid'),
+                errorMessage: 'not sending because...\n${value.errorMessage}',
+              ),
+            ),
+          )
+        });
   }
 }
