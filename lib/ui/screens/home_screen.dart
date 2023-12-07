@@ -3,14 +3,14 @@ import 'package:etouch/api/services.dart';
 import 'package:etouch/businessLogic/providers/navigation_bottom_manager.dart';
 import 'package:etouch/ui/constants.dart';
 import 'package:etouch/ui/elements/side_menu_model.dart';
-import 'package:etouch/ui/screens/login_screen.dart';
 import 'package:etouch/ui/themes/theme_manager.dart';
 import 'package:etouch/ui/themes/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import '../../main.dart';
-import 'home_pages/home_fragments.dart';
+import 'fragments/fragments_container.dart';
+import 'login_screen.dart';
 
 int animDuration = 600;
 
@@ -31,7 +31,7 @@ class _HomePageScreenState extends State<HomePageScreen>
   TabController? _tabsController;
   @override
   void initState() {
-    _tabsController = TabController(length: 3, vsync: this);
+    _tabsController = TabController(length: 2, vsync: this);
     super.initState();
     getCurrentThemeMode();
   }
@@ -47,16 +47,20 @@ class _HomePageScreenState extends State<HomePageScreen>
     var bottomNavigator = Provider.of<BottomNavigationProvider>(context);
     return Scaffold(
       key: _key,
+      resizeToAvoidBottomInset: false,
       backgroundColor: Theme.of(context).primaryColorDark,
       drawer: SideMenuModel(
-        taxPayerName: 'Abdullah',
+        taxPayerName: widget.loginResponse.userName ?? 'User name',
         isDarkMood: isDark,
-        taxPayerImg: null,
+        taxPayerImg: widget.loginResponse.imgSource,
         onChangeMood: (isDark) {
-          themeManager.toggleTheme(isDark);
-          setState(() {});
+          setState(() {
+            themeManager.toggleTheme(isDark);
+          });
         },
-        onContactClkd: () {},
+        onContactClkd: () {
+          openWhatsapp();
+        },
         onBackClkd: () {
           _key.currentState?.closeDrawer();
         },
@@ -143,28 +147,31 @@ class _HomePageScreenState extends State<HomePageScreen>
           ),
           tabs: [
             Tab(
-                icon: Image.asset(
-              bottomNavigator.indexOfPage == 0
-                  ? bottomNavHome
-                  : unSelectedNavHome,
-              width: 24,
-              height: 24,
-            )),
+              icon: Image.asset(
+                bottomNavigator.indexOfPage == 0
+                    ? bottomNavHome
+                    : unSelectedNavHome,
+                width: 24,
+                height: 24,
+              ),
+            ),
             Tab(
-                icon: Image.asset(
-                    bottomNavigator.indexOfPage == 1
-                        ? bottomNavSend
-                        : unSelectedNavSend,
-                    width: 24,
-                    height: 24)),
-            Tab(
-                icon: Image.asset(
-              bottomNavigator.indexOfPage == 2
-                  ? bottomNavDoc
-                  : unSelectedNavDoc,
-              width: 24,
-              height: 24,
-            )),
+              icon: Image.asset(
+                  bottomNavigator.indexOfPage == 1
+                      ? bottomNavSend
+                      : unSelectedNavSend,
+                  width: 24,
+                  height: 24),
+            ),
+            // Tab(
+            //   icon: Image.asset(
+            //     bottomNavigator.indexOfPage == 2
+            //         ? bottomNavDoc
+            //         : unSelectedNavDoc,
+            //     width: 24,
+            //     height: 24,
+            //   ),
+            // ),
           ],
         ),
       ),

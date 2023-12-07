@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:etouch/ui/constants.dart';
 
 class LoginTextFieldModel extends StatefulWidget {
-  LoginTextFieldModel(
-      {required this.hint,
+  const LoginTextFieldModel(
+      {Key? key, required this.hint,
       required this.isPassword,
-      required this.onTxtChanged, this.defVal});
-  String hint;
-  String? defVal;
-  bool isPassword;
-  Function onTxtChanged;
+      required this.onTxtChanged, this.defVal}) : super(key: key);
+  final String hint;
+  final String? defVal;
+  final bool isPassword;
+  final Function onTxtChanged;
   @override
   State<LoginTextFieldModel> createState() => _LoginTextFieldModelState();
 }

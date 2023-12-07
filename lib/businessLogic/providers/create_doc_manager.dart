@@ -1,4 +1,4 @@
-import 'package:etouch/api/api_models/view_product.dart';
+import 'package:etouch/businessLogic/classes/view_product.dart';
 import 'package:flutter/material.dart';
 
 class EInvoiceDocProvider extends ChangeNotifier {
@@ -37,8 +37,8 @@ class EInvoiceDocProvider extends ChangeNotifier {
   }
 
   void clearData() {
-    docTotalAmount = 0; paid = 0;
-    branchId = -1; warehouseId = 0;
+    docTotalAmount = paid = 0;
+    //branchId = -1; warehouseId = 0;
     notifyListeners();
   }
 }

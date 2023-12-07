@@ -7,8 +7,8 @@ import 'package:etouch/ui/elements/purple_btn.dart';
 import 'package:etouch/ui/elements/searchable_dropdown_model.dart';
 import 'package:etouch/ui/themes/themes.dart';
 import 'package:flutter/material.dart' hide ModalBottomSheetRoute;
-import '../../../../businessLogic/classes/document_for_listing.dart';
-import '../../preview_doc.dart';
+import '../../../businessLogic/classes/document_for_listing.dart';
+import '../preview_doc.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 class EInvoicesListFragment extends StatelessWidget {

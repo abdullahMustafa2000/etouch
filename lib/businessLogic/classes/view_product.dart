@@ -1,11 +1,11 @@
 import 'package:etouch/api/api_models/product_content.dart';
 
-import '../../businessLogic/classes/e_invoice_item_selection_model.dart';
+import 'base_api_response.dart';
 
 class ViewProduct extends ProductModel {
   BaseAPIObject? groupSelected, unitSelected;
-  double? quantity;
-  double? totalProdAmount;
+  double? quantity = 0.0;
+  double? totalProdAmount = 0.0;
 
   ViewProduct.empty() {
     productId = 0;

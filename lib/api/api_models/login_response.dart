@@ -1,7 +1,8 @@
-import 'package:etouch/businessLogic/classes/e_invoice_item_selection_model.dart';
+import 'package:etouch/businessLogic/classes/base_api_response.dart';
+import 'package:etouch/main.dart';
 
 class LoginResponse {
-  String? token;
+  String? token, imgSource, userName;
   List<String>? userRoles;
   int? foundationId;
   int? companyId;
@@ -9,12 +10,11 @@ class LoginResponse {
   DateTime? expiration;
 
   LoginResponse(
-      {String? token,
-      List<String>? userRoles,
-      int? foundationId,
-      int? companyId,
-      List<int>? userBranches,
-      DateTime? expiration}) {
+      {this.token,
+      this.userRoles,
+      this.foundationId, this.companyId,
+        this.userBranches,
+        this.expiration}) {
     if (token != null) {
       token = token;
     }
@@ -40,14 +40,16 @@ class LoginResponse {
     userRoles = json['userRoles'].cast<String>();
     foundationId = json['foundationId'];
     companyId = json['companyId'];
+    imgSource = json['userImagePath'];
+    userName = json['userName'];
     if (json['userBranches'] != null) {
       userBranches = <BaseAPIObject>[];
       json['userBranches'].forEach((v) {
-        userBranches!.add(BaseAPIObject(
-            id: v, name: 'Main Branch'));
+        userBranches!.add(BaseAPIObject(id: v['id'], name: v['name']));
       });
     }
-    expiration = DateTime.parse(json['expiration']);
+    expiration = DateTime.parse(
+        getSpacedFormattedDate(DateTime.parse(json['expiration'])));
   }
 
   Map<String, dynamic> toJson() {

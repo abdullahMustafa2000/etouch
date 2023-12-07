@@ -1,15 +1,12 @@
 import 'package:etouch/api/api_models/login_response.dart';
 import 'package:etouch/api/services.dart';
-import 'package:etouch/businessLogic/providers/create_doc_manager.dart';
 import 'package:etouch/businessLogic/providers/navigation_bottom_manager.dart';
-import 'package:etouch/main.dart';
-import 'package:etouch/ui/screens/home_pages/pages/documents_list.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../businessLogic/classes/e_invoice_item_selection_model.dart';
-import 'pages/doc_creation/create_document.dart';
-import 'pages/e_invoice_dashboard.dart';
 import '../home_screen.dart';
+import 'dashboard.dart';
+import 'doc_creation/create_document.dart';
+import 'recents_list.dart';
 
 class Fragments extends StatefulWidget {
   const Fragments(

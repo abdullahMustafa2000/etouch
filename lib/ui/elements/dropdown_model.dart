@@ -1,4 +1,4 @@
-import 'package:etouch/businessLogic/classes/e_invoice_item_selection_model.dart';
+import 'package:etouch/businessLogic/classes/base_api_response.dart';
 import 'package:etouch/ui/themes/themes.dart';
 import 'package:flutter/material.dart';
 import '../constants.dart';

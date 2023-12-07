@@ -1,5 +1,4 @@
 import 'package:etouch/api/services.dart';
-import 'package:etouch/businessLogic/providers/dashboard_manager.dart';
 import 'package:etouch/businessLogic/providers/navigation_bottom_manager.dart';
 import 'package:etouch/ui/screens/login_screen.dart';
 import 'package:etouch/ui/screens/splash_screen.dart';
@@ -59,7 +58,6 @@ class _MyAppState extends State<MyApp> {
       providers: [
         ChangeNotifierProvider(create: (_) => _themeManager),
         ChangeNotifierProvider(create: (_) => EInvoiceDocProvider()),
-        ChangeNotifierProvider(create: (_) => DashboardProvider()),
         ChangeNotifierProvider(create: (_) => BottomNavigationProvider()),
       ],
       child: Consumer<ThemeManager>(
@@ -96,9 +94,14 @@ String getZFormattedDate(DateTime when) {
   return DateFormat("yyyy-MM-ddTHH:mm:ss'Z'").format(when);
 }
 
+String getSpacedFormattedDate(DateTime when) {
+  return DateFormat("yyyy-MM-dd hh:mm:ss").format(when);
+}
+
 void logoutUser(BuildContext context, {bool why = true}) {
   if (why) {
     Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (ctx) => LoginScreen()), (route) => false);
+        MaterialPageRoute(builder: (ctx) => const LoginScreen()),
+        (route) => false);
   }
 }

@@ -7,6 +7,7 @@
   "orientationWelcomeTitle" : "مرحباً بك ..",
   "orientationWelcomeDesc" : "لقد انضممت إلى عملاء شركة ريادة للحلول المتكاملة",
   "loginTxt": "تسجيل دخول",
+  "emptyTextFieldErr": "رجاءا ادخل كل البيانات المطلوبه",
   "logoutTxt": "تسجيل الخروج",
   "loginUsernameTxt" : "اسم المستخدم",
   "loginPasswordTxt" : "كلمة السر",
@@ -85,5 +86,7 @@
   "emptyDataError": "لا توجد بيانات",
   "optional": "اختياري",
   "unAcceptableCount": "خارج نطاق الكمية",
-  "unAcceptablePrice": "خارج نطاق السعر"
+  "unAcceptablePrice": "خارج نطاق السعر",
+  "dateTimePickerTitle": "اختر توقيت ارسال الفاتورة",
+  "notAllowedUser": "ناسف لهذا، لا يمكنك استخدام التطبيق، تواصل معنا"
 }

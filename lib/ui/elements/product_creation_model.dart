@@ -1,4 +1,5 @@
-import 'package:etouch/api/api_models/view_product.dart';
+import 'package:etouch/api/api_models/sales_order.dart';
+import 'package:etouch/businessLogic/classes/view_product.dart';
 import 'package:etouch/api/services.dart';
 import 'package:etouch/businessLogic/providers/create_doc_manager.dart';
 import 'package:etouch/main.dart';
@@ -10,7 +11,7 @@ import 'package:etouch/ui/themes/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../api/api_models/product_content.dart';
-import '../../businessLogic/classes/e_invoice_item_selection_model.dart';
+import '../../businessLogic/classes/base_api_response.dart';
 import 'editable_data.dart';
 import 'primary_btn_model.dart';
 import 'uneditable_data.dart';
@@ -18,6 +19,7 @@ import 'uneditable_data.dart';
 class ProductCreationModel extends StatefulWidget {
   const ProductCreationModel(
       {Key? key,
+      required this.salesOrder,
       required this.services,
       required this.index,
       required this.branchId,
@@ -28,6 +30,7 @@ class ProductCreationModel extends StatefulWidget {
       : super(key: key);
   final int index, branchId;
   final List<ViewProduct> prods;
+  final SalesOrder salesOrder;
   final MyApiServices services;
   final String token;
   final Function(int) onDelete;
@@ -40,14 +43,17 @@ class _ProductCreationModelState extends State<ProductCreationModel> {
   late int index;
   int _selectedWHId = 0;
   late ScrollController _controller;
-  List<BaseAPIObject>? _units, _groups;
+  late Future<List<BaseAPIObject>?> _groupsRequest;
+  List<BaseAPIObject>? _groupsResponse;
   List<ProductModel>? _productsFromApi;
+  ProductModel? _curProSelected;
+
   @override
   void initState() {
     _controller = ScrollController();
     index = widget.index;
-    _units = [];
-    _groups = [];
+    _groupsRequest = _getGroupsList(widget.salesOrder.branch?.getId,
+        widget.salesOrder.warehouse?.getId, widget.token);
     super.initState();
   }
 
@@ -81,15 +87,18 @@ class _ProductCreationModelState extends State<ProductCreationModel> {
                   builder: (_, warehouseId, __) {
                     if (_selectedWHId != warehouseId) {
                       _selectedWHId = warehouseId;
+                      _groupsRequest = _getGroupsList(
+                          widget.salesOrder.branch?.getId,
+                          warehouseId,
+                          widget.token);
                       return RequestAPIWidget<List<BaseAPIObject>?>(
-                          request: _getGroupsList(
-                              widget.branchId, warehouseId, widget.token),
+                          request: _groupsRequest,
                           onSuccessfulResponse: (snap) {
-                            _groups = snap.data;
+                            _groupsResponse = snap.data;
                             return _groupsDropDown(snap.data);
                           });
                     } else {
-                      return _groupsDropDown(_groups);
+                      return _groupsDropDown(_groupsResponse);
                     }
                   },
                 ),
@@ -148,19 +157,21 @@ class _ProductCreationModelState extends State<ProductCreationModel> {
               ///productUnit
               InputTypeRow(
                 label: appTxt(context).unitOfInventory,
-                child: SearchDropdownMenuModel(
-                  dataList: _units,
-                  onItemSelected: (BaseAPIObject? val) {
-                    widget.widgetProduct.unitSelected = val;
-                  },
-                  selectedItem: widget.widgetProduct.unitSelected,
-                ),
+                child: UnEditableData(
+                    data: _curProSelected?.measurementUnitsName ?? 'non'),
+                // SearchDropdownMenuModel(
+                //   dataList: _units,
+                //   onItemSelected: (BaseAPIObject? val) {
+                //     widget.widgetProduct.unitSelected = val;
+                //   },
+                //   selectedItem: widget.widgetProduct.unitSelected,
+                // ),
               ),
 
               ///productPrice
               InputTypeRow(
                 label: appTxt(context).priceOfInventory,
-                child: widget.widgetProduct.isChangeable
+                child: widget.widgetProduct.isChangeable ?? false
                     ? EditableInputData(
                         data: widget.widgetProduct.pieceSalePrice.toString(),
                         hasInitValue: true,
@@ -262,16 +273,19 @@ class _ProductCreationModelState extends State<ProductCreationModel> {
   }
 
   void _updateSelectedProduct(BaseAPIObject val) {
-    var cur = _productsFromApi!.firstWhere((pro) => pro.productId == val.getId);
-    widget.widgetProduct.productId = cur.productId;
-    widget.widgetProduct.productName = cur.productName;
-    widget.widgetProduct.pieceSalePrice = cur.pieceSalePrice;
-    widget.widgetProduct.maxSalePrice = cur.maxSalePrice;
-    widget.widgetProduct.minSalePrice = cur.minSalePrice;
-    widget.widgetProduct.productCount = cur.productCount;
-    _units = [];
-    _units?.add(BaseAPIObject(
-        id: cur.measurementUnitsId, name: cur.measurementUnitsName));
+    _curProSelected =
+        _productsFromApi?.firstWhere((pro) => pro.productId == val.getId);
+    widget.widgetProduct.productId = _curProSelected?.productId;
+    widget.widgetProduct.productName = _curProSelected?.productName;
+    widget.widgetProduct.pieceSalePrice = _curProSelected?.pieceSalePrice;
+    widget.widgetProduct.maxSalePrice = _curProSelected?.maxSalePrice;
+    widget.widgetProduct.minSalePrice = _curProSelected?.minSalePrice;
+    widget.widgetProduct.productCount = _curProSelected?.productCount;
+    widget.widgetProduct.unitSelected = BaseAPIObject(
+        id: _curProSelected?.measurementUnitsId,
+        name: _curProSelected?.measurementUnitsName);
+    widget.widgetProduct.isChangeable = _curProSelected?.isChangeable;
+
   }
 
   Future<List<BaseAPIObject>?> _getGroupsList(

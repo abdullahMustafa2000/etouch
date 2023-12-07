@@ -16,6 +16,8 @@ import '../../api/api_models/login_response.dart';
 import '../../api/services.dart';
 
 class LoginScreen extends StatelessWidget {
+  const LoginScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,11 +38,11 @@ class LoginScreen extends StatelessWidget {
               const SizedBox(
                 height: 24,
               ),
-              LoginInputsWidget(),
+              const LoginInputsWidget(),
               const SizedBox(
                 height: 24,
               ),
-              LoginContactUsWidget(),
+              const LoginContactUsWidget(),
               const SizedBox(
                 height: 24,
               ),
@@ -53,9 +55,26 @@ class LoginScreen extends StatelessWidget {
   }
 }
 
-class LoginInputsWidget extends StatelessWidget {
-  String? _emailTxt = 'suarv_hesham', _passwordTxt = '01042010';
+class LoginInputsWidget extends StatefulWidget {
+  const LoginInputsWidget({Key? key}) : super(key: key);
+
+  @override
+  State<LoginInputsWidget> createState() => _LoginInputsWidgetState();
+}
+
+class _LoginInputsWidgetState extends State<LoginInputsWidget> {
+  String? _emailTxt, _passwordTxt;
+  String defUserName = 'suarv_hesham', defPassword = '01042010';
+
   MyApiServices get service => GetIt.I<MyApiServices>();
+
+  @override
+  void initState() {
+    _emailTxt = defUserName;
+    _passwordTxt = defPassword;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -79,19 +98,18 @@ class LoginInputsWidget extends StatelessWidget {
             onTxtChanged: (txt) {
               _emailTxt = txt;
             },
-            defVal: 'suarv_hesham',
+            defVal: defUserName,
           ),
           const SizedBox(
             height: 24,
           ),
-
           LoginTextFieldModel(
             hint: appTxt(context).loginPasswordTxt,
             isPassword: true,
             onTxtChanged: (txt) {
               _passwordTxt = txt;
             },
-            defVal: '01042010',
+            defVal: defPassword,
           ),
           const SizedBox(
             height: 24,
@@ -112,7 +130,14 @@ class LoginInputsWidget extends StatelessWidget {
               //2. request api
               //3. take action on api response
               Fluttertoast.showToast(msg: appTxt(context).pleaseWait);
-              _tryLogin(_emailTxt, _passwordTxt, context);
+              if (_emailTxt != null &&
+                  _emailTxt!.isNotEmpty &&
+                  _passwordTxt != null &&
+                  _passwordTxt!.isNotEmpty) {
+                _tryLogin(_emailTxt!, _passwordTxt!, context);
+              } else {
+                Fluttertoast.showToast(msg: appTxt(context).emptyTextFieldErr);
+              }
             },
           )
         ],
@@ -121,13 +146,11 @@ class LoginInputsWidget extends StatelessWidget {
   }
 
   void _tryLogin(
-      String? emailTxt, String? passwordTxt, BuildContext context) async {
+      String emailTxt, String passwordTxt, BuildContext context) async {
     APIResponse<LoginResponse>? res;
-    if (_emailTxt != null && _passwordTxt != null) {
-      res = await _callLoginApi(_emailTxt!, _passwordTxt!);
-      if (context.mounted) {
-        _loginResponse(res, context);
-      }
+    res = await _callLoginApi(emailTxt, passwordTxt);
+    if (context.mounted) {
+      _loginResponse(res, context);
     }
   }
 
@@ -141,13 +164,19 @@ class LoginInputsWidget extends StatelessWidget {
   void _loginResponse(APIResponse<LoginResponse>? res, BuildContext context) {
     if (res?.statusCode == 200) {
       if (context.mounted) {
-        UserInfoPreferences().saveUserInfo(res!.data!);
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => HomePageScreen(loginResponse: res.data!),
-          ),
-        );
+        if (res!.data!.userBranches != null ||
+            res.data!.userBranches!.isEmpty) {
+          UserInfoPreferences().saveUserInfo(res.data!);
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => HomePageScreen(loginResponse: res.data!),
+            ),
+          );
+        } else {
+          logoutUser(context);
+          Fluttertoast.showToast(msg: appTxt(context).notAllowedUser);
+        }
       }
     } else {
       Fluttertoast.showToast(msg: appTxt(context).loginRequestFailed);
@@ -156,6 +185,8 @@ class LoginInputsWidget extends StatelessWidget {
 }
 
 class LoginContactUsWidget extends StatelessWidget {
+  const LoginContactUsWidget({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -228,29 +259,6 @@ class LoginContactUsWidget extends StatelessWidget {
     );
   }
 
-  void openWhatsapp() async {
-    var whatsapp = "+201154913903";
-    var whatsappUrlAndroid = "whatsapp://send?phone=$whatsapp&text=hello";
-    var whatsappURLIos = "https://wa.me/$whatsapp?text=${Uri.parse("hello")}";
-    if (Platform.isIOS) {
-      // for iOS phone only
-      if (await canLaunchUrl(Uri.parse(whatsappURLIos))) {
-        await launchUrl(
-          Uri.parse(whatsappURLIos),
-        );
-      } else {
-        Fluttertoast.showToast(msg: 'Install WhatsApp first');
-      }
-    } else {
-      // android , web
-      if (await canLaunchUrl(Uri.parse(whatsappUrlAndroid))) {
-        await launchUrl(Uri.parse(whatsappUrlAndroid));
-      } else {
-        Fluttertoast.showToast(msg: 'Install WhatsApp first');
-      }
-    }
-  }
-
   Future<void> goToWebPage() async {
     final Uri url = Uri.parse('http://toucherp.ris-me.com/Account/Login');
     if (!await launchUrl(url)) {
@@ -265,6 +273,29 @@ class LoginContactUsWidget extends StatelessWidget {
     Uri mail = Uri.parse("mailto:$email?subject=$subject&body=$body");
     if (!await launchUrl(mail)) {
       Fluttertoast.showToast(msg: 'Cannot open gmail, Unknown problem');
+    }
+  }
+}
+
+void openWhatsapp() async {
+  var whatsapp = "+201154913903";
+  var whatsappUrlAndroid = "whatsapp://send?phone=$whatsapp&text=hello";
+  var whatsappURLIos = "https://wa.me/$whatsapp?text=${Uri.parse("hello")}";
+  if (Platform.isIOS) {
+// for iOS phone only
+    if (await canLaunchUrl(Uri.parse(whatsappURLIos))) {
+      await launchUrl(
+        Uri.parse(whatsappURLIos),
+      );
+    } else {
+      Fluttertoast.showToast(msg: 'Install WhatsApp first');
+    }
+  } else {
+// android , web
+    if (await canLaunchUrl(Uri.parse(whatsappUrlAndroid))) {
+      await launchUrl(Uri.parse(whatsappUrlAndroid));
+    } else {
+      Fluttertoast.showToast(msg: 'Install WhatsApp first');
     }
   }
 }

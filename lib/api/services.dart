@@ -1,8 +1,9 @@
 import 'dart:convert';
+import 'package:etouch/api/api_models/currencies_reponse.dart';
 import 'package:etouch/api/api_response.dart';
-import 'package:etouch/businessLogic/classes/e_invoice_item_selection_model.dart';
+import 'package:etouch/businessLogic/classes/base_api_response.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'api_models/dashboard_response.dart';
 import 'api_models/login_response.dart';
@@ -25,7 +26,7 @@ class MyApiServices {
   //   baseUrl = snap.value as String;
   // }
 
-  static String baseUrl = '';
+  static String baseUrl = 'baknelafyi-001-site1.ctempurl.com';
   static Map<int, String> currenciesMap = {};
 
   Future<APIResponse<List<BaseAPIObject>>> baseObjectRequest(
@@ -66,7 +67,7 @@ class MyApiServices {
         parameters: {'branchId': branchId.toString()});
   }
 
-  Future<APIResponse<List<BaseAPIObject>>> getCurrenciesList(
+  Future<APIResponse<List<CurrenciesResponse>>> getCurrenciesList(
       int companyId, String token) async {
     return await http.get(
         Uri.http(baseUrl, '/api/etax/ETax/GetCurrenciesByCompanyId',
@@ -77,16 +78,13 @@ class MyApiServices {
         }).then((data) {
       if (data.statusCode == 200) {
         final jsonData = json.decode(data.body);
-        final dataSet = <BaseAPIObject>[];
-        int i = 0;
+        final dataSet = <CurrenciesResponse>[];
         for (var jsonElement in jsonData) {
-          currenciesMap[i] = jsonElement['code'];
-          i++;
           final element =
-              BaseAPIObject(id: i, name: jsonElement['description']);
+              CurrenciesResponse.fromJson(jsonElement);
           dataSet.add(element);
         }
-        return APIResponse<List<BaseAPIObject>>(
+        return APIResponse<List<CurrenciesResponse>>(
           data: dataSet,
           hasError: false,
           statusCode: data.statusCode,
@@ -95,7 +93,7 @@ class MyApiServices {
         return APIResponse(
           data: null,
           hasError: true,
-          errorMessage: '',
+          errorMessage: data.body,
           statusCode: data.statusCode,
         );
       }
@@ -202,26 +200,25 @@ class MyApiServices {
 
   Future<APIResponse<dynamic>> postDocument(
       SalesOrder order, String token) async {
-    return await http
-        .post(Uri.http(baseUrl, 'inventory/Inventory/SubmitDocument'),
-            headers: {
-              //'Content-Type': 'multipart/form-data',
-              'Authorization': 'Bearer $token'
-            },
-            body: order.toJson(order))
-        .then((value) {
+    var toJ = json.encode(order.toJson(order));
+    return await http.post(
+      Uri.http(baseUrl, '/api/inventory/Inventory/SubmitDocument'),
+      body: toJ,
+      headers: {
+        'Content-type': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
+    ).then((value) {
       if (value.statusCode == 200) {
         return APIResponse<SubmitDocumentResponse>(
-            data: SubmitDocumentResponse(),
-            statusCode: value.statusCode,
-            hasError: false);
+            data: SubmitDocumentResponse(), statusCode: 200, hasError: false);
       }
       return APIResponse<bool>(
           data: false,
           statusCode: value.statusCode,
           errorMessage: value.body,
           hasError: true);
-    }).catchError((ex) => APIResponse<bool>(data: false, statusCode: -1));
+    });
   }
 
   Future<APIResponse<LoginResponse>> postLoginInfo(

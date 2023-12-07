@@ -1,21 +1,21 @@
-import 'package:etouch/api/api_models/view_product.dart';
+import 'package:etouch/businessLogic/classes/view_product.dart';
 
-import '../../businessLogic/classes/e_invoice_item_selection_model.dart';
+import '../../businessLogic/classes/base_api_response.dart';
 
 class ProductModel {
   int? productId;
   String? productName;
-  double? pieceSalePrice;
-  double? minSalePrice;
-  double? maxSalePrice;
+  double? pieceSalePrice = 0;
+  double? minSalePrice = 0;
+  double? maxSalePrice = 0;
   String? egsCode;
   String? gs1Code;
   String? itemCodeType;
-  int? warehouseProductGroupsId;
-  double? productCount;
-  int? measurementUnitsId;
+  int? warehouseProductGroupsId = 0;
+  double? productCount = 0;
+  int? measurementUnitsId = 0;
   String? measurementUnitsName;
-  bool isChangeable = true;
+  bool? isChangeable;
 
   ProductModel.empty() {
     productId = 0;
@@ -49,17 +49,17 @@ class ProductModel {
 
   ProductModel(
       {this.productId,
-        this.productName,
-        this.pieceSalePrice,
-        this.minSalePrice,
-        this.maxSalePrice,
-        this.egsCode,
-        this.gs1Code,
-        this.itemCodeType,
-        this.warehouseProductGroupsId,
-        this.productCount,
-        this.measurementUnitsId,
-        this.measurementUnitsName});
+      this.productName,
+      this.pieceSalePrice,
+      this.minSalePrice,
+      this.maxSalePrice,
+      this.egsCode,
+      this.gs1Code,
+      this.itemCodeType,
+      this.warehouseProductGroupsId,
+      this.productCount,
+      this.measurementUnitsId,
+      this.measurementUnitsName});
 
   ProductModel.fromJson(Map<String, dynamic> json) {
     productId = json['productId'];
@@ -74,22 +74,16 @@ class ProductModel {
     productCount = json['productCount'];
     measurementUnitsId = json['measurementUnitsId'];
     measurementUnitsName = json['measurementUnitsName'];
+    isChangeable = json['isEditable'];
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toJson(ViewProduct product) {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['productId'] = productId;
-    data['productName'] = productName;
-    data['pieceSalePrice'] = pieceSalePrice;
-    data['minSalePrice'] = minSalePrice;
-    data['maxSalePrice'] = maxSalePrice;
-    data['egsCode'] = egsCode;
-    data['gs1Code'] = gs1Code;
-    data['itemCodeType'] = itemCodeType;
-    data['warehouseProductGroupsId'] = warehouseProductGroupsId;
-    data['productCount'] = productCount;
-    data['measurementUnitsId'] = measurementUnitsId;
-    data['measurementUnitsName'] = measurementUnitsName;
+    data['ProductId'] = product.productId;
+    data['ProductCount'] = product.quantity ?? 0.0;
+    data['MeasurementUnitId'] = (product.unitSelected?.getId);
+    data['WarehouseProductGroupsId'] = (product.groupSelected?.getId);
+    data['UnitPrice'] = (product.pieceSalePrice);
     return data;
   }
 

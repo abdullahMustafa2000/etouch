@@ -25,15 +25,15 @@ class _SplashScreenState extends State<SplashScreen>
   late Animation<Color> color;
   late SharedPreferences preferences;
   UserInfoPreferences userInfoPreferences = UserInfoPreferences();
+  late Future<LoginResponse> _loginResponseFuture;
   Future<LoginResponse> getUserInfo() async {
     preferences = await SharedPreferences.getInstance();
     return await userInfoPreferences.retrieveUserInfo();
   }
 
-  late LoginResponse userInfo;
   @override
   void initState() {
-    getUserInfo().then((info) => userInfo = info);
+    _loginResponseFuture = getUserInfo();
     super.initState();
     logoController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 800))
@@ -69,12 +69,19 @@ class _SplashScreenState extends State<SplashScreen>
             preferences.setBool('FirstOpen', false);
             return OrientaionScreen();
           } else {
-            if (userInfo.token == null || userInfo.token!.isEmpty ||
-                userInfo.expiration!.isBefore(DateTime.now())) {
-              return LoginScreen();
-            } else {
-              return HomePageScreen(loginResponse: userInfo);
-            }
+            return FutureBuilder<LoginResponse>(
+                future: _loginResponseFuture,
+                builder: (context, snap) {
+                  if (snap.connectionState == ConnectionState.waiting) {
+                    return const SizedBox.shrink();
+                  } else if (snap.data?.token == null ||
+                      snap.data!.token!.isEmpty ||
+                      snap.data!.expiration!.isAfter(DateTime.now())) {
+                    return const LoginScreen();
+                  } else {
+                    return HomePageScreen(loginResponse: snap.data!);
+                  }
+                });
           }
         }),
       ),
