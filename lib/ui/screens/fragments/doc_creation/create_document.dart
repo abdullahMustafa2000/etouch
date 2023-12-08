@@ -1,6 +1,7 @@
 import 'package:etouch/api/api_models/login_response.dart';
 import 'package:etouch/api/services.dart';
 import 'package:etouch/businessLogic/classes/document_for_listing.dart';
+import 'package:etouch/businessLogic/firebase/realtime_curd.dart';
 import 'package:etouch/businessLogic/providers/create_doc_manager.dart';
 import 'package:etouch/main.dart';
 import 'package:etouch/ui/elements/purple_btn.dart';
@@ -33,6 +34,12 @@ class _CreateEInvoiceDocumentFragmentState
   MyApiServices get service => GetIt.I<MyApiServices>();
 
   SalesOrder salesOrder = SalesOrder();
+  
+  @override
+  void initState() {
+    RealtimeCURD.increaseValueByOne("document_creation_fragment");
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -107,6 +114,7 @@ class _CreateEInvoiceDocumentFragmentState
   }
 
   void _submitDocument(String token) async {
+    RealtimeCURD.increaseValueByOne("send_doc");
     salesOrder.totalOrderAmount =
         context.read<EInvoiceDocProvider>().docTotalAmount;
     if (salesOrder.invalidDataMsg() == '') {
@@ -115,6 +123,11 @@ class _CreateEInvoiceDocumentFragmentState
               setState(() {
                 _clicked = false;
               });
+              if (value.statusCode == 200) {
+                RealtimeCURD.increaseValueByOne("successful_send");
+              } else {
+                RealtimeCURD.increaseValueByOne("unsuccessful_send");
+              }
               Navigator.push(
                 context,
                 MaterialPageRoute(

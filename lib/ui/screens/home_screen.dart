@@ -1,5 +1,6 @@
 import 'package:etouch/api/api_models/login_response.dart';
 import 'package:etouch/api/services.dart';
+import 'package:etouch/businessLogic/firebase/realtime_curd.dart';
 import 'package:etouch/businessLogic/providers/navigation_bottom_manager.dart';
 import 'package:etouch/ui/constants.dart';
 import 'package:etouch/ui/elements/side_menu_model.dart';
@@ -32,6 +33,7 @@ class _HomePageScreenState extends State<HomePageScreen>
   @override
   void initState() {
     _tabsController = TabController(length: 2, vsync: this);
+    RealtimeCURD.increaseValueByOne("app_open");
     super.initState();
     getCurrentThemeMode();
   }

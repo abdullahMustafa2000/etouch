@@ -181,6 +181,9 @@ class TopCustomers extends StatelessWidget {
     for (Statistics item in dashboardResponse?.topReceivers ?? []) {
       data[item.key ?? 'no name'] = item.value ?? 0;
     }
+    if (data.isEmpty) {
+      data[''] = 0;
+    }
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(

@@ -135,9 +135,12 @@ class _LoginInputsWidgetState extends State<LoginInputsWidget> {
                           .copyWith(color: Theme.of(context).primaryColorDark),
                     ),
                   )
-                : const CircularProgressIndicator(
-                    color: Colors.white,
-                  ),
+                : const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 4),
+                  child: CircularProgressIndicator(
+                      color: Colors.white,
+                    ),
+                ),
             onPressed: () async {
               //1. validate null input
               //2. request api
@@ -198,6 +201,9 @@ class _LoginInputsWidgetState extends State<LoginInputsWidget> {
         }
       }
     } else {
+      setState(() {
+        _btnClicked = false;
+      });
       Fluttertoast.showToast(msg: appTxt(context).loginRequestFailed);
     }
   }
