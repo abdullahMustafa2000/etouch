@@ -26,14 +26,20 @@ class _SplashScreenState extends State<SplashScreen>
   late SharedPreferences preferences;
   UserInfoPreferences userInfoPreferences = UserInfoPreferences();
   late Future<LoginResponse> _loginResponseFuture;
+  late Future<bool?> _loggedOutFuture;
   Future<LoginResponse> getUserInfo() async {
     preferences = await SharedPreferences.getInstance();
     return await userInfoPreferences.retrieveUserInfo();
   }
 
+  Future<bool?> getLogoutInfo() async {
+    return await userInfoPreferences.getLogoutPref();
+  }
+
   @override
   void initState() {
     _loginResponseFuture = getUserInfo();
+    _loggedOutFuture = getLogoutInfo();
     super.initState();
     logoController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 800))
@@ -69,17 +75,18 @@ class _SplashScreenState extends State<SplashScreen>
             preferences.setBool('FirstOpen', false);
             return OrientaionScreen();
           } else {
-            return FutureBuilder<LoginResponse>(
-                future: _loginResponseFuture,
+            return FutureBuilder<List<dynamic>>(
+                future: Future.wait([_loginResponseFuture, _loggedOutFuture]),
                 builder: (context, snap) {
                   if (snap.connectionState == ConnectionState.waiting) {
                     return const SizedBox.shrink();
-                  } else if (snap.data?.token == null ||
-                      snap.data!.token!.isEmpty ||
-                      snap.data!.expiration!.isAfter(DateTime.now())) {
+                  } else if (snap.data?[0].token == null ||
+                      snap.data![0].token!.isEmpty ||
+                      _isLoginExpired(snap.data![0].expiration) ||
+                      (snap.data?[1] ?? true)) {
                     return const LoginScreen();
                   } else {
-                    return HomePageScreen(loginResponse: snap.data!);
+                    return HomePageScreen(loginResponse: snap.data?[0]!);
                   }
                 });
           }
@@ -134,5 +141,14 @@ class _SplashScreenState extends State<SplashScreen>
         ),
       ),
     );
+  }
+
+  bool _isLoginExpired(DateTime? expiration) {
+    DateTime now = DateTime.now();
+    if (expiration == null ||
+        (expiration.hour > now.hour && expiration.minute > now.minute)) {
+      return true;
+    }
+    return false;
   }
 }

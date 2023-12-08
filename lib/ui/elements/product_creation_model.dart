@@ -1,11 +1,11 @@
 import 'package:etouch/api/api_models/sales_order.dart';
+import 'package:etouch/businessLogic/classes/extentions.dart';
 import 'package:etouch/businessLogic/classes/view_product.dart';
 import 'package:etouch/api/services.dart';
 import 'package:etouch/businessLogic/providers/create_doc_manager.dart';
 import 'package:etouch/main.dart';
 import 'package:etouch/ui/constants.dart';
-import 'package:etouch/ui/elements/popups.dart';
-import 'package:etouch/ui/elements/request_api_widget.dart';
+import 'package:etouch/ui/elements/api_requests_builder.dart';
 import 'package:etouch/ui/elements/searchable_dropdown_model.dart';
 import 'package:etouch/ui/themes/themes.dart';
 import 'package:flutter/material.dart';
@@ -138,13 +138,12 @@ class _ProductCreationModelState extends State<ProductCreationModel> {
                 child: EditableInputData(
                   data: (widget.widgetProduct.quantity ?? 0).toString(),
                   hasInitValue: true,
+                  errorMessage: widget.widgetProduct.quantity! >
+                          widget.widgetProduct.productCount!
+                      ? "الكميه الطلوبه اكبر من المتاحة"
+                      : null,
                   onChange: (String? val, bool isEmpty) {
                     double? enteredVal = double.parse(!isEmpty ? val! : '0');
-                    if (isEmpty &&
-                        enteredVal > (widget.widgetProduct.productCount ?? 0)) {
-                      Popups.flutterToast(
-                          appTxt(context).unAcceptableCount, ToastType.error);
-                    }
                     widget.widgetProduct.quantity = enteredVal;
                     context
                         .read<EInvoiceDocProvider>()
@@ -175,19 +174,14 @@ class _ProductCreationModelState extends State<ProductCreationModel> {
                     ? EditableInputData(
                         data: widget.widgetProduct.pieceSalePrice.toString(),
                         hasInitValue: true,
+                        errorMessage: !widget.widgetProduct.pieceSalePrice
+                                .isBetween(widget.widgetProduct.minSalePrice!,
+                                    widget.widgetProduct.maxSalePrice!)
+                            ? "السعر خارج نطاق السماح"
+                            : null,
                         onChange: (String? val, bool isEmpty) {
                           double enteredPrice =
                               double.parse(!isEmpty ? val! : '0');
-                          if (isEmpty ||
-                              enteredPrice < 0 ||
-                              enteredPrice >
-                                  (widget.widgetProduct.maxSalePrice ?? 0) ||
-                              enteredPrice <
-                                  (widget.widgetProduct.minSalePrice ?? 0)) {
-                            Popups.flutterToast(
-                                '${appTxt(context).unAcceptablePrice} ${widget.widgetProduct.maxSalePrice}',
-                                ToastType.error);
-                          }
                           widget.widgetProduct.pieceSalePrice = enteredPrice;
                           context
                               .read<EInvoiceDocProvider>()
@@ -285,7 +279,6 @@ class _ProductCreationModelState extends State<ProductCreationModel> {
         id: _curProSelected?.measurementUnitsId,
         name: _curProSelected?.measurementUnitsName);
     widget.widgetProduct.isChangeable = _curProSelected?.isChangeable;
-
   }
 
   Future<List<BaseAPIObject>?> _getGroupsList(

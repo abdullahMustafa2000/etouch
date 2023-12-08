@@ -10,34 +10,25 @@ class DropDownMenuModel extends StatefulWidget {
       required this.defValue,
       required this.selectedVal})
       : super(key: key);
-  List<BaseAPIObject>? dataList;
+  final List<BaseAPIObject>? dataList;
   BaseAPIObject? defValue;
-  Function selectedVal;
+  final Function selectedVal;
   @override
-  State<DropDownMenuModel> createState() => _DropDownMenuModelState(defValue);
+  State<DropDownMenuModel> createState() => _DropDownMenuModelState();
 }
 
 class _DropDownMenuModelState extends State<DropDownMenuModel> {
-  BaseAPIObject? curValue;
-  late List<BaseAPIObject>? mList;
-  _DropDownMenuModelState(this.curValue);
-  @override
-  void initState() {
-    mList = widget.dataList;
-    curValue = widget.defValue;
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     return DecorateDropDown(
       dropDown: DropdownButtonHideUnderline(
         child: DropdownButton<BaseAPIObject>(
-          value: curValue,
+          value: widget.dataList?.firstWhere(
+              (element) => widget.defValue?.getId == element.getId),
           onChanged: (BaseAPIObject? value) {
             setState(
               () {
-                curValue = value ?? mList?.first;
+                widget.defValue = value ?? widget.dataList?.first;
                 widget.selectedVal(value);
               },
             );
@@ -46,7 +37,7 @@ class _DropDownMenuModelState extends State<DropDownMenuModel> {
               .textTheme
               .labelMedium!
               .copyWith(color: Colors.black),
-          items: (mList ?? []).map<DropdownMenuItem<BaseAPIObject>>(
+          items: (widget.dataList ?? []).map<DropdownMenuItem<BaseAPIObject>>(
             (BaseAPIObject item) {
               return DropdownMenuItem<BaseAPIObject>(
                 value: item,

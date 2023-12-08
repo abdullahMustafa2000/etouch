@@ -10,11 +10,14 @@ class LoginResponse {
   DateTime? expiration;
 
   LoginResponse(
-      {this.token,
+      {this.userName,
+      this.imgSource,
+      this.token,
       this.userRoles,
-      this.foundationId, this.companyId,
-        this.userBranches,
-        this.expiration}) {
+      this.foundationId,
+      this.companyId,
+      this.userBranches,
+      this.expiration}) {
     if (token != null) {
       token = token;
     }

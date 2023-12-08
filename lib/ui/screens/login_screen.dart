@@ -64,14 +64,19 @@ class LoginInputsWidget extends StatefulWidget {
 
 class _LoginInputsWidgetState extends State<LoginInputsWidget> {
   String? _emailTxt, _passwordTxt;
-  String defUserName = 'suarv_hesham', defPassword = '01042010';
+  bool _btnClicked = false;
+
+  late Future<String?> _loginUsernameFut;
+
+  Future<String?> _getLoginUsernameFromPref() async {
+    return UserInfoPreferences().getLoginUserName();
+  }
 
   MyApiServices get service => GetIt.I<MyApiServices>();
 
   @override
   void initState() {
-    _emailTxt = defUserName;
-    _passwordTxt = defPassword;
+    _loginUsernameFut = _getLoginUsernameFromPref();
     super.initState();
   }
 
@@ -92,14 +97,19 @@ class _LoginInputsWidgetState extends State<LoginInputsWidget> {
           const SizedBox(
             height: 24,
           ),
-          LoginTextFieldModel(
-            hint: appTxt(context).loginUsernameTxt,
-            isPassword: false,
-            onTxtChanged: (txt) {
-              _emailTxt = txt;
-            },
-            defVal: defUserName,
-          ),
+          FutureBuilder<String?>(
+              future: _loginUsernameFut,
+              builder: (context, snap) {
+                _emailTxt = snap.data;
+                return LoginTextFieldModel(
+                  hint: appTxt(context).loginUsernameTxt,
+                  isPassword: false,
+                  onTxtChanged: (txt) {
+                    _emailTxt = txt;
+                  },
+                  defVal: snap.data,
+                );
+              }),
           const SizedBox(
             height: 24,
           ),
@@ -109,34 +119,42 @@ class _LoginInputsWidgetState extends State<LoginInputsWidget> {
             onTxtChanged: (txt) {
               _passwordTxt = txt;
             },
-            defVal: defPassword,
           ),
           const SizedBox(
             height: 24,
           ),
           PrimaryClrBtnModel(
             color: Theme.of(context).primaryColor,
-            content: Center(
-              child: Text(
-                appTxt(context).loginTxt,
-                style: Theme.of(context)
-                    .textTheme
-                    .headlineMedium!
-                    .copyWith(color: Theme.of(context).primaryColorDark),
-              ),
-            ),
+            content: !_btnClicked
+                ? Center(
+                    child: Text(
+                      appTxt(context).loginTxt,
+                      style: Theme.of(context)
+                          .textTheme
+                          .headlineMedium!
+                          .copyWith(color: Theme.of(context).primaryColorDark),
+                    ),
+                  )
+                : const CircularProgressIndicator(
+                    color: Colors.white,
+                  ),
             onPressed: () async {
               //1. validate null input
               //2. request api
               //3. take action on api response
-              Fluttertoast.showToast(msg: appTxt(context).pleaseWait);
-              if (_emailTxt != null &&
-                  _emailTxt!.isNotEmpty &&
-                  _passwordTxt != null &&
-                  _passwordTxt!.isNotEmpty) {
-                _tryLogin(_emailTxt!, _passwordTxt!, context);
-              } else {
-                Fluttertoast.showToast(msg: appTxt(context).emptyTextFieldErr);
+              if (!_btnClicked) {
+                if (_emailTxt != null &&
+                    _emailTxt!.isNotEmpty &&
+                    _passwordTxt != null &&
+                    _passwordTxt!.isNotEmpty) {
+                  setState(() {
+                    _btnClicked = true;
+                  });
+                  _tryLogin(_emailTxt!, _passwordTxt!, context);
+                } else {
+                  Fluttertoast.showToast(
+                      msg: appTxt(context).emptyTextFieldErr);
+                }
               }
             },
           )
@@ -150,7 +168,7 @@ class _LoginInputsWidgetState extends State<LoginInputsWidget> {
     APIResponse<LoginResponse>? res;
     res = await _callLoginApi(emailTxt, passwordTxt);
     if (context.mounted) {
-      _loginResponse(res, context);
+      _loginResponse(res, context, emailTxt);
     }
   }
 
@@ -161,12 +179,13 @@ class _LoginInputsWidgetState extends State<LoginInputsWidget> {
     return response;
   }
 
-  void _loginResponse(APIResponse<LoginResponse>? res, BuildContext context) {
+  void _loginResponse(
+      APIResponse<LoginResponse>? res, BuildContext context, String userName) {
     if (res?.statusCode == 200) {
       if (context.mounted) {
         if (res!.data!.userBranches != null ||
             res.data!.userBranches!.isEmpty) {
-          UserInfoPreferences().saveUserInfo(res.data!);
+          UserInfoPreferences().saveUserInfo(res.data!, userName);
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(

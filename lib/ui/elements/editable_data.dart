@@ -9,12 +9,15 @@ class EditableInputData extends StatefulWidget {
         this.inputHint,
       required this.data,
       required this.onChange,
-      required this.hasInitValue})
+      required this.hasInitValue,
+      this.errorMessage})
       : super(key: key);
   final String data;
   final Function onChange;
   final bool hasInitValue;
   final String? inputHint;
+  final String? errorMessage;
+
   @override
   State<EditableInputData> createState() => _EditableInputDataState();
 }
@@ -42,7 +45,7 @@ class _EditableInputDataState extends State<EditableInputData> {
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
       inputFormatters: _formatter(),
       style: Theme.of(context).textTheme.headlineSmall,
-      decoration: _decoration(hint: widget.inputHint),
+      decoration: _decoration(hint: widget.inputHint, errMessage: widget.errorMessage),
     );
   }
 
@@ -61,7 +64,7 @@ class _EditableInputDataState extends State<EditableInputData> {
     ];
   }
 
-  InputDecoration _decoration({String? hint}) {
+  InputDecoration _decoration({String? hint, String? errMessage}) {
     return InputDecoration(
       contentPadding: const EdgeInsets.symmetric(horizontal: 8),
       border: const OutlineInputBorder(
@@ -74,6 +77,7 @@ class _EditableInputDataState extends State<EditableInputData> {
         borderSide: BorderSide(color: Theme.of(context).primaryColor),
       ),
       hintText: hint,
+      errorText: errMessage,
     );
   }
 }

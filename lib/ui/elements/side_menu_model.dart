@@ -132,8 +132,11 @@ class MenuProfileWidget extends StatelessWidget {
         child: Row(
           children: [
             CircleAvatar(
-              backgroundImage: userImg != null?AssetImage(userImg!) : null,
-              backgroundColor: userImg == null?appTheme(context).primaryColorDark:null,
+              backgroundImage: userImg != null && userImg!.isNotEmpty
+                  ? NetworkImage(userImg!)
+                  : null,
+              backgroundColor:
+                  userImg == null ? appTheme(context).primaryColorDark : null,
             ),
             const Padding(padding: EdgeInsets.symmetric(horizontal: 6)),
             Text(

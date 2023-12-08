@@ -6,7 +6,7 @@ import 'package:etouch/api/services.dart';
 import 'package:etouch/businessLogic/providers/create_doc_manager.dart';
 import 'package:etouch/ui/elements/dropdown_model.dart';
 import 'package:etouch/ui/elements/editable_data.dart';
-import 'package:etouch/ui/elements/request_api_widget.dart';
+import 'package:etouch/ui/elements/api_requests_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../businessLogic/classes/base_api_response.dart';
@@ -31,20 +31,17 @@ class OrderPreRequirementsWidget extends StatefulWidget {
 
 class _OrderPreRequirementsWidgetState
     extends State<OrderPreRequirementsWidget> {
-  late Future<List<BaseAPIObject>?> _currenciesFut;
-  late Future<List<BaseAPIObject>?> _treasuriesFut,
+  late Future<List<BaseAPIObject>?> _currenciesFut,
+      _treasuriesFut,
       _customersFut,
       _warehousesFut;
+
+  late bool _created;
+
   @override
   void initState() {
-    _currenciesFut = _getCurrencies();
-    widget.salesOrder.branch = widget.loginResponse.userBranches!.first;
-    _treasuriesFut = _getTreasuries(
-        widget.salesOrder.branch?.getId ?? 0, widget.loginResponse.token ?? '');
-    _customersFut = _getCustomers(
-        widget.salesOrder.branch?.getId ?? 0, widget.loginResponse.token ?? '');
-    _warehousesFut = _getWarehouses(
-        widget.salesOrder.branch?.getId ?? 0, widget.loginResponse.token ?? '');
+    initAPICalls();
+    _created = false;
     super.initState();
   }
 
@@ -54,13 +51,16 @@ class _OrderPreRequirementsWidgetState
         request: Future.wait(
             [_warehousesFut, _currenciesFut, _treasuriesFut, _customersFut]),
         onSuccessfulResponse: (snap) {
-          _initData(snap);
+          if (!_created) {
+            _created = true;
+            _initData(snap);
+          }
           return Container(
             padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
             width: double.infinity,
             decoration: BoxDecoration(
               borderRadius:
-                   const BorderRadius.all(Radius.circular(cornersRadiusConst)),
+                  const BorderRadius.all(Radius.circular(cornersRadiusConst)),
               gradient: LinearGradient(
                   colors: [accentColor, primaryColor],
                   begin: Alignment.topCenter,
@@ -164,6 +164,17 @@ class _OrderPreRequirementsWidgetState
             ),
           );
         });
+  }
+
+  void initAPICalls() {
+    _currenciesFut = _getCurrencies();
+    widget.salesOrder.branch = widget.loginResponse.userBranches!.first;
+    _treasuriesFut = _getTreasuries(
+        widget.salesOrder.branch?.getId ?? 0, widget.loginResponse.token ?? '');
+    _customersFut = _getCustomers(
+        widget.salesOrder.branch?.getId ?? 0, widget.loginResponse.token ?? '');
+    _warehousesFut = _getWarehouses(
+        widget.salesOrder.branch?.getId ?? 0, widget.loginResponse.token ?? '');
   }
 
   Future<List<BaseAPIObject>?> _getCurrencies() async {
@@ -284,9 +295,7 @@ class RequiredInfoDesign extends StatelessWidget {
         ),
         Expanded(
           child: DropDownMenuModel(
-            defValue: dataList != null && dataList!.isNotEmpty
-                ? dataList!.first
-                : null,
+            defValue: selectedItem,
             dataList: dataList,
             selectedVal: (BaseAPIObject? val) {
               selectedVal(val);

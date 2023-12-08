@@ -4,7 +4,7 @@ import 'package:etouch/api/services.dart';
 import 'package:etouch/businessLogic/providers/create_doc_manager.dart';
 import 'package:etouch/main.dart';
 import 'package:etouch/ui/elements/editable_data.dart';
-import 'package:etouch/ui/elements/request_api_widget.dart';
+import 'package:etouch/ui/elements/api_requests_builder.dart';
 import 'package:etouch/ui/elements/searchable_dropdown_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

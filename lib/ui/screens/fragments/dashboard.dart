@@ -8,7 +8,7 @@ import 'package:etouch/businessLogic/classes/base_api_response.dart';
 import 'package:etouch/main.dart';
 import 'package:etouch/ui/constants.dart';
 import 'package:etouch/ui/elements/dashboard_cards_model.dart';
-import 'package:etouch/ui/elements/request_api_widget.dart';
+import 'package:etouch/ui/elements/api_requests_builder.dart';
 import 'package:etouch/ui/themes/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';

@@ -4,40 +4,62 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../classes/base_api_response.dart';
 
 class UserInfoPreferences {
-  static const tokenPef = "USER_TOKEN";
-  static const userName = "USER_NAME";
-  static const userImg = "USER_IMG";
-  static const COMPANY_ID_PREF = "COMPANY_ID";
-  static const FOUNDATION_ID_PREF = "FOUNDATION_ID";
-  static const USER_BRANCHES = "BRANCHES_LIST";
-  static const USER_RULES = "RULES_LIST";
-  static const EXPIRATION_DATE = "EXPIRATION_DATE";
-  static const LOGGED_IN = "USER_LOGGED_IN";
+  static const tokenKey = "USER_TOKEN";
+  static const userNameKey = "USER_NAME";
+  static const userImgKey = "USER_IMG";
+  static const companyIdKey = "COMPANY_ID";
+  static const foundationIdKey = "FOUNDATION_ID";
+  static const userBranchesKey = "BRANCHES_LIST";
+  static const userRulesKey = "RULES_LIST";
+  static const expirationDateKey = "EXPIRATION_DATE";
+  static const loginUserNameKey = "LOGIN_USERNAME";
+  static const logoutKey = "LOGGED_OUT";
 
-  void saveUserInfo(LoginResponse res) async {
+  void saveUserInfo(LoginResponse res, String loginUsername) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    preferences.setString(tokenPef, res.token!);
-    preferences.setString(userName, res.userName!);
-    preferences.setString(userImg, res.imgSource ?? '');
-    preferences.setInt(COMPANY_ID_PREF, res.companyId!);
-    preferences.setInt(FOUNDATION_ID_PREF, res.foundationId!);
-    preferences.setStringList(USER_RULES, res.userRoles!);
-    preferences.setString(EXPIRATION_DATE, res.expiration!.toIso8601String());
+    preferences.setString(tokenKey, res.token!);
+    preferences.setString(userNameKey, res.userName!);
+    preferences.setString(userImgKey, res.imgSource ?? '');
+    preferences.setInt(companyIdKey, res.companyId!);
+    preferences.setInt(foundationIdKey, res.foundationId!);
+    preferences.setStringList(userRulesKey, res.userRoles!);
     preferences.setString(
-        USER_BRANCHES, BaseAPIObject.encode(res.userBranches!));
+        expirationDateKey, res.expiration!.toIso8601String());
+    preferences.setString(
+        userBranchesKey, BaseAPIObject.encode(res.userBranches!));
+
+    preferences.setString(loginUserNameKey, loginUsername);
+    preferences.setBool(logoutKey, false);
   }
 
   Future<LoginResponse> retrieveUserInfo() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     var response = LoginResponse(
-        token: preferences.getString(tokenPef) ?? '',
-        expiration: DateTime.parse(preferences.getString(EXPIRATION_DATE) ??
+        userName: preferences.getString(userNameKey),
+        imgSource: preferences.getString(userImgKey),
+        token: preferences.getString(tokenKey) ?? '',
+        expiration: DateTime.parse(preferences.getString(expirationDateKey) ??
             DateTime.now().toIso8601String()),
-        userRoles: preferences.getStringList(USER_RULES) ?? [],
-        foundationId: preferences.getInt(FOUNDATION_ID_PREF) ?? -1,
-        companyId: preferences.getInt(COMPANY_ID_PREF) ?? -1,
-        userBranches:
-            BaseAPIObject.decode(preferences.getString(USER_BRANCHES) ?? ''));
+        userRoles: preferences.getStringList(userRulesKey) ?? [],
+        foundationId: preferences.getInt(foundationIdKey) ?? -1,
+        companyId: preferences.getInt(companyIdKey) ?? -1,
+        userBranches: BaseAPIObject.decode(
+            preferences.getString(userBranchesKey) ?? ''));
     return response;
+  }
+
+  Future<String?> getLoginUserName() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    return pref.getString(loginUserNameKey);
+  }
+
+  static void logout() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.setBool(logoutKey, true);
+  }
+
+  Future<bool?> getLogoutPref() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    return pref.getBool(logoutKey);
   }
 }

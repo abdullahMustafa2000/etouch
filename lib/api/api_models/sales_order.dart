@@ -39,21 +39,26 @@ class SalesOrder {
     paymentMethods.clear();
   }
 
-  String allDataIsFine() {
-    if (paymentMethods.isEmpty) {
-      return "No Payment Method Selected";
+  String invalidDataMsg() {
+    if (productsList.isEmpty || productsList.first.productName == null) {
+      return "لم يتم تحديد اصناف للارسال";
     }
     for (var prod in productsList) {
       String err = "${prod.productName}";
       if (prod.quantity == 0) {
-        return " لم يتم تحديد كميه له$err";
+        return "$err لم يتم تحديد كميه له ";
+      } else if (prod.quantity! > prod.productCount!) {
+        return "$err>> الكميه الطلوبه اكبر من المتاحه في المخرن ${prod.productCount}>> ";
       } else if (prod.pieceSalePrice! < prod.minSalePrice!) {
-        return " سعر الوحده اقل من الحد الادني$err";
+        return " سعر الوحده اقل من الحد الادني $err ";
       } else if (prod.pieceSalePrice! > prod.maxSalePrice!) {
-        return " سعر الوحده اعلي من الحد الاقصي$err";
+        return " سعر الوحده اعلي من الحد الاقصي $err ";
       } else if (prod.pieceSalePrice! <= 0) {
-        return " سعر غير مقبول للوحدة$err";
+        return " لم يتم تحديد سعر للوحدة $err ";
       }
+    }
+    if (paymentMethods.isEmpty) {
+      return "No Payment Method Selected";
     }
     return '';
   }
@@ -74,7 +79,7 @@ class SalesOrder {
         : order.orderAmountAfterTaxes;
     request["CustomerId"] = order.customer!.getId;
     request["Paid"] = order.paid;
-    request["CompanyCurrencyId"] = order.currency?.getId ?? 3;
+    request["CompanyCurrencyId"] = order.currency?.getId ?? 0;
     request["SendToTax"] = true;
     request["OrderDate"] = order.orderDate.toIso8601String();
     request["SalesOrderItems"] =

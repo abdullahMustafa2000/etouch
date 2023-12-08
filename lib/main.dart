@@ -1,5 +1,6 @@
 import 'package:etouch/api/services.dart';
 import 'package:etouch/businessLogic/providers/navigation_bottom_manager.dart';
+import 'package:etouch/businessLogic/shared_preferences/user_info_saver.dart';
 import 'package:etouch/ui/screens/login_screen.dart';
 import 'package:etouch/ui/screens/splash_screen.dart';
 import 'package:etouch/ui/themes/theme_manager.dart';
@@ -11,6 +12,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'businessLogic/providers/create_doc_manager.dart';
 
 //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
@@ -98,8 +100,9 @@ String getSpacedFormattedDate(DateTime when) {
   return DateFormat("yyyy-MM-dd hh:mm:ss").format(when);
 }
 
-void logoutUser(BuildContext context, {bool why = true}) {
+void logoutUser(BuildContext context, {bool why = true}) async {
   if (why) {
+    UserInfoPreferences.logout();
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (ctx) => const LoginScreen()),
         (route) => false);
