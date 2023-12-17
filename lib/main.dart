@@ -1,4 +1,5 @@
 import 'package:etouch/api/services.dart';
+import 'package:etouch/businessLogic/classes/internet_connections.dart';
 import 'package:etouch/businessLogic/providers/navigation_bottom_manager.dart';
 import 'package:etouch/businessLogic/shared_preferences/user_info_saver.dart';
 import 'package:etouch/ui/screens/login_screen.dart';
@@ -12,7 +13,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'businessLogic/providers/create_doc_manager.dart';
 
 //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
@@ -29,6 +29,7 @@ void main() async {
       .child('base_url')
       .get()
       .then((data) => MyApiServices.baseUrl = data.value as String);
+  //initNoInternetListener();
   runApp(const MyApp());
 }
 
@@ -47,6 +48,12 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     _themeManager = ThemeManager();
     getCurrentTheme();
+  }
+
+  @override
+  void didChangeDependencies() {
+    initNoInternetListener(context);
+    super.didChangeDependencies();
   }
 
   void getCurrentTheme() async {

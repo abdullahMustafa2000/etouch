@@ -12,7 +12,7 @@ class EditableInputData extends StatefulWidget {
       required this.hasInitValue,
       this.errorMessage})
       : super(key: key);
-  final String data;
+  final String? data;
   final Function onChange;
   final bool hasInitValue;
   final String? inputHint;
@@ -27,11 +27,9 @@ class _EditableInputDataState extends State<EditableInputData> {
   @override
   void initState() {
     super.initState();
-    if (widget.hasInitValue) {
-      setState(() {
-        _controller.text = widget.data;
-      });
-    }
+    setState(() {
+      _controller.text = widget.data ?? "";
+    });
   }
 
   @override

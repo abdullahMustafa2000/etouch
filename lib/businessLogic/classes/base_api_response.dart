@@ -40,7 +40,7 @@ class BaseAPIObject {
           .map<BaseAPIObject>((item) => BaseAPIObject.fromJson(item))
           .toList();
 
-  Map<String, dynamic> toJson({required String keyName, required String valueName, required double value}) {
+  Map<String, dynamic> baseObjectToJson({required String keyName, required String valueName, required double value}) {
     final Map<String, dynamic> data = <String, dynamic>{};
     data[keyName] = getId;
     data[valueName] = value;

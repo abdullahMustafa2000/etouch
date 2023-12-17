@@ -1,8 +1,10 @@
 import 'package:etouch/api/api_models/login_response.dart';
 import 'package:etouch/api/api_models/sales_order.dart';
 import 'package:etouch/businessLogic/classes/view_product.dart';
+import 'package:etouch/businessLogic/providers/create_doc_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
 import '../../../../../../api/services.dart';
 import '../../../../../../main.dart';
 import '../../../elements/product_creation_model.dart';
@@ -61,6 +63,7 @@ class _ProductsSelectionWidgetState extends State<ProductsSelectionWidget> {
           child: ListView.builder(
             controller: _controller,
             scrollDirection: Axis.horizontal,
+            addAutomaticKeepAlives: true,
             itemCount: widget.salesOrder.productsList.length,
             itemBuilder: (context, index) {
               return SizedBox(
@@ -74,7 +77,12 @@ class _ProductsSelectionWidgetState extends State<ProductsSelectionWidget> {
                   token: widget.loginResponse.token ?? '',
                   widgetProduct: widget.salesOrder.productsList[index],
                   onDelete: (int index) {
-                    widget.salesOrder.productsList.removeAt(index);
+                    setState(() {
+                      widget.salesOrder.productsList.removeAt(index);
+                      context
+                          .read<EInvoiceDocProvider>()
+                          .updateTotalAmount(widget.salesOrder.productsList);
+                    });
                   },
                 ),
               );

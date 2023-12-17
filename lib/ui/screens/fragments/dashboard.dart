@@ -8,7 +8,7 @@ import 'package:etouch/businessLogic/classes/base_api_response.dart';
 import 'package:etouch/main.dart';
 import 'package:etouch/ui/constants.dart';
 import 'package:etouch/ui/elements/dashboard_cards_model.dart';
-import 'package:etouch/ui/elements/api_requests_builder.dart';
+import 'package:etouch/api/api_requests_builder.dart';
 import 'package:etouch/ui/themes/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -31,7 +31,7 @@ class _EInvoiceDashboardFragmentState extends State<EInvoiceDashboardFragment> {
 
   Future<APIResponse<DashboardResponse>> _getDashboardFuture(
           String token, int branchId) async =>
-      await services.getDashboard(token, branchId: branchId);
+      await services.getDashboard(token, branchId);
 
   @override
   void initState() {
@@ -42,9 +42,12 @@ class _EInvoiceDashboardFragmentState extends State<EInvoiceDashboardFragment> {
 
   @override
   Widget build(BuildContext context) {
-    return RequestAPIWidget<APIResponse<DashboardResponse>>(
+    return APIWidget<APIResponse<DashboardResponse>>(
       request: _dashboardResponse,
       onSuccessfulResponse: (snap) {
+        if (snap.data?.statusCode == 401) {
+          logoutUser(context);
+        }
         DashboardResponse? response = snap.data?.data;
         return SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
@@ -491,7 +494,7 @@ class _TopRowState extends State<TopRow> {
             ),
             child: DropdownButton<BaseAPIObject>(
               items: widget.branches
-                  ?.map((e) => buildMenuItem(e, context))
+                  !.map((e) => buildMenuItem(e, context))
                   .toList(),
               onChanged: (selected) {
                 setState(() {

@@ -7,7 +7,7 @@ import 'package:lottie/lottie.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class OrientationModel extends StatefulWidget {
-  OrientationModel(
+  const OrientationModel(
       {Key? key,
       required this.title,
       required this.desc,
@@ -15,10 +15,10 @@ class OrientationModel extends StatefulWidget {
       required this.controller,
       required this.onNextClick})
       : super(key: key);
-  String lottiePath;
-  String title, desc;
-  PageController controller;
-  Function onNextClick;
+  final String lottiePath;
+  final String title, desc;
+  final PageController controller;
+  final Function onNextClick;
 
   @override
   State<OrientationModel> createState() => _OrientationModelState();
@@ -35,7 +35,7 @@ class _OrientationModelState extends State<OrientationModel> {
         children: [
           Expanded(child: Lottie.asset(widget.lottiePath)),
           Expanded(
-              child: DiscussionWidget(
+              child: DescriptionWidget(
             title: widget.title,
             desc: widget.desc,
             pageController: widget.controller,
@@ -49,24 +49,24 @@ class _OrientationModelState extends State<OrientationModel> {
   }
 }
 
-class DiscussionWidget extends StatefulWidget {
-  DiscussionWidget(
+class DescriptionWidget extends StatefulWidget {
+  const DescriptionWidget(
       {Key? key,
       required this.title,
       required this.desc,
       required this.pageController,
       required this.onNextClicked})
       : super(key: key);
-  String title;
-  String desc;
-  PageController pageController;
-  Function onNextClicked;
+  final String title;
+  final String desc;
+  final PageController pageController;
+  final Function onNextClicked;
 
   @override
-  State<DiscussionWidget> createState() => _DiscussionWidgetState();
+  State<DescriptionWidget> createState() => _DescriptionWidgetState();
 }
 
-class _DiscussionWidgetState extends State<DiscussionWidget> {
+class _DescriptionWidgetState extends State<DescriptionWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(

@@ -100,7 +100,10 @@ class _LoginInputsWidgetState extends State<LoginInputsWidget> {
           FutureBuilder<String?>(
               future: _loginUsernameFut,
               builder: (context, snap) {
-                _emailTxt = snap.data;
+                if (snap.connectionState == ConnectionState.waiting) {
+                  return const SizedBox.shrink();
+                }
+                _emailTxt ??= snap.data;
                 return LoginTextFieldModel(
                   hint: appTxt(context).loginUsernameTxt,
                   isPassword: false,
@@ -135,30 +138,14 @@ class _LoginInputsWidgetState extends State<LoginInputsWidget> {
                           .copyWith(color: Theme.of(context).primaryColorDark),
                     ),
                   )
-                : const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 4),
-                  child: CircularProgressIndicator(
-                      color: Colors.white,
+                : Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    child: CircularProgressIndicator(
+                      color: appTheme(context).primaryColorDark,
                     ),
-                ),
+                  ),
             onPressed: () async {
-              //1. validate null input
-              //2. request api
-              //3. take action on api response
-              if (!_btnClicked) {
-                if (_emailTxt != null &&
-                    _emailTxt!.isNotEmpty &&
-                    _passwordTxt != null &&
-                    _passwordTxt!.isNotEmpty) {
-                  setState(() {
-                    _btnClicked = true;
-                  });
-                  _tryLogin(_emailTxt!, _passwordTxt!, context);
-                } else {
-                  Fluttertoast.showToast(
-                      msg: appTxt(context).emptyTextFieldErr);
-                }
-              }
+              _tryLogin(_emailTxt, _passwordTxt, context);
             },
           )
         ],
@@ -167,11 +154,25 @@ class _LoginInputsWidgetState extends State<LoginInputsWidget> {
   }
 
   void _tryLogin(
-      String emailTxt, String passwordTxt, BuildContext context) async {
+      String? emailTxt, String? passwordTxt, BuildContext context) async {
     APIResponse<LoginResponse>? res;
-    res = await _callLoginApi(emailTxt, passwordTxt);
-    if (context.mounted) {
-      _loginResponse(res, context, emailTxt);
+    emailTxt = emailTxt?.trim();
+    passwordTxt = passwordTxt?.trim();
+    if (!_btnClicked) {
+      if (emailTxt != null &&
+          emailTxt.isNotEmpty &&
+          passwordTxt != null &&
+          passwordTxt.isNotEmpty) {
+        setState(() {
+          _btnClicked = true;
+        });
+        res = await _callLoginApi(emailTxt, passwordTxt);
+        if (context.mounted) {
+          _loginResponse(res, context, emailTxt);
+        }
+      } else {
+        Fluttertoast.showToast(msg: appTxt(context).emptyTextFieldErr);
+      }
     }
   }
 
@@ -184,6 +185,9 @@ class _LoginInputsWidgetState extends State<LoginInputsWidget> {
 
   void _loginResponse(
       APIResponse<LoginResponse>? res, BuildContext context, String userName) {
+    setState(() {
+      _btnClicked = false;
+    });
     if (res?.statusCode == 200) {
       if (context.mounted) {
         if (res!.data!.userBranches != null ||
@@ -201,9 +205,6 @@ class _LoginInputsWidgetState extends State<LoginInputsWidget> {
         }
       }
     } else {
-      setState(() {
-        _btnClicked = false;
-      });
       Fluttertoast.showToast(msg: appTxt(context).loginRequestFailed);
     }
   }
@@ -223,33 +224,38 @@ class LoginContactUsWidget extends StatelessWidget {
             child: Row(
               children: [
                 Expanded(
-                    child: Container(
-                  height: 1,
-                  decoration: BoxDecoration(
+                  child: Container(
+                    height: 1,
+                    decoration: BoxDecoration(
                       gradient: LinearGradient(colors: [
-                    Theme.of(context).primaryColorDark,
-                    Theme.of(context).primaryColor,
-                  ])),
-                )),
+                        Theme.of(context).primaryColorDark,
+                        Theme.of(context).primaryColor,
+                      ]),
+                    ),
+                  ),
+                ),
                 Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 7),
-                    child: Text(
-                      appTxt(context).loginContactUsTxt,
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleMedium!
-                          .copyWith(color: Theme.of(context).primaryColor),
-                      textAlign: TextAlign.center,
-                    )),
+                  padding: const EdgeInsets.symmetric(horizontal: 7),
+                  child: Text(
+                    appTxt(context).loginContactUsTxt,
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium!
+                        .copyWith(color: Theme.of(context).primaryColor),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
                 Expanded(
-                    child: Container(
-                  height: 1,
-                  decoration: BoxDecoration(
+                  child: Container(
+                    height: 1,
+                    decoration: BoxDecoration(
                       gradient: LinearGradient(colors: [
-                    Theme.of(context).primaryColor,
-                    Theme.of(context).primaryColorDark,
-                  ])),
-                )),
+                        Theme.of(context).primaryColor,
+                        Theme.of(context).primaryColorDark,
+                      ]),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),

@@ -1,9 +1,9 @@
 import 'dart:convert';
-import 'package:etouch/api/api_models/currencies_reponse.dart';
+import 'package:etouch/api/api_models/discounts_taxes_response.dart';
 import 'package:etouch/api/api_response.dart';
 import 'package:etouch/businessLogic/classes/base_api_response.dart';
+import 'package:etouch/businessLogic/classes/extensions.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'api_models/dashboard_response.dart';
 import 'api_models/login_response.dart';
@@ -15,16 +15,10 @@ class MyApiServices {
   MyApiServices() {
     DatabaseReference databaseReference =
         FirebaseDatabase.instance.ref().child('base_url');
-    //getBaseUrl(databaseReference);
     databaseReference.onValue.listen((event) {
       baseUrl = event.snapshot.value as String;
     });
   }
-
-  // void getBaseUrl(DatabaseReference ref) async {
-  //   DataSnapshot snap = await ref.get();
-  //   baseUrl = snap.value as String;
-  // }
 
   static String baseUrl = 'baknelafyi-001-site1.ctempurl.com';
   static Map<int, String> currenciesMap = {};
@@ -45,6 +39,7 @@ class MyApiServices {
               id: jsonElement['id'], name: jsonElement['description']);
           dataSet.add(element);
         }
+        dataSet.filterDuplicates();
         return APIResponse<List<BaseAPIObject>>(
           data: dataSet,
           hasError: false,
@@ -67,37 +62,10 @@ class MyApiServices {
         parameters: {'branchId': branchId.toString()});
   }
 
-  Future<APIResponse<List<CurrenciesResponse>>> getCurrenciesList(
+  Future<APIResponse<List<BaseAPIObject>>> getCurrenciesList(
       int companyId, String token) async {
-    return await http.get(
-        Uri.http(baseUrl, '/api/etax/ETax/GetCurrenciesByCompanyId',
-            {'companyId': companyId.toString()}),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
-        }).then((data) {
-      if (data.statusCode == 200) {
-        final jsonData = json.decode(data.body);
-        final dataSet = <CurrenciesResponse>[];
-        for (var jsonElement in jsonData) {
-          final element =
-              CurrenciesResponse.fromJson(jsonElement);
-          dataSet.add(element);
-        }
-        return APIResponse<List<CurrenciesResponse>>(
-          data: dataSet,
-          hasError: false,
-          statusCode: data.statusCode,
-        );
-      } else {
-        return APIResponse(
-          data: null,
-          hasError: true,
-          errorMessage: data.body,
-          statusCode: data.statusCode,
-        );
-      }
-    });
+    return baseObjectRequest('etax/ETax/GetCurrenciesByCompanyId', token,
+        parameters: {'companyId': companyId.toString()});
   }
 
   Future<APIResponse<List<BaseAPIObject>>> getWarehousesList(
@@ -159,11 +127,6 @@ class MyApiServices {
     });
   }
 
-  Future<APIResponse<List<BaseAPIObject>>> getUnitsList(
-      int branchId, String token) {
-    return baseObjectRequest('', token);
-  }
-
   Future<APIResponse<List<BaseAPIObject>>> getPaymentMethodsList(
       int companyId, String token) {
     return baseObjectRequest(
@@ -171,13 +134,35 @@ class MyApiServices {
         parameters: {'companyId': companyId.toString()});
   }
 
-  Future<APIResponse<List<BaseAPIObject>>> getTaxesList(
-      int branchId, String token) {
-    return baseObjectRequest('', token);
+  Future<APIResponse<List<DiscountAndTaxes>>> getTaxesList(
+      int companyId, String token) async {
+    return await http.get(
+        Uri.http(
+          baseUrl,
+          'api/accounting/Account/GetTaxesAndDiscountsByCompanyId',
+          {
+            "companyId": companyId.toString(),
+          },
+        ),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        }).then((response) {
+      if (response.statusCode == 200) {
+        var responseList = <DiscountAndTaxes>[];
+        var responseJson = json.decode(response.body);
+        for (var item in responseJson) {
+          responseList.add(DiscountAndTaxes.fromJson(item));
+        }
+        return APIResponse(statusCode: 200, data: responseList);
+      }
+      return APIResponse(statusCode: response.statusCode);
+    });
   }
 
-  Future<APIResponse<DashboardResponse>> getDashboard(String token,
-      {int branchId = 94, int s = 10}) async {
+  Future<APIResponse<DashboardResponse>> getDashboard(
+      String token, int branchId,
+      {int s = 10}) async {
     return await http.get(
         Uri.http(baseUrl, '/api/etax/ETax/EInvoiceDashboard',
             {'branchId': branchId.toString(), 'count': s.toString()}),
@@ -200,10 +185,10 @@ class MyApiServices {
 
   Future<APIResponse<dynamic>> postDocument(
       SalesOrder order, String token) async {
-    var toJ = json.encode(order.toJson(order));
+    var item = json.encode(order.toJson(order));
     return await http.post(
       Uri.http(baseUrl, '/api/inventory/Inventory/SubmitDocument'),
-      body: toJ,
+      body: json.encode(order.toJson(order)),
       headers: {
         'Content-type': 'application/json',
         'Authorization': 'Bearer $token'
@@ -240,7 +225,10 @@ class MyApiServices {
       }
       return APIResponse<LoginResponse>(
           data: null, hasError: true, statusCode: value.statusCode);
-    }).catchError((_) => APIResponse<LoginResponse>(
-            data: null, hasError: true, statusCode: -1));
+    }).catchError((error) {
+      //print(error);
+      return APIResponse<LoginResponse>(
+          data: null, hasError: true, statusCode: -1);
+    });
   }
 }

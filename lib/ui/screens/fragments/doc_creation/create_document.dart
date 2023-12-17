@@ -44,68 +44,76 @@ class _CreateEInvoiceDocumentFragmentState
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          child: Padding(
-            padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom),
-            child: Column(
-              children: [
-                OrderPreRequirementsWidget(
-                  salesOrder: salesOrder,
-                  loginResponse: widget.loginResponse,
-                  service: service,
-                ),
-                // divider,
-                const SizedBox(
-                  height: 8,
-                ),
-                // add product details object
-                ProductsSelectionWidget(
-                  loginResponse: widget.loginResponse,
-                  salesOrder: salesOrder,
-                ),
-                const SizedBox(
-                  height: 24,
-                ),
-                DocumentNumbers(
-                  services: service,
-                  token: widget.loginResponse.token ?? '',
-                  salesOrder: salesOrder,
-                  companyId: widget.loginResponse.companyId ?? 0,
-                ),
-                const SizedBox(
-                  height: 24,
-                ),
-                //send document btn
-                SizedBox(
-                  width: double.infinity,
-                  child: PurpleButtonModel(
-                    content: !_clicked? Text(
-                      appTxt(context).sendDocument,
-                      style: txtTheme(context)
-                          .titleLarge!
-                          .copyWith(color: Colors.white),
-                    ): const CircularProgressIndicator(
-                      color: Colors.white,
-                    ),
-                    onTap: () {
-                      if (!_clicked) {
-                        setState(() {
-                          _clicked = true;
-                        });
-                        _submitDocument(widget.loginResponse.token ?? '');
-                      }
-                    },
-                    width: double.infinity,
+      child: RefreshIndicator(
+        onRefresh: () async {
+          setState(() {
+            dispose();
+            initState();
+          });
+        },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: Padding(
+              padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom),
+              child: Column(
+                children: [
+                  OrderPreRequirementsWidget(
+                    salesOrder: salesOrder,
+                    loginResponse: widget.loginResponse,
+                    service: service,
                   ),
-                ),
-                const SizedBox(
-                  height: 24,
-                ),
-              ],
+                  // divider,
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  // add product details object
+                  ProductsSelectionWidget(
+                    loginResponse: widget.loginResponse,
+                    salesOrder: salesOrder,
+                  ),
+                  const SizedBox(
+                    height: 24,
+                  ),
+                  DocumentNumbers(
+                    services: service,
+                    token: widget.loginResponse.token ?? '',
+                    salesOrder: salesOrder,
+                    companyId: widget.loginResponse.companyId ?? 0,
+                  ),
+                  const SizedBox(
+                    height: 24,
+                  ),
+                  //send document btn
+                  SizedBox(
+                    width: double.infinity,
+                    child: PurpleButtonModel(
+                      content: !_clicked? Text(
+                        appTxt(context).sendDocument,
+                        style: txtTheme(context)
+                            .titleLarge!
+                            .copyWith(color: Colors.white),
+                      ): const CircularProgressIndicator(
+                        color: Colors.white,
+                      ),
+                      onTap: () {
+                        if (!_clicked) {
+                          setState(() {
+                            _clicked = true;
+                          });
+                          _submitDocument(widget.loginResponse.token ?? '');
+                        }
+                      },
+                      width: double.infinity,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 24,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -116,7 +124,7 @@ class _CreateEInvoiceDocumentFragmentState
   void _submitDocument(String token) async {
     RealtimeCURD.increaseValueByOne("send_doc");
     salesOrder.totalOrderAmount =
-        context.read<EInvoiceDocProvider>().docTotalAmount;
+        context.read<EInvoiceDocProvider>().totalProductsAmount;
     if (salesOrder.invalidDataMsg() == '') {
       service.postDocument(salesOrder, token).then(
             (value) {
@@ -125,6 +133,8 @@ class _CreateEInvoiceDocumentFragmentState
               });
               if (value.statusCode == 200) {
                 RealtimeCURD.increaseValueByOne("successful_send");
+              } else if (value.statusCode == -1) {
+                Fluttertoast.showToast(msg: appTxt(context).checkInternetMessage);
               } else {
                 RealtimeCURD.increaseValueByOne("unsuccessful_send");
               }

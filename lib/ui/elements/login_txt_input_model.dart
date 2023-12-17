@@ -16,13 +16,22 @@ class LoginTextFieldModel extends StatefulWidget {
 
 class _LoginTextFieldModelState extends State<LoginTextFieldModel> {
   bool passwordInvisible = true;
+  late TextEditingController _controller;
+
+  @override
+  void initState() {
+    _controller = TextEditingController();
+    _controller.text = widget.defVal ?? '';
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return TextField(
       onChanged: (txt) {
         widget.onTxtChanged(txt);
       },
-      controller: TextEditingController()..text = widget.defVal ?? '',
+      controller: _controller,
       style: Theme.of(context).textTheme.headlineSmall,
       obscureText: widget.isPassword && passwordInvisible,
       decoration: InputDecoration(

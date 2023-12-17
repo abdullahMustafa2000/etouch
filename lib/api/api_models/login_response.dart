@@ -1,4 +1,5 @@
 import 'package:etouch/businessLogic/classes/base_api_response.dart';
+import 'package:etouch/businessLogic/classes/extensions.dart';
 import 'package:etouch/main.dart';
 
 class LoginResponse {
@@ -50,6 +51,7 @@ class LoginResponse {
       json['userBranches'].forEach((v) {
         userBranches!.add(BaseAPIObject(id: v['id'], name: v['name']));
       });
+      userBranches.filterDuplicates();
     }
     expiration = DateTime.parse(
         getSpacedFormattedDate(DateTime.parse(json['expiration'])));

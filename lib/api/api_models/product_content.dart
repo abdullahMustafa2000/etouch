@@ -2,9 +2,7 @@ import 'package:etouch/businessLogic/classes/view_product.dart';
 
 import '../../businessLogic/classes/base_api_response.dart';
 
-class ProductModel {
-  int? productId;
-  String? productName;
+class ProductModel extends BaseAPIObject {
   double? pieceSalePrice = 0;
   double? minSalePrice = 0;
   double? maxSalePrice = 0;
@@ -17,9 +15,7 @@ class ProductModel {
   String? measurementUnitsName;
   bool? isChangeable;
 
-  ProductModel.empty() {
-    productId = 0;
-    productName = "";
+  ProductModel.empty() : super(id: 0, name: "") {
     pieceSalePrice = 0.00;
     minSalePrice = 0.00;
     maxSalePrice = 0.0;
@@ -32,24 +28,24 @@ class ProductModel {
     measurementUnitsName = "";
   }
 
-  ProductModel.map(ViewProduct viewProduct) {
-    productId = viewProduct.productId;
-    productName = viewProduct.productName;
-    pieceSalePrice = viewProduct.pieceSalePrice;
-    minSalePrice = viewProduct.minSalePrice;
-    maxSalePrice = viewProduct.maxSalePrice;
-    egsCode = viewProduct.egsCode;
-    gs1Code = viewProduct.gs1Code;
-    itemCodeType = viewProduct.itemCodeType;
-    warehouseProductGroupsId = viewProduct.warehouseProductGroupsId;
-    productCount = viewProduct.productCount;
-    measurementUnitsId = viewProduct.measurementUnitsId;
-    measurementUnitsName = viewProduct.measurementUnitsName;
-  }
+  // ProductModel.map(ViewProduct viewProduct) {
+  //   id = viewProduct.getId;
+  //   name = viewProduct.getName;
+  //   pieceSalePrice = viewProduct.pieceSalePrice;
+  //   minSalePrice = viewProduct.minSalePrice;
+  //   maxSalePrice = viewProduct.maxSalePrice;
+  //   egsCode = viewProduct.egsCode;
+  //   gs1Code = viewProduct.gs1Code;
+  //   itemCodeType = viewProduct.itemCodeType;
+  //   warehouseProductGroupsId = viewProduct.warehouseProductGroupsId;
+  //   productCount = viewProduct.productCount;
+  //   measurementUnitsId = viewProduct.measurementUnitsId;
+  //   measurementUnitsName = viewProduct.measurementUnitsName;
+  // }
 
   ProductModel(
-      {this.productId,
-      this.productName,
+      {required int id,
+      required String name,
       this.pieceSalePrice,
       this.minSalePrice,
       this.maxSalePrice,
@@ -59,11 +55,11 @@ class ProductModel {
       this.warehouseProductGroupsId,
       this.productCount,
       this.measurementUnitsId,
-      this.measurementUnitsName});
+      this.measurementUnitsName})
+      : super(id: id, name: name);
 
-  ProductModel.fromJson(Map<String, dynamic> json) {
-    productId = json['productId'];
-    productName = json['productName'];
+  ProductModel.fromJson(Map<String, dynamic> json)
+      : super(id: json['productId'], name: json['productName']) {
     pieceSalePrice = json['pieceSalePrice'];
     minSalePrice = json['minSalePrice'];
     maxSalePrice = json['maxSalePrice'];
@@ -79,16 +75,16 @@ class ProductModel {
 
   Map<String, dynamic> toJson(ViewProduct product) {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['ProductId'] = product.productId;
-    data['ProductCount'] = product.quantity ?? 0.0;
-    data['MeasurementUnitId'] = (product.unitSelected?.getId);
-    data['WarehouseProductGroupsId'] = (product.groupSelected?.getId);
-    data['UnitPrice'] = (product.pieceSalePrice);
+    data['ProductId'] = product.productSelected!.getId;
+    data['ProductCount'] = product.quantity;
+    data['MeasurementUnitId'] = product.unitSelected!.getId;
+    data['WarehouseProductGroupsId'] = product.groupSelected!.getId;
+    data['UnitPrice'] = product.pieceSalePrice;
     return data;
   }
 
   @override
   String toString() {
-    return 'id:$productId, name:$productName, price:$pieceSalePrice,';
+    return 'id:$getId, name:$getName, price:$pieceSalePrice,';
   }
 }

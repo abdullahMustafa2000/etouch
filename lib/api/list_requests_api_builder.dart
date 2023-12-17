@@ -1,19 +1,21 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:etouch/api/api_response.dart';
 import 'package:etouch/main.dart';
 import 'package:flutter/material.dart';
 
-class RequestAPIWidget<T> extends StatefulWidget {
-  const RequestAPIWidget(
+class ListAPIWidgets<T extends List<APIResponse>> extends StatefulWidget {
+  const ListAPIWidgets(
       {Key? key, required this.request, required this.onSuccessfulResponse})
       : super(key: key);
   final Future<T> request;
   final Widget Function(AsyncSnapshot<T>) onSuccessfulResponse;
 
   @override
-  State<RequestAPIWidget<T>> createState() => _RequestAPIWidgetState<T>();
+  State<ListAPIWidgets<T>> createState() => _APIWidgetState<T>();
 }
 
-class _RequestAPIWidgetState<T> extends State<RequestAPIWidget<T>> {
+class _APIWidgetState<T extends List<APIResponse>>
+    extends State<ListAPIWidgets<T>> {
   final Connectivity connectivity = Connectivity();
 
   @override
@@ -26,6 +28,12 @@ class _RequestAPIWidgetState<T> extends State<RequestAPIWidget<T>> {
             child: CircularProgressIndicator(),
           );
         } else {
+          for (APIResponse item in snap.data ?? []) {
+            if (item.statusCode == 401) {
+              logoutUser(context);
+              return const SizedBox.shrink();
+            }
+          }
           if (!snap.hasError && snap.hasData) {
             return widget.onSuccessfulResponse(snap);
           } else {
@@ -41,9 +49,13 @@ class _RequestAPIWidgetState<T> extends State<RequestAPIWidget<T>> {
       future: connectivity.checkConnectivity(),
       builder: (context, snap) {
         if (snap.data == ConnectivityResult.none) {
-          return Center(child: Text(appTxt(context).checkInternetMessage),);
+          return Center(
+            child: Text(appTxt(context).checkInternetMessage),
+          );
         } else {
-          return Center(child: Text(appTxt(context).emptyDataError),);
+          return Center(
+            child: Text(appTxt(context).emptyDataError),
+          );
         }
       },
     );

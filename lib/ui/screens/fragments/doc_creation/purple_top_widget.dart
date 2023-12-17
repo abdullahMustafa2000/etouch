@@ -2,11 +2,13 @@ import 'package:bottom_picker/bottom_picker.dart';
 import 'package:etouch/api/api_models/currencies_reponse.dart';
 import 'package:etouch/api/api_models/login_response.dart';
 import 'package:etouch/api/api_models/sales_order.dart';
+import 'package:etouch/api/api_response.dart';
+import 'package:etouch/api/list_requests_api_builder.dart';
 import 'package:etouch/api/services.dart';
 import 'package:etouch/businessLogic/providers/create_doc_manager.dart';
 import 'package:etouch/ui/elements/dropdown_model.dart';
 import 'package:etouch/ui/elements/editable_data.dart';
-import 'package:etouch/ui/elements/api_requests_builder.dart';
+import 'package:etouch/api/api_requests_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../businessLogic/classes/base_api_response.dart';
@@ -31,13 +33,12 @@ class OrderPreRequirementsWidget extends StatefulWidget {
 
 class _OrderPreRequirementsWidgetState
     extends State<OrderPreRequirementsWidget> {
-  late Future<List<BaseAPIObject>?> _currenciesFut,
+  late Future<APIResponse<List<BaseAPIObject>?>> _currenciesFut,
       _treasuriesFut,
       _customersFut,
       _warehousesFut;
 
   late bool _created;
-
   @override
   void initState() {
     initAPICalls();
@@ -47,123 +48,124 @@ class _OrderPreRequirementsWidgetState
 
   @override
   Widget build(BuildContext context) {
-    return RequestAPIWidget<List<List<BaseAPIObject>?>>(
-        request: Future.wait(
-            [_warehousesFut, _currenciesFut, _treasuriesFut, _customersFut]),
-        onSuccessfulResponse: (snap) {
-          if (!_created) {
-            _created = true;
-            _initData(snap);
-          }
-          return Container(
-            padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
-            width: double.infinity,
-            decoration: BoxDecoration(
-              borderRadius:
-                  const BorderRadius.all(Radius.circular(cornersRadiusConst)),
-              gradient: LinearGradient(
-                  colors: [accentColor, primaryColor],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter),
-            ),
-            child: Column(
-              children: [
-                Text(
-                  appTxt(context).createDocumentTitle,
-                  style: Theme.of(context)
-                      .textTheme
-                      .displayLarge!
-                      .copyWith(color: pureWhite),
-                ),
-                const SizedBox(
-                  height: 24,
-                ),
-                PreRequirementsRow(
-                  ///Branches list
-                  label1: appTxt(context).branchTxt,
-                  dataList1: widget.loginResponse.userBranches,
-                  selectedItem1: widget.salesOrder.branch,
-                  selectedVal1: (BaseAPIObject? val1) {
-                    onBranchWarehouseChanged();
-                    widget.salesOrder.branch = val1;
-                    context
-                        .read<EInvoiceDocProvider>()
-                        .updateBranchId(val1?.getId ?? -1);
-                  },
+    return ListAPIWidgets<List<APIResponse<List<BaseAPIObject>?>>>(
+      request: Future.wait(
+          [_warehousesFut, _currenciesFut, _treasuriesFut, _customersFut]),
+      onSuccessfulResponse: (snap) {
+        if (!_created) {
+          _created = true;
+          _initData(snap.data);
+        }
+        return Container(
+          padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
+          width: double.infinity,
+          decoration: BoxDecoration(
+            borderRadius:
+                const BorderRadius.all(Radius.circular(cornersRadiusConst)),
+            gradient: LinearGradient(
+                colors: [accentColor, primaryColor],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter),
+          ),
+          child: Column(
+            children: [
+              Text(
+                appTxt(context).createDocumentTitle,
+                style: Theme.of(context)
+                    .textTheme
+                    .displayLarge!
+                    .copyWith(color: pureWhite),
+              ),
+              const SizedBox(
+                height: 24,
+              ),
+              PreRequirementsRow(
+                ///Branches list
+                label1: appTxt(context).branchTxt,
+                dataList1: widget.loginResponse.userBranches,
+                selectedItem1: widget.salesOrder.branch,
+                selectedVal1: (BaseAPIObject? val1) {
+                  onBranchWarehouseChanged();
+                  widget.salesOrder.branch = val1;
+                  context
+                      .read<EInvoiceDocProvider>()
+                      .updateBranchId(val1?.getId ?? -1);
+                },
 
-                  ///Warehouses list
-                  label2: appTxt(context).inventoryTxt,
-                  dataList2: snap.data?[0], //warehouses
-                  selectedVal2: (BaseAPIObject? val2) {
-                    onBranchWarehouseChanged();
-                    widget.salesOrder.warehouse = val2;
-                    context
-                        .read<EInvoiceDocProvider>()
-                        .updateWarehouseId(val2?.getId ?? 0);
-                  },
-                  selectedItem2: widget.salesOrder.warehouse,
-                ),
-                const SizedBox(
-                  height: 24,
-                ),
-                PreRequirementsRow(
-                  ///currencies list
-                  label1: appTxt(context).currencyTxt,
-                  dataList1: snap.data?[1],
-                  selectedItem1: widget.salesOrder.currency,
-                  selectedVal1: (CurrenciesResponse? val1) {
-                    widget.salesOrder.currency = val1;
-                  },
+                ///Warehouses list
+                label2: appTxt(context).inventoryTxt,
+                dataList2: snap.data?[0].data, //warehouses
+                selectedVal2: (BaseAPIObject? val2) {
+                  onBranchWarehouseChanged();
+                  widget.salesOrder.warehouse = val2;
+                  context
+                      .read<EInvoiceDocProvider>()
+                      .updateWarehouseId(val2?.getId ?? 0);
+                },
+                selectedItem2: widget.salesOrder.warehouse,
+              ),
+              const SizedBox(
+                height: 24,
+              ),
+              PreRequirementsRow(
+                ///currencies list
+                label1: appTxt(context).currencyTxt,
+                dataList1: snap.data?[1].data,
+                selectedItem1: widget.salesOrder.currency,
+                selectedVal1: (CurrenciesResponse? val1) {
+                  widget.salesOrder.currency = val1;
+                },
 
-                  ///treasuries list
-                  label2: appTxt(context).treasuryTxt,
-                  dataList2: snap.data?[2],
-                  selectedVal2: (BaseAPIObject? val2) {
-                    widget.salesOrder.treasury = val2;
-                  },
-                  selectedItem2: widget.salesOrder.treasury,
-                ),
-                const SizedBox(
-                  height: 24,
-                ),
-                RequiredInfoDesign(
-                  ///customers list
-                  label: appTxt(context).customerTxt,
-                  dataList: snap.data?[3],
-                  selectedVal: (BaseAPIObject? val) {
-                    widget.salesOrder.customer = val;
-                  },
-                  selectedItem: widget.salesOrder.customer,
-                ),
-                const SizedBox(
-                  height: 18,
-                ),
-                Container(
-                  width: double.infinity,
-                  height: 1,
-                  color: pureWhite,
-                ),
-                const SizedBox(
-                  height: 18,
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    DateTimePickerRow(
-                      salesOrder: widget.salesOrder,
-                    ),
-                    const SizedBox(
-                      height: 24,
-                    ),
-                    OrderNumberRow(
-                      salesOrder: widget.salesOrder,
-                    ),
-                  ],
-                )
-              ],
-            ),
-          );
-        });
+                ///treasuries list
+                label2: appTxt(context).treasuryTxt,
+                dataList2: snap.data?[2].data,
+                selectedVal2: (BaseAPIObject? val2) {
+                  widget.salesOrder.treasury = val2;
+                },
+                selectedItem2: widget.salesOrder.treasury,
+              ),
+              const SizedBox(
+                height: 24,
+              ),
+              RequiredInfoDesign(
+                ///customers list
+                label: appTxt(context).customerTxt,
+                dataList: snap.data?[3].data,
+                selectedVal: (BaseAPIObject? val) {
+                  widget.salesOrder.customer = val;
+                },
+                selectedItem: widget.salesOrder.customer,
+              ),
+              const SizedBox(
+                height: 18,
+              ),
+              Container(
+                width: double.infinity,
+                height: 1,
+                color: pureWhite,
+              ),
+              const SizedBox(
+                height: 18,
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  DateTimePickerRow(
+                    salesOrder: widget.salesOrder,
+                  ),
+                  const SizedBox(
+                    height: 24,
+                  ),
+                  OrderNumberRow(
+                    salesOrder: widget.salesOrder,
+                  ),
+                ],
+              )
+            ],
+          ),
+        );
+      },
+    );
   }
 
   void initAPICalls() {
@@ -177,33 +179,28 @@ class _OrderPreRequirementsWidgetState
         widget.salesOrder.branch?.getId ?? 0, widget.loginResponse.token ?? '');
   }
 
-  Future<List<BaseAPIObject>?> _getCurrencies() async {
+  Future<APIResponse<List<BaseAPIObject>?>> _getCurrencies() async {
     return (await widget.service.getCurrenciesList(
-            widget.loginResponse.companyId ?? 0,
-            widget.loginResponse.token ?? ''))
-        .data;
+        widget.loginResponse.companyId ?? 0, widget.loginResponse.token ?? ''));
   }
 
-  Future<List<BaseAPIObject>?> _getCustomers(
+  Future<APIResponse<List<BaseAPIObject>?>> _getCustomers(
           int branchId, String token) async =>
-      (await widget.service.getCustomersList(branchId, token)).data;
+      await widget.service.getCustomersList(branchId, token);
 
-  Future<List<BaseAPIObject>?> _getWarehouses(
+  Future<APIResponse<List<BaseAPIObject>?>> _getWarehouses(
           int branchId, String token) async =>
-      (await widget.service.getWarehousesList(branchId, token)).data;
+      await widget.service.getWarehousesList(branchId, token);
 
-  Future<List<BaseAPIObject>?> _getTreasuries(
+  Future<APIResponse<List<BaseAPIObject>?>> _getTreasuries(
           int branchId, String token) async =>
-      (await widget.service.getTreasuriesList(branchId, token)).data;
+      await widget.service.getTreasuriesList(branchId, token);
 
-  void _initData(AsyncSnapshot<List<List<BaseAPIObject>?>> snap) {
-    widget.salesOrder.warehouse = snap.data?[0]?.first;
-    widget.salesOrder.currency = CurrenciesResponse(
-        id: snap.data?[1]?.first.getId,
-        name: snap.data?[1]?.first.getName,
-        code: '');
-    widget.salesOrder.treasury = snap.data?[2]?.first;
-    widget.salesOrder.customer = snap.data?[3]?.first;
+  void _initData(List<APIResponse<List<BaseAPIObject>?>>? data) {
+    widget.salesOrder.warehouse = data?[0].data?.first;
+    widget.salesOrder.currency = data?[1].data?.first;
+    widget.salesOrder.treasury = data?[2].data?.first;
+    widget.salesOrder.customer = data?[3].data?.first;
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       context
           .read<EInvoiceDocProvider>()

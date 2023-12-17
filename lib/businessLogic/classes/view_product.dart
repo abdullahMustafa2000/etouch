@@ -3,13 +3,14 @@ import 'package:etouch/api/api_models/product_content.dart';
 import 'base_api_response.dart';
 
 class ViewProduct extends ProductModel {
-  BaseAPIObject? groupSelected, unitSelected;
-  double? quantity = 0.0;
+  BaseAPIObject? groupSelected, unitSelected, productSelected;
+  double? quantity;
   double? totalProdAmount = 0.0;
 
-  ViewProduct.empty() {
-    productId = 0;
-    productName = "";
+  ViewProduct({required int id, required String name})
+      : super(id: id, name: name);
+
+  ViewProduct.empty() : super(id: 0, name: "") {
     pieceSalePrice = 0.00;
     minSalePrice = 0.00;
     maxSalePrice = 0.0;
@@ -23,20 +24,20 @@ class ViewProduct extends ProductModel {
     totalProdAmount = 0;
   }
 
-  ViewProduct.map(ProductModel product) {
-    productId = product.productId;
-    productName = product.productName;
-    pieceSalePrice = product.pieceSalePrice;
-    minSalePrice = product.minSalePrice;
-    maxSalePrice = product.maxSalePrice;
-    egsCode = product.egsCode;
-    gs1Code = product.gs1Code;
-    itemCodeType = product.itemCodeType;
-    warehouseProductGroupsId = product.warehouseProductGroupsId;
-    productCount = product.productCount;
-    measurementUnitsId = product.measurementUnitsId;
-    measurementUnitsName = product.measurementUnitsName;
-  }
+  // ViewProduct.map(ProductModel product) {
+  //   productId = product.productId;
+  //   productName = product.productName;
+  //   pieceSalePrice = product.pieceSalePrice;
+  //   minSalePrice = product.minSalePrice;
+  //   maxSalePrice = product.maxSalePrice;
+  //   egsCode = product.egsCode;
+  //   gs1Code = product.gs1Code;
+  //   itemCodeType = product.itemCodeType;
+  //   warehouseProductGroupsId = product.warehouseProductGroupsId;
+  //   productCount = product.productCount;
+  //   measurementUnitsId = product.measurementUnitsId;
+  //   measurementUnitsName = product.measurementUnitsName;
+  // }
 
   @override
   String toString() {

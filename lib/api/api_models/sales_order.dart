@@ -1,11 +1,10 @@
-import 'package:etouch/api/api_models/currencies_reponse.dart';
+import 'package:etouch/api/api_models/discounts_taxes_response.dart';
 import 'package:etouch/businessLogic/classes/view_product.dart';
 import '../../businessLogic/classes/base_api_response.dart';
-import 'tax_of_document_model.dart';
 
 class SalesOrder {
   BaseAPIObject? branch, customer, treasury, warehouse;
-  CurrenciesResponse? currency;
+  BaseAPIObject? currency;
   double totalOrderAmount = 0;
   double orderAmountAfterTaxes = 0;
   double paid = 0;
@@ -14,7 +13,7 @@ class SalesOrder {
   DateTime orderDate = DateTime.now().add(const Duration(hours: -2));
   List<ViewProduct> productsList = [];
   List<BaseAPIObject> paymentMethods = [BaseAPIObject(id: 0, name: '')];
-  List<DocumentTaxesModel> taxesAndDiscounts = [];
+  List<DiscountAndTaxes> taxesAndDiscounts = [];
 
   @override
   String toString() {
@@ -40,11 +39,11 @@ class SalesOrder {
   }
 
   String invalidDataMsg() {
-    if (productsList.isEmpty || productsList.first.productName == null) {
+    if (productsList.isEmpty) {
       return "لم يتم تحديد اصناف للارسال";
     }
     for (var prod in productsList) {
-      String err = "${prod.productName}";
+      String err = prod.getName;
       if (prod.quantity == 0) {
         return "$err لم يتم تحديد كميه له ";
       } else if (prod.quantity! > prod.productCount!) {
@@ -84,7 +83,8 @@ class SalesOrder {
     request["OrderDate"] = order.orderDate.toIso8601String();
     request["SalesOrderItems"] =
         order.productsList.map((e) => e.toJson(e)).toList();
-    request["lstDiscountTaxes"] = [];
+    request["lstDiscountTaxes"] =
+        taxesAndDiscounts.map((e) => e.toJson()).toList();
     request["lstPayments"] = order.paymentMethods
         .map((e) => {
               "PaymentMethodId": e.getId,
