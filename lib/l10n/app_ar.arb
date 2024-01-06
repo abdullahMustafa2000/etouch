@@ -88,5 +88,6 @@
   "unAcceptableCount": "خارج نطاق الكمية",
   "unAcceptablePrice": "خارج نطاق السعر",
   "dateTimePickerTitle": "اختر توقيت ارسال الفاتورة",
-  "notAllowedUser": "ناسف لهذا، لا يمكنك استخدام التطبيق، تواصل معنا"
+  "notAllowedUser": "ناسف لهذا، لا يمكنك استخدام التطبيق، تواصل معنا",
+  "etaRejectedDocMessage": "لقد رفضت الضرائب الفاتورة وتقول..."
 }

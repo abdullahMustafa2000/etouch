@@ -87,5 +87,6 @@
   "unAcceptableCount": "Out of quantity range",
   "unAcceptablePrice": "Out of price range",
   "dateTimePickerTitle": "Select document send time",
-  "notAllowedUser": "Sorry, you're not allowed to use the app, kindly contact with us"
+  "notAllowedUser": "Sorry, you're not allowed to use the app, kindly contact with us",
+  "etaRejectedDocMessage": "ETA rejected the document and says..."
 }

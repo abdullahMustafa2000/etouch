@@ -29,12 +29,11 @@ class CreateEInvoiceDocumentFragment extends StatefulWidget {
 
 class _CreateEInvoiceDocumentFragmentState
     extends State<CreateEInvoiceDocumentFragment> {
-  bool _clicked = false;
 
   MyApiServices get service => GetIt.I<MyApiServices>();
 
   SalesOrder salesOrder = SalesOrder();
-  
+
   @override
   void initState() {
     RealtimeCURD.increaseValueByOne("document_creation_fragment");
@@ -87,27 +86,10 @@ class _CreateEInvoiceDocumentFragmentState
                     height: 24,
                   ),
                   //send document btn
-                  SizedBox(
-                    width: double.infinity,
-                    child: PurpleButtonModel(
-                      content: !_clicked? Text(
-                        appTxt(context).sendDocument,
-                        style: txtTheme(context)
-                            .titleLarge!
-                            .copyWith(color: Colors.white),
-                      ): const CircularProgressIndicator(
-                        color: Colors.white,
-                      ),
-                      onTap: () {
-                        if (!_clicked) {
-                          setState(() {
-                            _clicked = true;
-                          });
-                          _submitDocument(widget.loginResponse.token ?? '');
-                        }
-                      },
-                      width: double.infinity,
-                    ),
+                  SubmitButton(
+                    salesOrder: salesOrder,
+                    token: widget.loginResponse.token ?? '',
+                    services: service,
                   ),
                   const SizedBox(
                     height: 24,
@@ -120,46 +102,88 @@ class _CreateEInvoiceDocumentFragmentState
       ),
     );
   }
+}
+
+class SubmitButton extends StatefulWidget {
+  final SalesOrder salesOrder;
+  final String token;
+  final MyApiServices services;
+  const SubmitButton({Key? key, required this.salesOrder, required this.token,
+  required this.services})
+      : super(key: key);
+
+  @override
+  State<SubmitButton> createState() => _SubmitButtonState();
+}
+
+class _SubmitButtonState extends State<SubmitButton> {
+  bool _clicked = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: PurpleButtonModel(
+        content: !_clicked
+            ? Text(
+                appTxt(context).sendDocument,
+                style:
+                    txtTheme(context).titleLarge!.copyWith(color: Colors.white),
+              )
+            : const CircularProgressIndicator(
+                color: Colors.white,
+              ),
+        onTap: () {
+          if (!_clicked) {
+            setState(() {
+              _clicked = true;
+            });
+            _submitDocument(widget.token);
+          }
+        },
+        width: double.infinity,
+      ),
+    );
+  }
 
   void _submitDocument(String token) async {
     RealtimeCURD.increaseValueByOne("send_doc");
-    salesOrder.totalOrderAmount =
+    widget.salesOrder.totalOrderAmount =
         context.read<EInvoiceDocProvider>().totalProductsAmount;
-    if (salesOrder.invalidDataMsg() == '') {
-      service.postDocument(salesOrder, token).then(
-            (value) {
-              setState(() {
-                _clicked = false;
-              });
-              if (value.statusCode == 200) {
-                RealtimeCURD.increaseValueByOne("successful_send");
-              } else if (value.statusCode == -1) {
-                Fluttertoast.showToast(msg: appTxt(context).checkInternetMessage);
-              } else {
-                RealtimeCURD.increaseValueByOne("unsuccessful_send");
-              }
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => AfterSubmissionScreen(
-                    hasError: value.hasError,
-                    document: DocumentForListing(
-                        type: 'Purchases',
-                        id: 1,
-                        registrationId: 12,
-                        ownerName: 'Hesham',
-                        submissionDate: DateTime.now(),
-                        totalAmount: 12000,
-                        status: 'valid'),
-                    errorMessage:
-                        'not sending because...\n${value.errorMessage}',
-                  ),
-                ),
-              );
-            },
+    if (widget.salesOrder.invalidDataMsg() == '') {
+      widget.services.postDocument(widget.salesOrder, token).then(
+        (value) {
+          setState(() {
+            _clicked = false;
+          });
+          if (value.statusCode == 200) {
+            RealtimeCURD.increaseValueByOne("successful_send");
+          } else if (value.statusCode == -1) {
+            Fluttertoast.showToast(msg: appTxt(context).checkInternetMessage);
+          } else {
+            RealtimeCURD.increaseValueByOne("unsuccessful_send");
+          }
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AfterSubmissionScreen(
+                hasError: value.hasError,
+                document: DocumentForListing(
+                    type: 'Purchases',
+                    id: 1,
+                    registrationId: 12,
+                    ownerName: 'Hesham',
+                    submissionDate: DateTime.now(),
+                    totalAmount: 0,
+                    status: 'valid'),
+                errorMessage: '${appTxt(context).etaRejectedDocMessage}\n${value.errorMessage}',
+              ),
+            ),
           );
+        },
+      );
     } else {
-      Fluttertoast.showToast(msg: salesOrder.invalidDataMsg());
+      Fluttertoast.showToast(msg: widget.salesOrder.invalidDataMsg());
     }
   }
 }

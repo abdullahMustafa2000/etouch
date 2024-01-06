@@ -63,6 +63,7 @@ class _DocumentNumbersState extends State<DocumentNumbers> {
             ),
             PricesAndTotals(
               taxesAndDiscounts: widget.salesOrder.taxesAndDiscounts,
+              salesOrder: widget.salesOrder,
             ),
           ],
         ),
@@ -157,8 +158,7 @@ class _CashesWidgetState extends State<CashesWidget> {
             Selector<EInvoiceDocProvider, double>(
                 builder: (context, val, __) {
                   return Text(
-                    (val -
-                            context.watch<EInvoiceDocProvider>().paid)
+                    (val - context.watch<EInvoiceDocProvider>().paid)
                         .toString(),
                     style: txtTheme(context)
                         .headlineLarge!
@@ -276,7 +276,9 @@ class _DiscountsAndTaxesWidgetState extends State<DiscountsAndTaxesWidget> {
 
 class PricesAndTotals extends StatefulWidget {
   final List<DiscountAndTaxes> taxesAndDiscounts;
-  const PricesAndTotals({Key? key, required this.taxesAndDiscounts})
+  final SalesOrder salesOrder;
+  const PricesAndTotals(
+      {Key? key, required this.taxesAndDiscounts, required this.salesOrder})
       : super(key: key);
 
   @override
@@ -285,6 +287,7 @@ class PricesAndTotals extends StatefulWidget {
 
 class _PricesAndTotalsState extends State<PricesAndTotals> {
   late EInvoiceDocProvider taxesProvider;
+
   @override
   Widget build(BuildContext context) {
     taxesProvider = Provider.of<EInvoiceDocProvider>(context);
@@ -324,7 +327,8 @@ class _PricesAndTotalsState extends State<PricesAndTotals> {
 
   double calcTotalAfter(double taxes, double totalVal) {
     if (totalVal == 0) return 0;
-    return taxesProvider.updateTotalAfter(taxes + totalVal);
+    widget.salesOrder.orderAmountAfterTaxes = taxesProvider.updateTotalAfter(taxes + totalVal);
+    return widget.salesOrder.orderAmountAfterTaxes;
   }
 
   Widget _numbersDataRow(String label, double value) => Row(
